@@ -1,0 +1,121 @@
+---
+title: Pillbox
+description: Multi-select input with removable tags
+icon: tags
+---
+
+<Note>
+  The Pillbox component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+The Pillbox component (also known as a tag input or token field) allows users to enter multiple values as individual removable pills or tags. It's perfect for multi-select scenarios like tagging, categorization, and recipient selection.
+
+## Overview
+
+Pillbox provides an intuitive interface for managing multiple values, where each value appears as a dismissible "pill" that users can easily add or remove.
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Tagging System" icon="tags">
+    Add and manage tags for posts, products, or content
+  </Card>
+  <Card title="Email Recipients" icon="envelope">
+    Select multiple email recipients with autocomplete
+  </Card>
+  <Card title="Filters" icon="filter">
+    Build multi-criteria filter selections
+  </Card>
+  <Card title="Categorization" icon="layer-group">
+    Assign multiple categories or labels
+  </Card>
+</CardGroup>
+
+## Key Features
+
+- **Add/Remove Pills** - Click to add, click X to remove
+- **Autocomplete** - Suggest values as user types
+- **Keyboard Navigation** - Backspace to remove, Enter to add
+- **Validation** - Prevent duplicates and invalid entries
+- **Max Items** - Limit number of selections
+- **Custom Rendering** - Customize pill appearance
+- **Livewire Binding** - Seamless wire:model integration
+- **Paste Support** - Parse pasted comma-separated values
+
+## Common Patterns
+
+### Email Recipients
+
+```blade
+<flux:pillbox 
+    wire:model="recipients"
+    placeholder="Add email addresses..."
+    delimiter=","
+    validate="email"
+/>
+```
+
+### Tags with Autocomplete
+
+```blade
+<flux:pillbox 
+    wire:model="tags"
+    :suggestions="$availableTags"
+    placeholder="Add tags..."
+    max="5"
+/>
+```
+
+### Color-Coded Pills
+
+```blade
+<flux:pillbox wire:model="categories">
+    @foreach($categories as $category)
+        <flux:pillbox.pill :color="$category->color">
+            {{ $category->name }}
+        </flux:pillbox.pill>
+    @endforeach
+</flux:pillbox>
+```
+
+## Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `wire:model` | `string` | Livewire property binding (array) |
+| `placeholder` | `string` | Input placeholder text |
+| `suggestions` | `array` | Autocomplete suggestions |
+| `delimiter` | `string` | Character to split pasted values |
+| `max` | `int` | Maximum number of items |
+| `validate` | `string` | Validation rule (email, url, etc.) |
+| `allow-duplicates` | `bool` | Allow duplicate values |
+| `disabled` | `bool` | Disable the input |
+
+## Validation
+
+Pillbox integrates with Livewire validation:
+
+```php
+protected $rules = [
+    'tags' => 'required|array|min:1|max:10',
+    'tags.*' => 'string|max:50',
+];
+```
+
+## Accessibility
+
+- ARIA labels for pills and remove buttons
+- Keyboard navigation (Tab, Backspace, Enter)
+- Screen reader announcements for additions/removals
+- Focus management
+- Proper list semantics
+
+<Tip>
+  Combine Pillbox with [Autocomplete](/pro/autocomplete) for a powerful multi-select experience with search.
+</Tip>
+
+## Related Components
+
+- [Autocomplete](/pro/autocomplete) - Search with suggestions
+- [Select](/components/form-inputs#select) - Single-select dropdown
+- [Checkbox Group](/components/form-inputs#checkbox) - Multi-select alternative

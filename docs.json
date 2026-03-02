@@ -64,14 +64,18 @@
               "pro/calendar",
               "pro/chart",
               "pro/command",
+              "pro/composer",
+              "pro/context",
               "pro/date-picker",
               "pro/editor",
               "pro/file-upload",
               "pro/kanban",
+              "pro/pillbox",
               "pro/popover",
               "pro/slider",
               "pro/table",
               "pro/tabs",
+              "pro/time-picker",
               "pro/toast"
             ]
           },

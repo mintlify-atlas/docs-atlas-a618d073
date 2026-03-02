@@ -1,0 +1,163 @@
+---
+title: Time Picker
+description: Select time values with an intuitive picker interface
+icon: clock
+---
+
+<Note>
+  The Time Picker component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+The Time Picker component provides an intuitive interface for selecting time values, with support for 12-hour and 24-hour formats, minute intervals, and time range selection.
+
+## Overview
+
+Time Picker offers a user-friendly alternative to manual time entry, reducing errors and improving the user experience for scheduling and time-sensitive features.
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Appointment Scheduling" icon="calendar-check">
+    Select meeting and appointment times
+  </Card>
+  <Card title="Event Creation" icon="calendar-plus">
+    Set start and end times for events
+  </Card>
+  <Card title="Reminders" icon="bell">
+    Schedule notification times
+  </Card>
+  <Card title="Time Tracking" icon="stopwatch">
+    Log work hours and durations
+  </Card>
+</CardGroup>
+
+## Key Features
+
+- **12/24 Hour Format** - Support for both time formats
+- **Minute Intervals** - Configure step intervals (5, 10, 15, 30 minutes)
+- **Time Ranges** - Select start and end times
+- **Keyboard Input** - Type time directly
+- **Quick Selection** - Common times (9:00 AM, 12:00 PM, etc.)
+- **Validation** - Min/max time constraints
+- **Timezone Support** - Display and convert timezones
+- **Livewire Integration** - Seamless wire:model binding
+
+## Common Patterns
+
+### Basic Time Selection
+
+```blade
+<flux:time-picker 
+    wire:model="startTime"
+    placeholder="Select time"
+/>
+```
+
+### 24-Hour Format
+
+```blade
+<flux:time-picker 
+    wire:model="time"
+    format="24"
+    step="15"
+/>
+```
+
+### Time Range
+
+```blade
+<flux:time-picker 
+    wire:model="startTime"
+    label="Start Time"
+/>
+<flux:time-picker 
+    wire:model="endTime"
+    label="End Time"
+    :min="$startTime"
+/>
+```
+
+### With Constraints
+
+```blade
+<flux:time-picker 
+    wire:model="appointmentTime"
+    min="09:00"
+    max="17:00"
+    step="30"
+/>
+```
+
+## Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `wire:model` | `string` | Livewire property binding |
+| `format` | `string` | Time format: '12' or '24' |
+| `step` | `int` | Minute interval (5, 10, 15, 30) |
+| `min` | `string` | Minimum selectable time |
+| `max` | `string` | Maximum selectable time |
+| `placeholder` | `string` | Input placeholder |
+| `disabled` | `bool` | Disable the picker |
+| `timezone` | `string` | Display timezone |
+
+## Integration with Date Picker
+
+Combine with Date Picker for full datetime selection:
+
+```blade
+<flux:field>
+    <flux:label>Appointment Date & Time</flux:label>
+    <div class="flex gap-2">
+        <flux:date-picker wire:model="appointmentDate" />
+        <flux:time-picker wire:model="appointmentTime" />
+    </div>
+</flux:field>
+```
+
+## Time Formats
+
+### 12-Hour Format
+
+```
+9:00 AM
+12:30 PM
+6:45 PM
+```
+
+### 24-Hour Format
+
+```
+09:00
+12:30
+18:45
+```
+
+## Validation
+
+Validate time values in Livewire:
+
+```php
+protected $rules = [
+    'startTime' => 'required|date_format:H:i',
+    'endTime' => 'required|date_format:H:i|after:startTime',
+];
+```
+
+## Accessibility
+
+- ARIA labels for time selection
+- Keyboard navigation (arrows, Enter)
+- Screen reader announcements
+- Focus management
+- Proper input semantics
+
+<Tip>
+  Use Time Picker with [Date Picker](/pro/date-picker) for complete datetime selection interfaces.
+</Tip>
+
+## Related Components
+
+- [Date Picker](/pro/date-picker) - Date selection
+- [Calendar](/pro/calendar) - Full calendar view
+- [Input](/components/form-inputs#input) - Text input alternative

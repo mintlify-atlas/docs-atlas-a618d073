@@ -1,0 +1,93 @@
+---
+title: Context Menu
+description: Right-click context menus for enhanced interactions
+icon: bars-3
+---
+
+<Note>
+  The Context component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+The Context component provides right-click (contextual) menus that appear when users interact with specific elements. It's essential for power user features and productivity workflows.
+
+## Overview
+
+Context menus offer quick access to actions related to a specific element without cluttering the main UI. They appear on right-click (or long-press on touch devices) and provide contextually relevant options.
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Table Actions" icon="table">
+    Row-specific actions in data tables
+  </Card>
+  <Card title="File Operations" icon="folder">
+    File management actions (copy, delete, rename)
+  </Card>
+  <Card title="Content Editing" icon="pen-to-square">
+    Text selection actions (copy, cut, paste, format)
+  </Card>
+  <Card title="Card Actions" icon="square">
+    Quick actions on cards and list items
+  </Card>
+</CardGroup>
+
+## Key Features
+
+- **Smart Positioning** - Automatically positions to stay within viewport
+- **Keyboard Navigation** - Arrow keys and shortcuts
+- **Nested Menus** - Support for submenus
+- **Icons and Shortcuts** - Visual indicators and keyboard hints
+- **Separators** - Group related actions
+- **Custom Triggers** - Right-click, long-press, or custom events
+- **Livewire Actions** - Direct wire:click integration
+
+## Common Patterns
+
+### Table Row Context Menu
+
+Provide row-specific actions without cluttering the table:
+
+- Edit record
+- Duplicate
+- Delete
+- Export
+- View details
+
+### File Browser Context Menu
+
+File management actions:
+
+- Open
+- Download
+- Rename
+- Move to folder
+- Delete
+- Share
+
+### Canvas/Editor Context Menu
+
+Content manipulation:
+
+- Cut
+- Copy
+- Paste
+- Select all
+- Clear formatting
+
+## Accessibility
+
+- ARIA roles for menu and menu items
+- Keyboard navigation (arrows, Enter, Escape)
+- Focus management
+- Screen reader announcements
+- Touch-friendly targets
+
+<Warning>
+  Context menus should complement, not replace, standard UI controls. Always provide alternative ways to access critical actions.
+</Warning>
+
+## Related Components
+
+- [Dropdown](/components/dropdown) - Standard dropdown menus
+- [Popover](/pro/popover) - Overlay content
+- [Command](/pro/command) - Keyboard-driven command palette

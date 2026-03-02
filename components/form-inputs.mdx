@@ -467,6 +467,134 @@ class ContactForm extends Component
 
 ---
 
+## OTP
+
+One-Time Password (OTP) input component for verification codes and authentication.
+
+### Basic Usage
+
+```blade
+<flux:otp wire:model="code" length="6" />
+```
+
+### Private Mode
+
+Hide the entered digits for security:
+
+```blade
+<flux:otp wire:model="code" length="6" private />
+```
+
+### Custom Length
+
+```blade
+<flux:otp wire:model="code" length="4" />
+<flux:otp wire:model="code" length="8" />
+```
+
+### With Field Wrapper
+
+```blade
+<flux:field>
+    <flux:label>Enter verification code</flux:label>
+    <flux:otp wire:model="code" length="6" />
+    <flux:error name="code" />
+</flux:field>
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `length` | `int` | `null` | Number of input boxes |
+| `private` | `bool` | `false` | Hide entered digits |
+| `wire:model` | `string` | - | Livewire property binding |
+
+---
+
+## Avatar
+
+Display user avatars with initials, images, or icons.
+
+### Basic Usage
+
+```blade
+<flux:avatar name="John Doe" />
+<flux:avatar src="/path/to/image.jpg" alt="John Doe" />
+<flux:avatar icon="user" />
+```
+
+### Sizes
+
+```blade
+<flux:avatar name="John Doe" size="xs" />
+<flux:avatar name="John Doe" size="sm" />
+<flux:avatar name="John Doe" size="md" />
+<flux:avatar name="John Doe" size="lg" />
+<flux:avatar name="John Doe" size="xl" />
+```
+
+### Colors
+
+```blade
+<flux:avatar name="John Doe" color="auto" />
+<flux:avatar name="John Doe" color="blue" />
+<flux:avatar name="John Doe" color="red" />
+<flux:avatar name="John Doe" color="green" />
+```
+
+### Circle Shape
+
+```blade
+<flux:avatar name="John Doe" circle />
+```
+
+### With Badge
+
+```blade
+<flux:avatar name="John Doe" badge="3" />
+<flux:avatar name="John Doe" badge badge:color="green" />
+<flux:avatar name="John Doe">
+    <flux:badge slot="badge" color="red" circle />
+</flux:avatar>
+```
+
+### With Tooltip
+
+```blade
+<flux:avatar name="John Doe" tooltip />
+<flux:avatar name="John Doe" tooltip="Profile picture" />
+```
+
+### Avatar Group
+
+Display multiple avatars in a group:
+
+```blade
+<flux:avatar.group>
+    <flux:avatar name="John Doe" />
+    <flux:avatar name="Jane Smith" />
+    <flux:avatar name="Bob Johnson" />
+</flux:avatar.group>
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | `null` | Name for initials generation |
+| `src` | `string` | `null` | Image source URL |
+| `icon` | `string` | `null` | Icon name from Heroicons |
+| `initials` | `string` | `null` | Custom initials override |
+| `size` | `string` | `'md'` | Size: xs, sm, md, lg, xl |
+| `color` | `string` | `null` | Color: auto or any Tailwind color |
+| `circle` | `bool` | `false` | Circular shape |
+| `badge` | `string\|slot` | `null` | Badge content or slot |
+| `tooltip` | `string\|bool` | `null` | Tooltip text |
+| `href` | `string` | `null` | Make avatar clickable |
+
+---
+
 ## Accessibility
 
 - All inputs include proper `name` attributes
@@ -474,6 +602,8 @@ class ContactForm extends Component
 - Error messages use `aria-invalid` and proper ARIA attributes
 - Keyboard navigation works as expected
 - Required fields can be marked visually
+- OTP inputs include proper ARIA labels for screen readers
+- Avatars include proper `alt` text when using images
 
 <Note>
   Form components automatically extract the field name from `wire:model` for validation and error handling.
