@@ -1,0 +1,146 @@
+{
+  "projectType": "frontend",
+  "projectName": "Flux",
+  "projectDescription": "A robust, hand-crafted UI component library for Livewire applications built with Tailwind CSS",
+  "theme": "palm",
+  "primaryColor": "#fb7185",
+  "lightColor": "#fda4af",
+  "darkColor": "#f43f5e",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/components",
+              "concepts/styling",
+              "concepts/customization",
+              "concepts/pro-license"
+            ]
+          },
+          {
+            "group": "Components",
+            "pages": [
+              "components/overview",
+              "components/button",
+              "components/dropdown",
+              "components/icon",
+              "components/separator",
+              "components/tooltip",
+              "components/form-inputs",
+              "components/layout",
+              "components/navigation",
+              "components/feedback"
+            ]
+          },
+          {
+            "group": "Pro Components",
+            "pages": [
+              "pro/overview",
+              "pro/accordion",
+              "pro/autocomplete",
+              "pro/calendar",
+              "pro/chart",
+              "pro/command",
+              "pro/date-picker",
+              "pro/editor",
+              "pro/file-upload",
+              "pro/kanban",
+              "pro/popover",
+              "pro/slider",
+              "pro/table",
+              "pro/tabs",
+              "pro/toast"
+            ]
+          },
+          {
+            "group": "CLI",
+            "pages": [
+              "cli/activate",
+              "cli/publish",
+              "cli/icon"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "PHP Classes",
+            "pages": [
+              "api/flux-facade",
+              "api/flux-manager",
+              "api/date-range",
+              "api/asset-manager"
+            ]
+          },
+          {
+            "group": "Blade Directives",
+            "pages": [
+              "api/directives"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Hand-crafted UI components for Livewire",
+    "Built with Tailwind CSS v4.0+",
+    "454+ component Blade templates",
+    "Free and Pro tiers with license activation",
+    "Customizable component publishing",
+    "Date range utilities and presets",
+    "Icon library with 300+ icons",
+    "Form components with Livewire integration",
+    "Layout components (header, sidebar, footer)",
+    "Advanced Pro components (charts, tables, kanban)"
+  ],
+  "publicApiSurface": [
+    "Flux::classes()",
+    "Flux::pro()",
+    "Flux::scripts()",
+    "Flux::fluxAppearance()",
+    "Flux::splitAttributes()",
+    "Flux::forwardedAttributes()",
+    "DateRange::today()",
+    "DateRange::yesterday()",
+    "DateRange::thisWeek()",
+    "DateRange::lastWeek()",
+    "DateRange::last7Days()",
+    "DateRange::thisMonth()",
+    "DateRange::lastMonth()",
+    "DateRange::allTime()",
+    "@fluxAppearance",
+    "@fluxScripts",
+    "php artisan flux:activate",
+    "php artisan flux:publish",
+    "php artisan flux:icon",
+    "<flux:button>",
+    "<flux:dropdown>",
+    "<flux:icon>",
+    "<flux:separator>",
+    "<flux:tooltip>",
+    "<flux:input>",
+    "<flux:select>",
+    "<flux:checkbox>",
+    "<flux:radio>",
+    "<flux:textarea>",
+    "<flux:modal>",
+    "<flux:navbar>",
+    "<flux:sidebar>",
+    "<flux:header>",
+    "<flux:footer>"
+  ]
+}
