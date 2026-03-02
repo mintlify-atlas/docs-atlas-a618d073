@@ -1,0 +1,331 @@
+---
+title: 'Kanban Board'
+description: 'Drag-and-drop board for task management'
+icon: 'columns'
+---
+
+<Note>
+  The Kanban component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+## Overview
+
+The Kanban component provides a visual board interface for managing tasks, projects, or workflows. With drag-and-drop functionality, it enables intuitive organization and status tracking, perfect for project management and agile workflows.
+
+## Basic Usage
+
+Create a simple kanban board:
+
+```blade
+<flux:kanban wire:model="tasks">
+    <flux:kanban.column status="todo" label="To Do">
+        @foreach($tasks->where('status', 'todo') as $task)
+            <flux:kanban.card :id="$task->id">
+                {{ $task->title }}
+            </flux:kanban.card>
+        @endforeach
+    </flux:kanban.column>
+    
+    <flux:kanban.column status="in-progress" label="In Progress">
+        @foreach($tasks->where('status', 'in-progress') as $task)
+            <flux:kanban.card :id="$task->id">
+                {{ $task->title }}
+            </flux:kanban.card>
+        @endforeach
+    </flux:kanban.column>
+    
+    <flux:kanban.column status="done" label="Done">
+        @foreach($tasks->where('status', 'done') as $task)
+            <flux:kanban.card :id="$task->id">
+                {{ $task->title }}
+            </flux:kanban.card>
+        @endforeach
+    </flux:kanban.column>
+</flux:kanban>
+```
+
+## With Drag and Drop
+
+Handle card movement between columns:
+
+```blade
+<flux:kanban wire:card-moved="handleCardMoved">
+    <!-- Columns and cards -->
+</flux:kanban>
+```
+
+```php
+class TaskBoard extends Component
+{
+    public function handleCardMoved($cardId, $fromColumn, $toColumn, $position)
+    {
+        $task = Task::find($cardId);
+        
+        $task->update([
+            'status' => $toColumn,
+            'position' => $position,
+        ]);
+    }
+}
+```
+
+## Rich Card Content
+
+Customize card appearance and information:
+
+```blade
+<flux:kanban.card :id="$task->id">
+    <div class="space-y-2">
+        <div class="flex items-start justify-between">
+            <h4 class="font-medium">{{ $task->title }}</h4>
+            <flux:badge :color="$task->priority_color">
+                {{ $task->priority }}
+            </flux:badge>
+        </div>
+        
+        <p class="text-sm text-gray-600">{{ $task->description }}</p>
+        
+        <div class="flex items-center gap-2">
+            <flux:avatar
+                :src="$task->assignee->avatar"
+                size="xs"
+            />
+            <span class="text-xs text-gray-500">{{ $task->assignee->name }}</span>
+        </div>
+        
+        @if($task->due_date)
+            <div class="flex items-center gap-1 text-xs text-gray-500">
+                <flux:icon name="calendar" size="xs" />
+                {{ $task->due_date->format('M d') }}
+            </div>
+        @endif
+    </div>
+</flux:kanban.card>
+```
+
+## Column Limits
+
+Set WIP (Work In Progress) limits:
+
+```blade
+<flux:kanban.column
+    status="in-progress"
+    label="In Progress"
+    :limit="3"
+    :count="$tasks->where('status', 'in-progress')->count()"
+>
+    <!-- Cards -->
+</flux:kanban.column>
+```
+
+## Swimlanes
+
+Organize boards with horizontal groupings:
+
+```blade
+<flux:kanban>
+    @foreach($projects as $project)
+        <flux:kanban.swimlane :label="$project->name">
+            <flux:kanban.column status="todo" label="To Do">
+                @foreach($project->tasks->where('status', 'todo') as $task)
+                    <flux:kanban.card :id="$task->id">
+                        {{ $task->title }}
+                    </flux:kanban.card>
+                @endforeach
+            </flux:kanban.column>
+            
+            <flux:kanban.column status="in-progress" label="In Progress">
+                @foreach($project->tasks->where('status', 'in-progress') as $task)
+                    <flux:kanban.card :id="$task->id">
+                        {{ $task->title }}
+                    </flux:kanban.card>
+                @endforeach
+            </flux:kanban.column>
+            
+            <flux:kanban.column status="done" label="Done">
+                @foreach($project->tasks->where('status', 'done') as $task)
+                    <flux:kanban.card :id="$task->id">
+                        {{ $task->title }}
+                    </flux:kanban.card>
+                @endforeach
+            </flux:kanban.column>
+        </flux:kanban.swimlane>
+    @endforeach
+</flux:kanban>
+```
+
+## Card Actions
+
+Add interactive elements to cards:
+
+```blade
+<flux:kanban.card :id="$task->id">
+    <div class="space-y-2">
+        <h4 class="font-medium">{{ $task->title }}</h4>
+        
+        <div class="flex gap-2">
+            <flux:button size="xs" wire:click="editTask({{ $task->id }})">
+                Edit
+            </flux:button>
+            <flux:button size="xs" variant="danger" wire:click="deleteTask({{ $task->id }})">
+                Delete
+            </flux:button>
+        </div>
+    </div>
+</flux:kanban.card>
+```
+
+## Add Cards
+
+Enable quick card creation:
+
+```blade
+<flux:kanban.column status="todo" label="To Do">
+    @foreach($tasks->where('status', 'todo') as $task)
+        <flux:kanban.card :id="$task->id">
+            {{ $task->title }}
+        </flux:kanban.card>
+    @endforeach
+    
+    <flux:kanban.add-card wire:click="createTask('todo')">
+        Add task
+    </flux:kanban.add-card>
+</flux:kanban.column>
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Project Management" icon="list-check">
+    Track project tasks through stages like backlog, in progress, review, and complete.
+  </Card>
+  
+  <Card title="Sales Pipeline" icon="chart-line">
+    Manage leads through qualification, proposal, negotiation, and closing stages.
+  </Card>
+  
+  <Card title="Support Tickets" icon="ticket">
+    Organize customer support tickets by status and priority for efficient handling.
+  </Card>
+  
+  <Card title="Content Calendar" icon="calendar-days">
+    Plan and track content through ideation, drafting, review, and publication stages.
+  </Card>
+</CardGroup>
+
+## Features
+
+### Drag and Drop
+
+- Move cards between columns
+- Reorder cards within columns
+- Visual feedback during dragging
+- Touch device support
+
+### Column Management
+
+- Customizable column titles and colors
+- WIP limit indicators
+- Card count badges
+- Add new columns dynamically
+
+### Card Features
+
+- Rich content support
+- Custom styling per card
+- Card actions and menus
+- Quick add functionality
+
+### Board Options
+
+- Horizontal swimlanes
+- Filtering and search
+- Column collapse/expand
+- Responsive layouts
+
+## Best Practices
+
+### Keep Columns Focused
+
+Limit the number of columns to 3-5 key stages. Too many columns can overwhelm users and reduce the board's effectiveness.
+
+### Set WIP Limits
+
+Use work-in-progress limits to prevent bottlenecks and maintain workflow efficiency.
+
+### Use Visual Hierarchy
+
+Distinguish cards by priority, type, or assignee using colors, badges, or icons for quick visual scanning.
+
+### Provide Card Details
+
+Include essential information on cards (assignee, due date, priority) while keeping them scannable.
+
+## Advanced Example
+
+Complete kanban board with all features:
+
+```blade
+<div class="space-y-4">
+    <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-bold">Sprint Board</h2>
+        <flux:button wire:click="createTask">New Task</flux:button>
+    </div>
+    
+    <flux:kanban wire:card-moved="handleCardMoved">
+        @foreach($columns as $column)
+            <flux:kanban.column
+                :status="$column->status"
+                :label="$column->label"
+                :limit="$column->wip_limit"
+                :count="$tasks->where('status', $column->status)->count()"
+            >
+                @foreach($tasks->where('status', $column->status) as $task)
+                    <flux:kanban.card :id="$task->id" wire:click="viewTask({{ $task->id }})">
+                        <div class="space-y-3">
+                            <div class="flex items-start justify-between gap-2">
+                                <h4 class="font-medium flex-1">{{ $task->title }}</h4>
+                                <flux:badge :color="$task->priority_color" size="xs">
+                                    {{ $task->priority }}
+                                </flux:badge>
+                            </div>
+                            
+                            @if($task->description)
+                                <p class="text-sm text-gray-600 line-clamp-2">
+                                    {{ $task->description }}
+                                </p>
+                            @endif
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    @foreach($task->assignees as $assignee)
+                                        <flux:avatar
+                                            :src="$assignee->avatar"
+                                            :alt="$assignee->name"
+                                            size="xs"
+                                        />
+                                    @endforeach
+                                </div>
+                                
+                                @if($task->due_date)
+                                    <span class="text-xs {{ $task->is_overdue ? 'text-red-600' : 'text-gray-500' }}">
+                                        {{ $task->due_date->format('M d') }}
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                    </flux:kanban.card>
+                @endforeach
+                
+                <flux:kanban.add-card wire:click="createTask('{{ $column->status }}')">
+                    Add task
+                </flux:kanban.add-card>
+            </flux:kanban.column>
+        @endforeach
+    </flux:kanban>
+</div>
+```
+
+<Tip>
+  Kanban boards work best when combined with keyboard shortcuts for power users, filters for large datasets, and real-time updates for collaborative environments.
+</Tip>

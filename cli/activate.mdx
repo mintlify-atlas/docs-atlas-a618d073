@@ -1,0 +1,106 @@
+---
+title: flux:activate
+description: Activate Flux Pro by adding your license credentials and installing the package
+---
+
+The `flux:activate` command activates Flux Pro on your Laravel application by configuring your Composer credentials and installing the `livewire/flux-pro` package.
+
+## Usage
+
+```bash
+php artisan flux:activate
+```
+
+You can optionally provide your email and license key as arguments:
+
+```bash
+php artisan flux:activate [email] [key]
+```
+
+## Arguments
+
+<ParamField path="email" type="string" optional>
+  The email address associated with your Flux license. If not provided, you'll be prompted to enter it.
+</ParamField>
+
+<ParamField path="key" type="string" optional>
+  Your Flux license key. If not provided, you'll be prompted to enter it securely.
+</ParamField>
+
+## What It Does
+
+When you run `flux:activate`, the command performs the following steps:
+
+<Steps>
+  <Step title="Add credentials to auth.json">
+    The command adds your license credentials to Composer's `auth.json` file using:
+    ```bash
+    composer config -a http-basic.composer.fluxui.dev [email] [key]
+    ```
+    This allows Composer to authenticate with the Flux Pro repository.
+  </Step>
+
+  <Step title="Add repository to composer.json">
+    The Flux Pro Composer repository is added to your `composer.json`:
+    ```bash
+    composer config repositories.flux-pro composer https://composer.fluxui.dev
+    ```
+  </Step>
+
+  <Step title="Install Flux Pro">
+    Finally, the command runs:
+    ```bash
+    composer require livewire/flux-pro
+    ```
+    This downloads and installs the Flux Pro package and its dependencies.
+  </Step>
+</Steps>
+
+## Interactive Prompts
+
+If you don't provide the email and key as arguments, the command will prompt you:
+
+```bash
+php artisan flux:activate
+
+┌ Enter the email address associated with your license ──────┐
+│ john@example.com                                            │
+└─────────────────────────────────────────────────────────────┘
+  Purchase a license key: https://fluxui.dev/pricing
+
+┌ Enter your license key ─────────────────────────────────────┐
+│ ••••••••••••••••••••••••••••••••                            │
+└─────────────────────────────────────────────────────────────┘
+  Purchase a license key: https://fluxui.dev/pricing
+```
+
+## Examples
+
+### With prompts
+
+```bash
+php artisan flux:activate
+```
+
+You'll be prompted to enter your email and license key interactively.
+
+### With arguments
+
+```bash
+php artisan flux:activate john@example.com your-license-key-here
+```
+
+The command will use the provided credentials without prompting.
+
+## Troubleshooting
+
+If activation fails at any step, the command will display an error message and suggest contacting `support@fluxui.dev` for assistance.
+
+Common issues:
+- Invalid license credentials
+- Network connectivity problems
+- Composer configuration issues
+
+<Note>
+  You need a valid Flux Pro license to use this command. Purchase one at [fluxui.dev/pricing](https://fluxui.dev/pricing).
+</Note>

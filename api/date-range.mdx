@@ -1,0 +1,549 @@
+---
+title: DateRange
+description: API reference for the DateRange class and DateRangePreset enum
+---
+
+The `DateRange` class provides convenient static methods for creating common date ranges. It extends Carbon's `CarbonPeriod` class and includes preset functionality.
+
+## Overview
+
+```php
+use Flux\DateRange;
+
+// Create preset date ranges
+$today = DateRange::today();
+$lastWeek = DateRange::lastWeek();
+$last30Days = DateRange::last30Days();
+
+// Access start and end dates
+$start = $today->start(); // Carbon instance
+$end = $today->end();     // Carbon instance
+```
+
+## Instance Methods
+
+### start()
+
+Get the start date of the range.
+
+```php
+public function start(): ?Carbon
+```
+
+**Returns:** Carbon instance or `null`
+
+**Example:**
+
+```php
+$range = DateRange::today();
+$startDate = $range->start(); // Carbon instance for today at 00:00:00
+```
+
+### end()
+
+Get the end date of the range.
+
+```php
+public function end(): ?Carbon
+```
+
+**Returns:** Carbon instance or `null`
+
+**Example:**
+
+```php
+$range = DateRange::today();
+$endDate = $range->end(); // Carbon instance for today at 23:59:59
+```
+
+### preset()
+
+Get the preset that was used to create this range.
+
+```php
+public function preset(): ?DateRangePreset
+```
+
+**Returns:** `DateRangePreset` enum or `null`
+
+**Example:**
+
+```php
+$range = DateRange::lastWeek();
+$preset = $range->preset(); // DateRangePreset::LastWeek
+```
+
+### hasStart()
+
+Check if the range has a start date.
+
+```php
+public function hasStart(): bool
+```
+
+**Returns:** `true` if start date is set, `false` otherwise
+
+### hasEnd()
+
+Check if the range has an end date.
+
+```php
+public function hasEnd(): bool
+```
+
+**Returns:** `true` if end date is set, `false` otherwise
+
+### hasPreset()
+
+Check if the range was created from a preset.
+
+```php
+public function hasPreset(): bool
+```
+
+**Returns:** `true` if created from a preset, `false` otherwise
+
+### isNotAllTime()
+
+Check if the range is not the "All Time" preset.
+
+```php
+public function isNotAllTime(): bool
+```
+
+**Returns:** `true` if not all-time, `false` if it is all-time
+
+## Static Preset Methods
+
+All preset methods return a `DateRange` instance with the appropriate start and end dates.
+
+### Past Date Ranges
+
+#### today()
+
+Create a range for today.
+
+```php
+public static function today(): DateRange
+```
+
+**Returns:** Range from today 00:00:00 to today 23:59:59
+
+#### yesterday()
+
+Create a range for yesterday.
+
+```php
+public static function yesterday(): DateRange
+```
+
+**Returns:** Range from yesterday 00:00:00 to yesterday 23:59:59
+
+#### thisWeek()
+
+Create a range for the current week.
+
+```php
+public static function thisWeek(): DateRange
+```
+
+**Returns:** Range from start of week to end of week
+
+#### lastWeek()
+
+Create a range for last week.
+
+```php
+public static function lastWeek(): DateRange
+```
+
+**Returns:** Range from start of last week to end of last week
+
+#### last7Days()
+
+Create a range for the last 7 days.
+
+```php
+public static function last7Days(): DateRange
+```
+
+**Returns:** Range from 7 days ago to now
+
+#### last14Days()
+
+Create a range for the last 14 days.
+
+```php
+public static function last14Days(): DateRange
+```
+
+**Returns:** Range from 14 days ago to now
+
+#### last30Days()
+
+Create a range for the last 30 days.
+
+```php
+public static function last30Days(): DateRange
+```
+
+**Returns:** Range from 30 days ago to now
+
+#### thisMonth()
+
+Create a range for the current month.
+
+```php
+public static function thisMonth(): DateRange
+```
+
+**Returns:** Range from start of month to end of month
+
+#### lastMonth()
+
+Create a range for last month.
+
+```php
+public static function lastMonth(): DateRange
+```
+
+**Returns:** Range from start of last month to end of last month
+
+#### last3Months()
+
+Create a range for the last 3 months.
+
+```php
+public static function last3Months(): DateRange
+```
+
+**Returns:** Range from 3 months ago to now
+
+#### last6Months()
+
+Create a range for the last 6 months.
+
+```php
+public static function last6Months(): DateRange
+```
+
+**Returns:** Range from 6 months ago to now
+
+#### thisQuarter()
+
+Create a range for the current quarter.
+
+```php
+public static function thisQuarter(): DateRange
+```
+
+**Returns:** Range from start of quarter to end of quarter
+
+#### lastQuarter()
+
+Create a range for last quarter.
+
+```php
+public static function lastQuarter(): DateRange
+```
+
+**Returns:** Range from start of last quarter to end of last quarter
+
+#### thisYear()
+
+Create a range for the current year.
+
+```php
+public static function thisYear(): DateRange
+```
+
+**Returns:** Range from start of year to end of year
+
+#### lastYear()
+
+Create a range for last year.
+
+```php
+public static function lastYear(): DateRange
+```
+
+**Returns:** Range from start of last year to end of last year
+
+#### yearToDate()
+
+Create a range from the start of the year to now.
+
+```php
+public static function yearToDate(): DateRange
+```
+
+**Returns:** Range from January 1st to now
+
+### Future Date Ranges
+
+#### tomorrow()
+
+Create a range for tomorrow.
+
+```php
+public static function tomorrow(): DateRange
+```
+
+**Returns:** Range from tomorrow 00:00:00 to tomorrow 23:59:59
+
+#### nextWeek()
+
+Create a range for next week.
+
+```php
+public static function nextWeek(): DateRange
+```
+
+**Returns:** Range from start of next week to end of next week
+
+#### next7Days()
+
+Create a range for the next 7 days.
+
+```php
+public static function next7Days(): DateRange
+```
+
+**Returns:** Range from now to 6 days from now
+
+#### next14Days()
+
+Create a range for the next 14 days.
+
+```php
+public static function next14Days(): DateRange
+```
+
+**Returns:** Range from now to 13 days from now
+
+#### next30Days()
+
+Create a range for the next 30 days.
+
+```php
+public static function next30Days(): DateRange
+```
+
+**Returns:** Range from now to 29 days from now
+
+#### nextMonth()
+
+Create a range for next month.
+
+```php
+public static function nextMonth(): DateRange
+```
+
+**Returns:** Range from start of next month to end of next month
+
+#### next3Months()
+
+Create a range for the next 3 months.
+
+```php
+public static function next3Months(): DateRange
+```
+
+**Returns:** Range from now to 3 months from now
+
+#### next6Months()
+
+Create a range for the next 6 months.
+
+```php
+public static function next6Months(): DateRange
+```
+
+**Returns:** Range from now to 6 months from now
+
+#### nextQuarter()
+
+Create a range for next quarter.
+
+```php
+public static function nextQuarter(): DateRange
+```
+
+**Returns:** Range from start of next quarter to end of next quarter
+
+#### nextYear()
+
+Create a range for next year.
+
+```php
+public static function nextYear(): DateRange
+```
+
+**Returns:** Range from start of next year to end of next year
+
+### Special Ranges
+
+#### allTime()
+
+Create a range from a specific start date to now.
+
+```php
+public static function allTime($start): DateRange
+```
+
+<ParamField path="start" type="string|Carbon" required>
+  The start date (parseable by Carbon)
+</ParamField>
+
+**Returns:** Range from the specified start date to now
+
+**Example:**
+
+```php
+$range = DateRange::allTime('2020-01-01');
+$range = DateRange::allTime(Carbon::parse('2020-01-01'));
+```
+
+## DateRangePreset Enum
+
+The `DateRangePreset` enum defines all available date range presets.
+
+### Enum Cases
+
+```php
+enum DateRangePreset: string
+{
+    case Today = 'today';
+    case Yesterday = 'yesterday';
+    case ThisWeek = 'thisWeek';
+    case LastWeek = 'lastWeek';
+    case Last7Days = 'last7Days';
+    case Last14Days = 'last14Days';
+    case Last30Days = 'last30Days';
+    case ThisMonth = 'thisMonth';
+    case LastMonth = 'lastMonth';
+    case Last3Months = 'last3Months';
+    case Last6Months = 'last6Months';
+    case ThisQuarter = 'thisQuarter';
+    case LastQuarter = 'lastQuarter';
+    case ThisYear = 'thisYear';
+    case LastYear = 'lastYear';
+    case YearToDate = 'yearToDate';
+    case Tomorrow = 'tomorrow';
+    case NextWeek = 'nextWeek';
+    case Next7Days = 'next7Days';
+    case Next14Days = 'next14Days';
+    case Next30Days = 'next30Days';
+    case NextMonth = 'nextMonth';
+    case Next3Months = 'next3Months';
+    case Next6Months = 'next6Months';
+    case NextQuarter = 'nextQuarter';
+    case NextYear = 'nextYear';
+    case AllTime = 'allTime';
+    case Custom = 'custom';
+}
+```
+
+### dates()
+
+Get the start and end dates for the preset.
+
+```php
+public function dates(?Carbon $start = null): array
+```
+
+<ParamField path="start" type="Carbon|null" default="null">
+  Required for AllTime preset, ignored for others
+</ParamField>
+
+**Returns:** Array with two Carbon instances: `[start, end]`
+
+**Example:**
+
+```php
+[$start, $end] = DateRangePreset::Today->dates();
+[$start, $end] = DateRangePreset::AllTime->dates(Carbon::parse('2020-01-01'));
+```
+
+### label()
+
+Get the human-readable label for the preset.
+
+```php
+public function label(): string
+```
+
+**Returns:** Localized label string
+
+**Example:**
+
+```php
+$label = DateRangePreset::Last30Days->label(); // 'Last 30 Days'
+$label = DateRangePreset::ThisWeek->label();   // 'This Week'
+```
+
+## Usage Examples
+
+### Basic Usage
+
+```php
+use Flux\DateRange;
+
+// Get last 30 days
+$range = DateRange::last30Days();
+
+// Access dates
+$startDate = $range->start();
+$endDate = $range->end();
+
+// Check preset
+if ($range->preset() === DateRangePreset::Last30Days) {
+    // Handle last 30 days specifically
+}
+```
+
+### With Database Queries
+
+```php
+$range = DateRange::thisMonth();
+
+$results = DB::table('orders')
+    ->whereBetween('created_at', [$range->start(), $range->end()])
+    ->get();
+```
+
+### Livewire Component
+
+```php
+use Livewire\Component;
+use Flux\DateRange;
+
+class Analytics extends Component
+{
+    public DateRange $dateRange;
+
+    public function mount()
+    {
+        $this->dateRange = DateRange::last7Days();
+    }
+
+    public function setRange(string $preset)
+    {
+        $this->dateRange = match($preset) {
+            'today' => DateRange::today(),
+            'yesterday' => DateRange::yesterday(),
+            'last7days' => DateRange::last7Days(),
+            'last30days' => DateRange::last30Days(),
+            default => DateRange::thisMonth(),
+        };
+    }
+}
+```
+
+## Notes
+
+- All date ranges use Carbon for date manipulation
+- Start times are set to 00:00:00 (start of day)
+- End times are set to 23:59:59 (end of day)
+- Week calculations use Carbon's locale settings
+- The `AllTime` preset requires a start date parameter

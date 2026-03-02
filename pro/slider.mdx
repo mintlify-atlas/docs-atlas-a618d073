@@ -1,0 +1,324 @@
+---
+title: 'Slider'
+description: 'Range selection and value adjustment'
+icon: 'sliders'
+---
+
+<Note>
+  The Slider component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+## Overview
+
+The Slider component provides an intuitive interface for selecting numeric values or ranges. Perfect for filters, settings, and any scenario where users need to choose values along a continuous spectrum.
+
+## Basic Usage
+
+Create a simple slider:
+
+```blade
+<flux:slider
+    wire:model="volume"
+    :min="0"
+    :max="100"
+    label="Volume"
+/>
+```
+
+## With Steps
+
+Define specific increments:
+
+```blade
+<flux:slider
+    wire:model="rating"
+    :min="0"
+    :max="5"
+    :step="0.5"
+    label="Rating"
+/>
+```
+
+## Range Slider
+
+Select a range with two handles:
+
+```blade
+<flux:slider
+    wire:model="priceRange"
+    :min="0"
+    :max="1000"
+    range
+    label="Price Range"
+/>
+```
+
+```php
+class ProductFilter extends Component
+{
+    public $priceRange = [0, 500];
+}
+```
+
+## Show Value
+
+Display the current value:
+
+```blade
+<flux:slider
+    wire:model="brightness"
+    :min="0"
+    :max="100"
+    show-value
+    label="Brightness"
+/>
+```
+
+## Custom Format
+
+Format the displayed value:
+
+```blade
+<flux:slider
+    wire:model="distance"
+    :min="0"
+    :max="100"
+    show-value
+    :format="fn($value) => $value . ' km'"
+    label="Distance"
+/>
+```
+
+## With Marks
+
+Add visual markers:
+
+```blade
+<flux:slider
+    wire:model="priority"
+    :min="1"
+    :max="5"
+    :marks="[
+        1 => 'Low',
+        3 => 'Medium',
+        5 => 'High',
+    ]"
+    label="Priority"
+/>
+```
+
+## Vertical Orientation
+
+Render a vertical slider:
+
+```blade
+<flux:slider
+    wire:model="level"
+    :min="0"
+    :max="100"
+    orientation="vertical"
+    class="h-48"
+/>
+```
+
+## Disabled State
+
+Disable the slider:
+
+```blade
+<flux:slider
+    wire:model="value"
+    :min="0"
+    :max="100"
+    disabled
+    label="Read-only Value"
+/>
+```
+
+## With Tooltip
+
+Show value in a tooltip while dragging:
+
+```blade
+<flux:slider
+    wire:model="percentage"
+    :min="0"
+    :max="100"
+    tooltip="drag"
+/>
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Price Filters" icon="filter-circle-dollar">
+    Allow users to filter products by selecting a price range.
+  </Card>
+  
+  <Card title="Volume Controls" icon="volume-high">
+    Adjust audio volume, brightness, or other continuous settings.
+  </Card>
+  
+  <Card title="Date Range" icon="calendar-range">
+    Select a range of years, months, or days for date filtering.
+  </Card>
+  
+  <Card title="Ratings" icon="star">
+    Input or filter by rating values with decimal precision.
+  </Card>
+</CardGroup>
+
+## Features
+
+### Value Selection
+
+- Single value selection
+- Range selection with dual handles
+- Configurable min, max, and step
+- Decimal value support
+
+### Visual Feedback
+
+- Current value display
+- Tooltips on hover/drag
+- Visual markers and labels
+- Fill color for selected range
+
+### Interaction
+
+- Click to jump to value
+- Drag handles to adjust
+- Keyboard navigation (arrow keys)
+- Touch device support
+
+### Customization
+
+- Custom value formatting
+- Vertical or horizontal orientation
+- Custom colors and styling
+- Marks and labels
+
+## Keyboard Navigation
+
+- **Arrow Up/Right**: Increase value
+- **Arrow Down/Left**: Decrease value
+- **Page Up**: Increase by large step
+- **Page Down**: Decrease by large step
+- **Home**: Jump to minimum
+- **End**: Jump to maximum
+
+## Advanced Examples
+
+### Price Range Filter
+
+```blade
+<flux:slider
+    wire:model.live="filters.price"
+    :min="0"
+    :max="5000"
+    :step="50"
+    range
+    show-value
+    :format="fn($value) => '$' . number_format($value)"
+>
+    <x-slot name="label">
+        <div class="flex items-center justify-between">
+            <span>Price Range</span>
+            <span class="text-sm text-gray-500">
+                ${{ number_format($filters['price'][0]) }} - ${{ number_format($filters['price'][1]) }}
+            </span>
+        </div>
+    </x-slot>
+</flux:slider>
+```
+
+### Temperature Control
+
+```blade
+<flux:slider
+    wire:model.live="temperature"
+    :min="16"
+    :max="30"
+    :step="0.5"
+    show-value
+    :format="fn($value) => $value . '°C'"
+    :marks="[
+        16 => '16°',
+        20 => '20°',
+        24 => '24°',
+        30 => '30°',
+    ]"
+    label="Temperature"
+/>
+```
+
+### Age Range Filter
+
+```blade
+<flux:slider
+    wire:model.live="ageRange"
+    :min="18"
+    :max="100"
+    range
+    :marks="[
+        18 => '18',
+        30 => '30',
+        50 => '50',
+        70 => '70',
+        100 => '100+',
+    ]"
+    label="Age Range"
+/>
+
+<p class="text-sm text-gray-600 mt-2">
+    Ages {{ $ageRange[0] }} to {{ $ageRange[1] }}
+</p>
+```
+
+### Experience Level
+
+```blade
+<flux:slider
+    wire:model="experience"
+    :min="1"
+    :max="5"
+    :marks="[
+        1 => 'Beginner',
+        2 => 'Intermediate',
+        3 => 'Advanced',
+        4 => 'Expert',
+        5 => 'Master',
+    ]"
+    snap-to-marks
+    label="Experience Level"
+/>
+```
+
+## Styling
+
+Customize slider appearance:
+
+```blade
+<flux:slider
+    wire:model="value"
+    :min="0"
+    :max="100"
+    track-class="bg-gray-200 h-2"
+    fill-class="bg-blue-500"
+    thumb-class="w-4 h-4 bg-blue-600 border-2 border-white shadow-lg"
+/>
+```
+
+## Accessibility
+
+The Slider component is fully accessible:
+
+- Proper ARIA attributes (`role="slider"`, `aria-valuemin`, `aria-valuemax`, `aria-valuenow`)
+- Keyboard navigation support
+- Focus indicators
+- Screen reader announcements
+- Touch-friendly hit targets
+
+<Tip>
+  For better UX, combine sliders with numeric inputs when precision is important, allowing users to either drag for quick adjustments or type exact values.
+</Tip>

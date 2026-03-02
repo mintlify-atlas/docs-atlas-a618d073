@@ -1,0 +1,219 @@
+---
+title: flux:publish
+description: Publish individual Flux component views to your application for customization
+---
+
+The `flux:publish` command allows you to publish Flux component Blade templates to your application's `resources/views/flux` directory. This enables you to customize component markup and styling.
+
+## Usage
+
+```bash
+php artisan flux:publish
+```
+
+You can specify components as arguments, use flags for batch operations, or use interactive selection:
+
+```bash
+php artisan flux:publish {components?*} [--multiple] [--all] [--force]
+```
+
+## Arguments
+
+<ParamField path="components" type="array" optional>
+  One or more component names to publish. If not provided, you'll be prompted to select components interactively.
+  
+  ```bash
+  php artisan flux:publish button card modal
+  ```
+</ParamField>
+
+## Options
+
+<ParamField path="--multiple" type="flag">
+  Enable multi-select mode in the interactive prompt, allowing you to select multiple components at once.
+  
+  ```bash
+  php artisan flux:publish --multiple
+  ```
+</ParamField>
+
+<ParamField path="--all" type="flag">
+  Publish all available Flux components (both free and Pro if installed).
+  
+  ```bash
+  php artisan flux:publish --all
+  ```
+</ParamField>
+
+<ParamField path="--force" type="flag">
+  Overwrite existing published components. By default, the command skips files that already exist.
+  
+  ```bash
+  php artisan flux:publish --force
+  ```
+</ParamField>
+
+## Available Components
+
+### Free Components
+
+- **Accent** - `accent`
+- **Avatar** - `avatar`
+- **Badge** - `badge`
+- **Brand** - `brand`
+- **Breadcrumbs** - `breadcrumbs`
+- **Button** - `button`
+- **Callout** - `callout`
+- **Card** - `card`
+- **Checkbox** - `checkbox`
+- **Dropdown** - `dropdown`, `menu`, `navmenu`
+- **Field** - `fieldset`, `legend`, `field`, `label`, `description`, `error`
+- **Heading** - `heading`, `subheading`, `text`, `link`
+- **Icon** - `icon`
+- **Input** - `input`
+- **Layout** - `header`, `sidebar`, `aside`, `main`, `footer`, `container`, `brand`, `profile`, `spacer`
+- **Modal** - `modal`
+- **Navbar** - `navbar`, `navlist`
+- **Otp** - `otp`
+- **Radio** - `radio`
+- **Separator** - `separator`
+- **Select** - `select`
+- **Skeleton** - `skeleton`
+- **Switch** - `switch`
+- **Textarea** - `textarea`
+- **Tooltip** - `tooltip`
+- **Typography** - `heading`, `subheading`, `text`, `link`
+
+### Pro Components
+
+<Note>
+  Pro components are only available if you have `livewire/flux-pro` installed.
+</Note>
+
+- **Accordion** - `accordion`
+- **Autocomplete** - `autocomplete`
+- **Calendar** - `calendar`
+- **Chart** - `chart`
+- **Checkbox** - `checkbox`
+- **Command** - `command`
+- **Composer** - `composer`
+- **Context** - `context`
+- **Date picker** - `date-picker`
+- **Editor** - `editor`
+- **File upload** - `file-upload`, `file-item`
+- **Kanban** - `kanban`
+- **Pillbox** - `pillbox`
+- **Popover** - `popover`
+- **Select** - `select`
+- **Slider** - `slider`
+- **Tabs** - `tabs`, `tab`
+- **Table** - `table`, `pagination`
+- **Time picker** - `time-picker`
+- **Toast** - `toast`
+
+## Examples
+
+### Interactive single selection
+
+```bash
+php artisan flux:publish
+
+┌ Which component would you like to publish? ─────────────────┐
+│ › Button                                                    │
+│   Card                                                      │
+│   Modal                                                     │
+│   ...                                                       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Interactive multi-selection
+
+```bash
+php artisan flux:publish --multiple
+
+┌ Which component would you like to publish? ─────────────────┐
+│ ◻ Button                                                    │
+│ ◻ Card                                                      │
+│ ◼ Modal                                                     │
+│ ◼ Table                                                     │
+│   ...                                                       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Publish specific components
+
+```bash
+php artisan flux:publish button card
+
+  Published: /path/to/resources/views/flux/button.blade.php
+  Published: /path/to/resources/views/flux/card.blade.php
+```
+
+### Publish all components
+
+```bash
+php artisan flux:publish --all
+
+  Published: /path/to/resources/views/flux/accent.blade.php
+  Published: /path/to/resources/views/flux/avatar.blade.php
+  ...
+```
+
+### Force overwrite existing files
+
+```bash
+php artisan flux:publish button --force
+
+  Published: /path/to/resources/views/flux/button.blade.php
+```
+
+Without `--force`, if the file already exists:
+
+```bash
+php artisan flux:publish button
+
+  ⚠ Skipping [button]. File already exists: /path/to/resources/views/flux/button.blade.php
+```
+
+## How It Works
+
+<Steps>
+  <Step title="Component selection">
+    Based on your arguments or options, the command determines which components to publish. If using interactive mode, you'll search and select from available components.
+  </Step>
+
+  <Step title="Directory creation">
+    The command ensures the `resources/views/flux` directory exists in your application.
+  </Step>
+
+  <Step title="File publishing">
+    For each selected component, the command:
+    - Locates the component stub files (from either free or Pro packages)
+    - Copies the Blade template(s) to your `resources/views/flux` directory
+    - Skips existing files unless `--force` is specified
+  </Step>
+
+  <Step title="Confirmation">
+    Each successfully published file path is displayed in the terminal.
+  </Step>
+</Steps>
+
+## Published File Location
+
+All published components are placed in:
+
+```
+resources/views/flux/
+├── button.blade.php
+├── card.blade.php
+├── modal.blade.php
+└── ...
+```
+
+Some components publish multiple files or directories, such as:
+- **Dropdown** publishes: `dropdown.blade.php`, `menu.blade.php`, `navmenu.blade.php`
+- **Field** publishes: `fieldset.blade.php`, `legend.blade.php`, `field.blade.php`, `label.blade.php`, `description.blade.php`, `error.blade.php`
+
+<Warning>
+  Once published, you're responsible for maintaining these files. Updates to Flux won't automatically update your published components.
+</Warning>

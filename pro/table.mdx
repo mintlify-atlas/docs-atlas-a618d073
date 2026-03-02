@@ -1,0 +1,370 @@
+---
+title: 'Table'
+description: 'Advanced data tables with sorting and pagination'
+icon: 'table'
+---
+
+<Note>
+  The Table component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+## Overview
+
+The Table component provides a powerful, feature-rich interface for displaying and managing tabular data. With built-in sorting, pagination, filtering, and row selection, it's perfect for admin panels, dashboards, and data-heavy applications.
+
+## Basic Usage
+
+Create a simple table:
+
+```blade
+<flux:table :rows="$users">
+    <flux:table.column header="Name" :sortable="true">
+        {{ $row->name }}
+    </flux:table.column>
+    
+    <flux:table.column header="Email">
+        {{ $row->email }}
+    </flux:table.column>
+    
+    <flux:table.column header="Role">
+        {{ $row->role }}
+    </flux:table.column>
+</flux:table>
+```
+
+## With Sorting
+
+Enable column sorting:
+
+```blade
+<flux:table :rows="$users" wire:sort="handleSort">
+    <flux:table.column field="name" header="Name" :sortable="true" />
+    <flux:table.column field="email" header="Email" :sortable="true" />
+    <flux:table.column field="created_at" header="Joined" :sortable="true" />
+</flux:table>
+```
+
+```php
+class UserTable extends Component
+{
+    public $sortField = 'name';
+    public $sortDirection = 'asc';
+    
+    public function handleSort($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
+    
+    public function getUsersProperty()
+    {
+        return User::orderBy($this->sortField, $this->sortDirection)->get();
+    }
+}
+```
+
+## With Pagination
+
+Add pagination controls:
+
+```blade
+<flux:table :rows="$users">
+    <flux:table.column header="Name">{{ $row->name }}</flux:table.column>
+    <flux:table.column header="Email">{{ $row->email }}</flux:table.column>
+</flux:table>
+
+<flux:pagination :paginator="$users" />
+```
+
+```php
+public function getUsersProperty()
+{
+    return User::paginate(15);
+}
+```
+
+## Row Selection
+
+Enable selecting rows:
+
+```blade
+<flux:table :rows="$users" wire:model="selectedUsers" selectable>
+    <flux:table.column header="Name">{{ $row->name }}</flux:table.column>
+    <flux:table.column header="Email">{{ $row->email }}</flux:table.column>
+</flux:table>
+
+@if(count($selectedUsers) > 0)
+    <div class="mt-4">
+        <flux:button wire:click="deleteSelected">Delete {{ count($selectedUsers) }} users</flux:button>
+    </div>
+@endif
+```
+
+## Row Actions
+
+Add action buttons to rows:
+
+```blade
+<flux:table :rows="$users">
+    <flux:table.column header="Name">{{ $row->name }}</flux:table.column>
+    <flux:table.column header="Email">{{ $row->email }}</flux:table.column>
+    
+    <flux:table.column header="Actions">
+        <div class="flex gap-2">
+            <flux:button size="sm" wire:click="edit({{ $row->id }})">Edit</flux:button>
+            <flux:button size="sm" variant="danger" wire:click="delete({{ $row->id }})">Delete</flux:button>
+        </div>
+    </flux:table.column>
+</flux:table>
+```
+
+## Custom Cell Rendering
+
+Format cell content:
+
+```blade
+<flux:table :rows="$orders">
+    <flux:table.column header="Order #">
+        <a href="{{ route('orders.show', $row) }}" class="text-blue-600 hover:underline">
+            #{{ $row->id }}
+        </a>
+    </flux:table.column>
+    
+    <flux:table.column header="Customer">
+        <div class="flex items-center gap-2">
+            <flux:avatar :src="$row->customer->avatar" size="sm" />
+            <span>{{ $row->customer->name }}</span>
+        </div>
+    </flux:table.column>
+    
+    <flux:table.column header="Status">
+        <flux:badge :color="$row->status_color">
+            {{ $row->status }}
+        </flux:badge>
+    </flux:table.column>
+    
+    <flux:table.column header="Total">
+        ${{ number_format($row->total, 2) }}
+    </flux:table.column>
+</flux:table>
+```
+
+## With Search
+
+Add search functionality:
+
+```blade
+<div class="space-y-4">
+    <flux:input
+        wire:model.live="search"
+        placeholder="Search users..."
+        icon="magnifying-glass"
+    />
+    
+    <flux:table :rows="$users">
+        <flux:table.column header="Name">{{ $row->name }}</flux:table.column>
+        <flux:table.column header="Email">{{ $row->email }}</flux:table.column>
+    </flux:table>
+</div>
+```
+
+```php
+public $search = '';
+
+public function getUsersProperty()
+{
+    return User::query()
+        ->when($this->search, fn($query) => 
+            $query->where('name', 'like', "%{$this->search}%")
+                  ->orWhere('email', 'like', "%{$this->search}%")
+        )
+        ->paginate(15);
+}
+```
+
+## Empty State
+
+Customize the empty state:
+
+```blade
+<flux:table :rows="$users">
+    <flux:table.column header="Name">{{ $row->name }}</flux:table.column>
+    <flux:table.column header="Email">{{ $row->email }}</flux:table.column>
+    
+    <x-slot name="empty">
+        <div class="text-center py-12">
+            <flux:icon name="users" class="w-12 h-12 mx-auto text-gray-400" />
+            <h3 class="mt-4 text-lg font-medium">No users found</h3>
+            <p class="text-gray-500 mt-2">Get started by creating a new user.</p>
+            <flux:button class="mt-4" wire:click="createUser">Add User</flux:button>
+        </div>
+    </x-slot>
+</flux:table>
+```
+
+## Expandable Rows
+
+Show additional details:
+
+```blade
+<flux:table :rows="$orders" expandable>
+    <flux:table.column header="Order #">{{ $row->id }}</flux:table.column>
+    <flux:table.column header="Customer">{{ $row->customer->name }}</flux:table.column>
+    <flux:table.column header="Total">${{ $row->total }}</flux:table.column>
+    
+    <x-slot name="expansion" :row="$row">
+        <div class="p-4 bg-gray-50">
+            <h4 class="font-medium mb-2">Order Items</h4>
+            <ul class="space-y-1">
+                @foreach($row->items as $item)
+                    <li>{{ $item->product->name }} - Qty: {{ $item->quantity }}</li>
+                @endforeach
+            </ul>
+        </div>
+    </x-slot>
+</flux:table>
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="User Management" icon="users">
+    Display and manage users with sorting, filtering, and bulk actions.
+  </Card>
+  
+  <Card title="Order Lists" icon="cart-shopping">
+    Show customer orders with status badges and action buttons.
+  </Card>
+  
+  <Card title="Data Reports" icon="chart-simple">
+    Present analytics and report data in a sortable, paginated format.
+  </Card>
+  
+  <Card title="Inventory" icon="boxes-stacked">
+    Manage product inventory with search, filters, and stock indicators.
+  </Card>
+</CardGroup>
+
+## Features
+
+### Data Management
+
+- Column sorting (ascending/descending)
+- Pagination with customizable page sizes
+- Search and filtering
+- Bulk row selection
+
+### Customization
+
+- Custom cell rendering
+- Conditional row styling
+- Expandable row details
+- Custom empty states
+
+### Interactions
+
+- Row click handlers
+- Action buttons and menus
+- Inline editing
+- Keyboard navigation
+
+### Performance
+
+- Virtual scrolling for large datasets
+- Lazy loading
+- Efficient re-rendering
+- Debounced search
+
+## Advanced Example
+
+Complete table with all features:
+
+```blade
+<div class="space-y-4">
+    <div class="flex items-center justify-between gap-4">
+        <flux:input
+            wire:model.live.debounce.300ms="search"
+            placeholder="Search..."
+            icon="magnifying-glass"
+            class="flex-1"
+        />
+        
+        <flux:button wire:click="export">Export</flux:button>
+    </div>
+    
+    @if(count($selected) > 0)
+        <div class="bg-blue-50 p-4 rounded-lg flex items-center justify-between">
+            <span>{{ count($selected) }} items selected</span>
+            <div class="flex gap-2">
+                <flux:button size="sm" wire:click="bulkEdit">Edit</flux:button>
+                <flux:button size="sm" variant="danger" wire:click="bulkDelete">Delete</flux:button>
+            </div>
+        </div>
+    @endif
+    
+    <flux:table
+        :rows="$users"
+        wire:model="selected"
+        wire:sort="handleSort"
+        selectable
+    >
+        <flux:table.column field="name" header="Name" :sortable="true">
+            <div class="flex items-center gap-2">
+                <flux:avatar :src="$row->avatar" size="sm" />
+                <div>
+                    <div class="font-medium">{{ $row->name }}</div>
+                    <div class="text-sm text-gray-500">{{ $row->email }}</div>
+                </div>
+            </div>
+        </flux:table.column>
+        
+        <flux:table.column field="role" header="Role" :sortable="true">
+            <flux:badge>{{ $row->role }}</flux:badge>
+        </flux:table.column>
+        
+        <flux:table.column field="status" header="Status" :sortable="true">
+            <flux:badge :color="$row->status === 'active' ? 'green' : 'gray'">
+                {{ $row->status }}
+            </flux:badge>
+        </flux:table.column>
+        
+        <flux:table.column field="created_at" header="Joined" :sortable="true">
+            {{ $row->created_at->format('M d, Y') }}
+        </flux:table.column>
+        
+        <flux:table.column header="">
+            <flux:popover placement="bottom-end">
+                <flux:popover.trigger>
+                    <flux:button icon="ellipsis-vertical" size="sm" variant="ghost" />
+                </flux:popover.trigger>
+                <flux:popover.content>
+                    <flux:menu>
+                        <flux:menu.item wire:click="view({{ $row->id }})">View</flux:menu.item>
+                        <flux:menu.item wire:click="edit({{ $row->id }})">Edit</flux:menu.item>
+                        <flux:menu.separator />
+                        <flux:menu.item wire:click="delete({{ $row->id }})" variant="danger">
+                            Delete
+                        </flux:menu.item>
+                    </flux:menu>
+                </flux:popover.content>
+            </flux:popover>
+        </flux:table.column>
+        
+        <x-slot name="empty">
+            <div class="text-center py-12">
+                <p class="text-gray-500">No users found</p>
+            </div>
+        </x-slot>
+    </flux:table>
+    
+    <flux:pagination :paginator="$users" />
+</div>
+```
+
+<Tip>
+  For better performance with large datasets, use cursor pagination instead of offset pagination and implement virtual scrolling for tables with hundreds of rows.
+</Tip>

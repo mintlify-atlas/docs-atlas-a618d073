@@ -1,0 +1,214 @@
+---
+title: Icon
+description: 300+ beautiful Heroicons with multiple style variants
+---
+
+Flux includes over 300 icons from the Heroicons library, available in multiple variants to match your design needs.
+
+## Basic Usage
+
+```blade
+<flux:icon icon="home" />
+```
+
+## Variants
+
+Icons come in three different visual styles:
+
+<Tabs>
+  <Tab title="Micro">
+    ```blade
+    <flux:icon icon="home" variant="micro" />
+    ```
+    
+    Solid 16x16 icons. Default for most components.
+  </Tab>
+  
+  <Tab title="Mini">
+    ```blade
+    <flux:icon icon="home" variant="mini" />
+    ```
+    
+    Solid 20x20 icons. Slightly larger detail.
+  </Tab>
+  
+  <Tab title="Outline">
+    ```blade
+    <flux:icon icon="home" variant="outline" />
+    ```
+    
+    24x24 outlined icons for a lighter look.
+  </Tab>
+</Tabs>
+
+## Available Icons
+
+Flux includes over 318 icons. Here are some commonly used ones:
+
+### Actions
+- `plus`, `minus`, `x-mark`, `check`
+- `pencil`, `trash`, `arrow-right`, `arrow-left`
+- `magnifying-glass`, `cog`, `ellipsis-horizontal`, `ellipsis-vertical`
+
+### Navigation
+- `home`, `bars-3`, `chevron-down`, `chevron-up`, `chevron-left`, `chevron-right`
+- `arrow-left`, `arrow-right`, `arrow-up`, `arrow-down`
+
+### Communication
+- `envelope`, `phone`, `chat-bubble-left`, `bell`
+- `megaphone`, `newspaper`, `rss`
+
+### Media
+- `photo`, `film`, `musical-note`, `microphone`
+- `speaker-wave`, `play`, `pause`, `stop`
+
+### Files & Folders
+- `folder`, `folder-open`, `document`, `document-text`
+- `archive-box`, `inbox`, `cloud`, `cloud-arrow-up`, `cloud-arrow-down`
+
+### Users & People
+- `user`, `user-circle`, `user-group`, `users`
+- `identification`, `academic-cap`
+
+### Commerce
+- `shopping-cart`, `shopping-bag`, `credit-card`, `currency-dollar`
+- `tag`, `ticket`, `gift`
+
+### Status & Feedback
+- `information-circle`, `exclamation-circle`, `check-circle`, `x-circle`
+- `exclamation-triangle`, `question-mark-circle`
+- `shield-check`, `shield-exclamation`
+
+### Interface
+- `heart`, `star`, `bookmark`, `flag`
+- `eye`, `eye-slash`, `lock-closed`, `lock-open`
+- `share`, `link`, `calendar`, `clock`
+
+### Development
+- `code-bracket`, `command-line`, `cpu-chip`, `server`
+- `wrench`, `bug-ant`, `light-bulb`
+
+<Note>
+  For a complete list of all 318+ available icons, visit [Heroicons.com](https://heroicons.com)
+</Note>
+
+## Sizing
+
+Icons inherit the current text size by default. You can customize with Tailwind classes:
+
+```blade
+<!-- Using Tailwind size classes -->
+<flux:icon icon="heart" class="w-4 h-4" />
+<flux:icon icon="heart" class="w-6 h-6" />
+<flux:icon icon="heart" class="w-8 h-8" />
+```
+
+## Colors
+
+Icons inherit the current text color:
+
+```blade
+<div class="text-red-500">
+    <flux:icon icon="heart" />
+</div>
+
+<!-- Or apply directly -->
+<flux:icon icon="heart" class="text-blue-500" />
+```
+
+## Usage in Components
+
+Many Flux components accept icon names directly:
+
+### Buttons
+
+```blade
+<flux:button icon="plus">Add Item</flux:button>
+<flux:button icon:leading="check">Confirm</flux:button>
+<flux:button icon:trailing="arrow-right">Next</flux:button>
+```
+
+### Inputs
+
+```blade
+<flux:input icon="magnifying-glass" placeholder="Search..." />
+<flux:input icon:leading="envelope" placeholder="Email" />
+<flux:input icon:trailing="information-circle" />
+```
+
+### Badges
+
+```blade
+<flux:badge icon="check-circle" color="green">Verified</flux:badge>
+```
+
+### Callouts
+
+```blade
+<flux:callout icon="information-circle" variant="warning">
+    <flux:callout.text>Important information</flux:callout.text>
+</flux:callout>
+```
+
+## Loading Indicator
+
+A special animated loading icon:
+
+```blade
+<flux:icon icon="loading" />
+```
+
+This icon automatically animates and is used internally by components with loading states.
+
+## Custom Icons
+
+You can pass custom SVG content using slots:
+
+```blade
+<flux:icon>
+    <svg><!-- your custom SVG --></svg>
+</flux:icon>
+```
+
+## Icon Composition
+
+Layer multiple icons or add badges:
+
+```blade
+<div class="relative inline-flex">
+    <flux:icon icon="bell" class="w-6 h-6" />
+    <span class="absolute -top-1 -right-1 flex h-3 w-3">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+    </span>
+</div>
+```
+
+## Props Reference
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `icon` | `string` | - | Icon name (e.g., `home`, `user`, `cog`) |
+| `variant` | `string` | `micro` | Icon variant: `micro`, `mini`, `outline` |
+| `class` | `string` | - | Additional CSS classes |
+
+## Best Practices
+
+1. **Be Consistent**: Stick to one variant throughout your application for visual consistency
+2. **Use Semantic Icons**: Choose icons that clearly represent their function
+3. **Provide Context**: Use `aria-label` on icon-only buttons
+4. **Size Appropriately**: Match icon size to surrounding text
+
+## Accessibility
+
+- Icons are decorative by default (`aria-hidden="true"`)
+- When icons convey meaning, add appropriate ARIA labels
+- For interactive elements, ensure proper labeling:
+
+```blade
+<flux:button icon="trash" aria-label="Delete item" />
+```
+
+<Warning>
+  Icon names use kebab-case (e.g., `chevron-down`, not `chevronDown`). Refer to [Heroicons.com](https://heroicons.com) for exact naming.
+</Warning>

@@ -1,0 +1,279 @@
+---
+title: Button
+description: Versatile button component with multiple variants, sizes, and icon support
+---
+
+The Button component provides a flexible, accessible button element with extensive customization options including variants, sizes, icons, and loading states.
+
+## Basic Usage
+
+```blade
+<flux:button>Click me</flux:button>
+```
+
+## Variants
+
+Flux buttons come in several visual variants to match different UI contexts:
+
+<Tabs>
+  <Tab title="Primary">
+    ```blade
+    <flux:button variant="primary">
+        Primary Action
+    </flux:button>
+    ```
+    
+    The primary variant uses your application's accent color. Perfect for the main call-to-action on a page.
+  </Tab>
+  
+  <Tab title="Outline">
+    ```blade
+    <flux:button variant="outline">
+        Secondary Action
+    </flux:button>
+    ```
+    
+    Default variant with a visible border and subtle background.
+  </Tab>
+  
+  <Tab title="Filled">
+    ```blade
+    <flux:button variant="filled">
+        Filled Button
+    </flux:button>
+    ```
+    
+    Solid background without prominent borders.
+  </Tab>
+  
+  <Tab title="Ghost">
+    ```blade
+    <flux:button variant="ghost">
+        Ghost Button
+    </flux:button>
+    ```
+    
+    Transparent background that shows on hover.
+  </Tab>
+  
+  <Tab title="Subtle">
+    ```blade
+    <flux:button variant="subtle">
+        Subtle Action
+    </flux:button>
+    ```
+    
+    Minimal styling with muted text color.
+  </Tab>
+  
+  <Tab title="Danger">
+    ```blade
+    <flux:button variant="danger">
+        Delete
+    </flux:button>
+    ```
+    
+    Red variant for destructive actions.
+  </Tab>
+</Tabs>
+
+## Sizes
+
+Buttons support three size variants:
+
+```blade
+<flux:button size="xs">Extra Small</flux:button>
+<flux:button size="sm">Small</flux:button>
+<flux:button size="base">Base (default)</flux:button>
+```
+
+## Icons
+
+### Leading Icons
+
+Add an icon to the left side of the button text:
+
+```blade
+<flux:button icon="plus">
+    Add Item
+</flux:button>
+
+<!-- Or use icon:leading -->
+<flux:button icon:leading="check">
+    Confirm
+</flux:button>
+```
+
+### Trailing Icons
+
+Add an icon to the right side:
+
+```blade
+<flux:button icon:trailing="arrow-right">
+    Next Step
+</flux:button>
+```
+
+### Icon-Only Buttons
+
+When no text is provided, the button automatically becomes square:
+
+```blade
+<flux:button icon="cog" aria-label="Settings" />
+```
+
+### Icon Variants
+
+Control the icon style independently:
+
+```blade
+<flux:button icon="heart" icon:variant="outline">
+    Like
+</flux:button>
+```
+
+## Colors
+
+Customize the primary variant with different colors:
+
+```blade
+<flux:button variant="primary" color="blue">Blue Button</flux:button>
+<flux:button variant="primary" color="green">Green Button</flux:button>
+<flux:button variant="primary" color="purple">Purple Button</flux:button>
+```
+
+Available colors: `slate`, `gray`, `zinc`, `neutral`, `stone`, `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`.
+
+## Loading States
+
+Buttons automatically show loading indicators for Livewire actions:
+
+```blade
+<!-- Automatic loading for wire:click -->
+<flux:button wire:click="save">
+    Save
+</flux:button>
+
+<!-- Manual loading control -->
+<flux:button :loading="$isProcessing">
+    Process
+</flux:button>
+
+<!-- Disable loading -->
+<flux:button wire:click="save" :loading="false">
+    Save
+</flux:button>
+```
+
+For submit buttons, loading state is shown while the form is processing:
+
+```blade
+<flux:button type="submit">
+    Submit Form
+</flux:button>
+```
+
+## Keyboard Shortcuts
+
+Display keyboard shortcuts within buttons:
+
+```blade
+<flux:button kbd="⌘K">
+    Search
+</flux:button>
+```
+
+## Alignment
+
+Control content alignment within the button:
+
+```blade
+<flux:button align="start">Left Aligned</flux:button>
+<flux:button align="center">Center Aligned</flux:button>
+<flux:button align="end">Right Aligned</flux:button>
+```
+
+## Links as Buttons
+
+Buttons automatically render as `<a>` tags when using the `href` attribute:
+
+```blade
+<flux:button href="/dashboard">
+    Go to Dashboard
+</flux:button>
+```
+
+## Disabled State
+
+```blade
+<flux:button disabled>
+    Disabled Button
+</flux:button>
+```
+
+## Inset
+
+Reduce internal padding to align with surrounding content:
+
+```blade
+<flux:button inset="left">
+    Inset Left
+</flux:button>
+
+<flux:button inset="top left">
+    Inset Top and Left
+</flux:button>
+```
+
+## Tooltips
+
+Buttons support inline tooltips:
+
+```blade
+<flux:button tooltip="This will save your changes">
+    Save
+</flux:button>
+```
+
+## Button Groups
+
+Group related buttons together:
+
+```blade
+<flux:button.group>
+    <flux:button>Left</flux:button>
+    <flux:button>Middle</flux:button>
+    <flux:button>Right</flux:button>
+</flux:button.group>
+```
+
+## Props Reference
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `string` | `outline` | Visual style: `primary`, `outline`, `filled`, `ghost`, `subtle`, `danger` |
+| `size` | `string` | `base` | Button size: `xs`, `sm`, `base` |
+| `icon` | `string` | - | Leading icon name |
+| `icon:leading` | `string` | - | Leading icon name (alternative) |
+| `icon:trailing` | `string` | - | Trailing icon name |
+| `icon:variant` | `string` | `micro` | Icon variant: `mini`, `micro`, `outline` |
+| `color` | `string` | - | Color for primary variant |
+| `type` | `string` | `button` | Button type: `button`, `submit`, `reset` |
+| `loading` | `boolean` | auto | Show loading indicator |
+| `square` | `boolean` | auto | Force square shape |
+| `kbd` | `string` | - | Keyboard shortcut to display |
+| `align` | `string` | `center` | Content alignment: `start`, `center`, `end` |
+| `inset` | `string` | - | Reduce padding: `top`, `right`, `bottom`, `left` or combinations |
+| `href` | `string` | - | URL to link to (renders as `<a>`) |
+| `disabled` | `boolean` | `false` | Disable the button |
+
+## Accessibility
+
+- Buttons include proper `type` attributes
+- Icon-only buttons should include `aria-label`
+- Disabled buttons are not keyboard accessible
+- Loading states announce to screen readers
+
+<Note>
+  When using `wire:click` with parameters, the loading indicator is automatically scoped to that specific action to prevent multiple buttons from showing loading states simultaneously.
+</Note>

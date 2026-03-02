@@ -1,0 +1,188 @@
+---
+title: 'Calendar'
+description: 'Full-featured calendar with event management'
+icon: 'calendar'
+---
+
+<Note>
+  The Calendar component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+## Overview
+
+The Calendar component provides a comprehensive scheduling interface with month, week, and day views. It supports event management, drag-and-drop rescheduling, and seamless Livewire integration for dynamic calendar applications.
+
+## Basic Usage
+
+Display a calendar with events:
+
+```blade
+<flux:calendar
+    wire:model="selectedDate"
+    :events="$events"
+/>
+```
+
+## With Events
+
+Render events on the calendar:
+
+```blade
+<flux:calendar :events="$events" wire:event-click="handleEventClick" />
+```
+
+```php
+class CalendarView extends Component
+{
+    public function getEventsProperty()
+    {
+        return Event::query()
+            ->whereBetween('start_date', [now()->startOfMonth(), now()->endOfMonth()])
+            ->get()
+            ->map(fn($event) => [
+                'id' => $event->id,
+                'title' => $event->title,
+                'start' => $event->start_date,
+                'end' => $event->end_date,
+                'color' => $event->category->color,
+            ]);
+    }
+    
+    public function handleEventClick($eventId)
+    {
+        // Handle event click
+        $this->emit('openEventModal', $eventId);
+    }
+}
+```
+
+## Different Views
+
+Switch between month, week, and day views:
+
+```blade
+<flux:calendar
+    :events="$events"
+    :view="$currentView"
+    wire:view-change="changeView"
+/>
+
+<flux:button.group>
+    <flux:button wire:click="changeView('month')">Month</flux:button>
+    <flux:button wire:click="changeView('week')">Week</flux:button>
+    <flux:button wire:click="changeView('day')">Day</flux:button>
+</flux:button.group>
+```
+
+## Drag and Drop
+
+Enable event rescheduling with drag-and-drop:
+
+```blade
+<flux:calendar
+    :events="$events"
+    draggable
+    wire:event-drop="rescheduleEvent"
+/>
+```
+
+```php
+public function rescheduleEvent($eventId, $newStart, $newEnd)
+{
+    Event::find($eventId)->update([
+        'start_date' => $newStart,
+        'end_date' => $newEnd,
+    ]);
+}
+```
+
+## Creating Events
+
+Allow users to create events by clicking on dates:
+
+```blade
+<flux:calendar
+    :events="$events"
+    wire:date-click="createEvent"
+/>
+```
+
+```php
+public function createEvent($date)
+{
+    $this->emit('openCreateEventModal', $date);
+}
+```
+
+## Custom Event Rendering
+
+Customize how events appear:
+
+```blade
+<flux:calendar :events="$events">
+    <x-slot name="event" :event="$event">
+        <div class="flex items-center gap-2">
+            @if($event->priority === 'high')
+                <flux:badge color="red">High</flux:badge>
+            @endif
+            <span>{{ $event->title }}</span>
+        </div>
+    </x-slot>
+</flux:calendar>
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Event Scheduling" icon="calendar-check">
+    Manage team meetings, appointments, and deadlines in a visual timeline.
+  </Card>
+  
+  <Card title="Booking System" icon="clock">
+    Allow customers to view availability and book appointments or reservations.
+  </Card>
+  
+  <Card title="Project Timeline" icon="list-check">
+    Display project milestones, deadlines, and important dates.
+  </Card>
+  
+  <Card title="Availability Management" icon="user-clock">
+    Show staff schedules, room availability, or resource allocation.
+  </Card>
+</CardGroup>
+
+## Features
+
+### Multiple Views
+
+- **Month view**: Overview of all events in a month
+- **Week view**: Detailed hourly schedule for a week
+- **Day view**: Granular view of a single day's events
+
+### Event Management
+
+- Click to view event details
+- Drag-and-drop to reschedule
+- Click empty slots to create new events
+- Color-coded event categories
+
+### Navigation
+
+- Previous/Next navigation
+- Jump to today
+- Date picker integration
+- Keyboard shortcuts
+
+## Customization
+
+The Calendar component supports extensive customization:
+
+- Custom event colors and styling
+- Configurable week start day
+- Business hours highlighting
+- Locale-specific date formatting
+- Custom time slot intervals
+
+<Tip>
+  Combine the Calendar component with the Date Picker for a complete scheduling solution that allows users to both browse and select dates.
+</Tip>

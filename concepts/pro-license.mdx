@@ -1,0 +1,447 @@
+---
+title: Pro License
+description: Understanding Flux free vs Pro tiers, license activation, and Pro features
+---
+
+Flux offers two tiers: a free open-source version and a paid Pro version with advanced components. Understanding the differences and how to activate your Pro license will help you make the most of Flux.
+
+## Free vs Pro
+
+### What's Included in Free
+
+The `livewire/flux` package includes essential UI components:
+
+- **Button** - Buttons with variants, sizes, and loading states
+- **Dropdown** - Dropdown menus and context menus
+- **Icon** - Icon component with Heroicons support
+- **Separator** - Visual dividers
+- **Tooltip** - Contextual tooltips
+- **Input** - Text inputs with validation
+- **Checkbox** - Checkboxes and checkbox groups
+- **Radio** - Radio buttons and groups
+- **Select** - Select dropdowns
+- **Textarea** - Multi-line text inputs
+- **Switch** - Toggle switches
+- **Modal** - Modal dialogs
+- **Badge** - Labels and status indicators
+- **Card** - Container components
+- **Avatar** - User avatars
+- **Layout** - Header, sidebar, main, footer components
+- **Typography** - Heading, text, and link components
+- **Field** - Form field wrappers with labels and validation
+- **Navbar** - Navigation bars
+- **Breadcrumbs** - Breadcrumb navigation
+- **Callout** - Alert and notice components
+- **Skeleton** - Loading placeholders
+- **Otp** - One-time password inputs
+
+### What's Included in Pro
+
+The `livewire/flux-pro` package adds advanced components:
+
+- **Accordion** - Collapsible content sections
+- **Autocomplete** - Auto-complete inputs with search
+- **Calendar** - Date calendars and pickers
+- **Chart** - Data visualization charts
+- **Command** - Command palette (⌘K)
+- **Composer** - Rich text composer
+- **Context** - Context menus
+- **Date picker** - Advanced date selection
+- **Editor** - Rich text editor with formatting
+- **File upload** - File upload with drag & drop and previews
+- **Kanban** - Kanban boards with drag & drop
+- **Pillbox** - Multi-select pills/tags
+- **Popover** - Floating popovers
+- **Slider** - Range sliders
+- **Tabs** - Tabbed interfaces
+- **Table** - Data tables with sorting, filtering, pagination
+- **Time picker** - Time selection
+- **Toast** - Toast notifications
+
+Plus:
+- **Enhanced variants** - More styling options for base components
+- **Priority support** - Email support from the Flux team
+- **Future updates** - All new Pro components as they're released
+
+## Checking Your License
+
+Flux can detect whether Pro is installed:
+
+```php
+// FluxManager.php:34-37
+public function pro()
+{
+    return InstalledVersions::isInstalled('livewire/flux-pro');
+}
+```
+
+Use this in your application:
+
+```php
+if (Flux::pro()) {
+    // Show Pro features
+} else {
+    // Show upgrade prompt
+}
+```
+
+### Enforcing Pro License
+
+Some components require Pro:
+
+```php
+// FluxManager.php:27-32
+public function ensurePro()
+{
+    if (! $this->pro()) {
+        throw new \Exception('Your install of Flux is not activated. Visit https://fluxui.dev/pricing to purchase a license key.');
+    }
+}
+```
+
+Pro components will throw an exception if accessed without a license.
+
+## Purchasing a License
+
+Purchase a Flux Pro license at:
+
+**https://fluxui.dev/pricing**
+
+After purchase, you'll receive:
+- License key
+- Email associated with the license
+- Access to the private Composer repository
+
+## Activating Your License
+
+Use the `flux:activate` command to activate your Pro license:
+
+```bash
+php artisan flux:activate
+```
+
+### Interactive Activation
+
+The command will prompt for your credentials:
+
+```bash
+php artisan flux:activate
+
+# Enter the email address associated with your license:
+# > you@example.com
+
+# Enter your license key:
+# > ••••••••••••••••
+```
+
+### Non-Interactive Activation
+
+Provide credentials as arguments:
+
+```bash
+php artisan flux:activate you@example.com your-license-key
+```
+
+## How Activation Works
+
+The activation command performs three steps:
+
+### Step 1: Add Credentials to auth.json
+
+```php
+// ActivateCommand.php:46-58
+$process = new Process([
+    'composer', 'config', '-a',
+    'http-basic.composer.fluxui.dev', $email, $key
+]);
+
+$process->run();
+
+if (! $process->isSuccessful()) {
+    echo "Failed to add license to auth.json. Console output: " . $process->getErrorOutput();
+    note('Contact support@fluxui.dev for help');
+    return;
+}
+
+info('[√] License key added to auth.json');
+```
+
+This creates/updates your `auth.json` file with credentials for the private Composer repository.
+
+### Step 2: Add Repository to composer.json
+
+```php
+// ActivateCommand.php:62-72
+$process = new Process([
+    'composer', 'config', 'repositories.flux-pro', 
+    'composer', 'https://composer.fluxui.dev'
+]);
+
+$process->run();
+
+if (! $process->isSuccessful()) {
+    echo "Failed to add repository to composer.json. Console output: " . $process->getErrorOutput();
+    note('Contact support@fluxui.dev for help');
+    return;
+}
+
+info('[√] Repository added to composer.json');
+```
+
+This adds the Flux Pro Composer repository to your project.
+
+### Step 3: Install flux-pro
+
+```php
+// ActivateCommand.php:75-98
+note('Running: composer require livewire/flux-pro...');
+
+$process = new Process(['composer', 'require', 'livewire/flux-pro']);
+
+if ('\\' !== DIRECTORY_SEPARATOR && file_exists('/dev/tty') && is_readable('/dev/tty')) {
+    try {
+        $process->setTty(true);
+    } catch (RuntimeException $e) {
+        $this->output->writeln('  <bg=yellow;fg=black> WARN </> '.$e->getMessage().PHP_EOL);
+    }
+}
+
+$process->setTimeout(null);
+
+$process->run(function ($type, $line) {
+    $this->output->write('    '.$line);
+});
+
+if (! $process->isSuccessful()) {
+    error("We are unable to install Flux automatically. Try running `composer require livewire/flux-pro` manually.");
+    note('Contact support@fluxui.dev for help');
+    return;
+}
+
+note('');
+outro('Thanks for using Flux!');
+note('Your support is an investment in the future of Livewire ❤️');
+```
+
+This installs the `livewire/flux-pro` package from the private repository.
+
+## Manual Activation
+
+If the automatic activation fails, you can activate manually:
+
+### 1. Add auth.json
+
+Create `auth.json` in your project root:
+
+```json
+{
+    "http-basic": {
+        "composer.fluxui.dev": {
+            "username": "you@example.com",
+            "password": "your-license-key"
+        }
+    }
+}
+```
+
+### 2. Add Repository
+
+Add to `composer.json`:
+
+```json
+{
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://composer.fluxui.dev"
+        }
+    ]
+}
+```
+
+### 3. Install Package
+
+Run:
+
+```bash
+composer require livewire/flux-pro
+```
+
+## Asset Loading
+
+Flux automatically loads the correct assets based on your license:
+
+```php
+// AssetManager.php:44-54
+public function fluxJs() {
+    return Flux::pro()
+        ? $this->pretendResponseIsFile(__DIR__.'/../../flux-pro/dist/flux.js', 'text/javascript')
+        : $this->pretendResponseIsFile(__DIR__.'/../../flux/dist/flux-lite.min.js', 'text/javascript');
+}
+
+public function fluxMinJs() {
+    return Flux::pro()
+        ? $this->pretendResponseIsFile(__DIR__.'/../../flux-pro/dist/flux.min.js', 'text/javascript')
+        : $this->pretendResponseIsFile(__DIR__.'/../../flux/dist/flux-lite.min.js', 'text/javascript');
+}
+```
+
+When Pro is installed:
+- Uses `flux.js` and `flux.min.js` from flux-pro
+- Includes all Pro component JavaScript
+- Loads editor assets when using the Editor component
+
+Without Pro:
+- Uses `flux-lite.min.js`
+- Only includes free component JavaScript
+
+## Editor Component Assets
+
+The Editor component requires special assets only available in Pro:
+
+```php
+// AssetManager.php:56-72
+public function editorCss() {
+    if (! Flux::pro()) throw new \Exception('Flux Pro is required to use the Flux editor.');
+    return $this->pretendResponseIsFile(__DIR__.'/../../flux-pro/dist/editor.css', 'text/css');
+}
+
+public function editorJs() {
+    if (! Flux::pro()) throw new \Exception('Flux Pro is required to use the Flux editor.');
+    return $this->pretendResponseIsFile(__DIR__.'/../../flux-pro/dist/editor.js', 'text/javascript');
+}
+
+public function editorMinJs() {
+    if (! Flux::pro()) throw new \Exception('Flux Pro is required to use the Flux editor.');
+    return $this->pretendResponseIsFile(__DIR__.'/../../flux-pro/dist/editor.min.js', 'text/javascript');
+}
+```
+
+Include editor assets when needed:
+
+```blade
+<head>
+    @fluxEditorStyles
+</head>
+
+<body>
+    @fluxEditorScripts
+</body>
+```
+
+## Updating Flux Pro
+
+Update both packages together:
+
+```bash
+composer update livewire/flux livewire/flux-pro
+```
+
+Or update individually:
+
+```bash
+composer update livewire/flux-pro
+```
+
+## License Validation
+
+Flux validates your license through Composer:
+
+- **Valid license** - Composer successfully downloads the package
+- **Invalid license** - Composer returns a 401 authentication error
+- **Expired license** - Contact support@fluxui.dev
+
+## Multiple Environments
+
+Your license works in all environments (local, staging, production):
+
+1. **Development** - Use `flux:activate` on your local machine
+2. **CI/CD** - Add `auth.json` to your deployment secrets
+3. **Production** - Ensure `auth.json` is available during `composer install`
+
+### Example: GitHub Actions
+
+Add your auth.json as a secret:
+
+```yaml
+- name: Setup Composer auth
+  run: echo '${{ secrets.COMPOSER_AUTH }}' > $GITHUB_WORKSPACE/auth.json
+
+- name: Install dependencies
+  run: composer install --no-interaction --prefer-dist
+```
+
+## License Types
+
+Flux Pro offers different license types:
+
+### Solo License
+- Single developer
+- Unlimited projects
+- 1 year of updates
+- Email support
+
+### Team License
+- Unlimited developers
+- Unlimited projects
+- 1 year of updates
+- Priority email support
+
+Check the pricing page for current offerings: **https://fluxui.dev/pricing**
+
+## Support
+
+Pro license holders receive priority support:
+
+**Email**: support@fluxui.dev
+
+Include:
+- Your license email
+- Laravel version
+- Livewire version
+- Flux version (`composer show livewire/flux livewire/flux-pro`)
+- Detailed description of the issue
+
+## Troubleshooting
+
+### Authentication Failed
+
+If you get Composer authentication errors:
+
+1. Verify your email and license key
+2. Check `auth.json` is properly formatted
+3. Ensure the repository is added to `composer.json`
+4. Clear Composer cache: `composer clear-cache`
+
+### Package Not Found
+
+If Composer can't find `livewire/flux-pro`:
+
+1. Verify the repository is in `composer.json`:
+   ```json
+   "repositories": [
+       {
+           "type": "composer",
+           "url": "https://composer.fluxui.dev"
+       }
+   ]
+   ```
+2. Run `composer clear-cache`
+3. Try installing again
+
+### Components Not Available
+
+If Pro components aren't available:
+
+1. Verify installation: `composer show livewire/flux-pro`
+2. Clear cache: `php artisan optimize:clear`
+3. Check service provider is registered (automatic)
+
+### Assets Not Loading
+
+If Pro assets aren't loading:
+
+1. Clear view cache: `php artisan view:clear`
+2. Rebuild assets: `npm run build`
+3. Hard refresh browser
+4. Check browser console for 404 errors

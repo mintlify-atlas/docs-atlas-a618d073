@@ -1,0 +1,273 @@
+---
+title: 'File Upload'
+description: 'Drag-and-drop file uploads with previews'
+icon: 'cloud-arrow-up'
+---
+
+<Note>
+  The File Upload component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+## Overview
+
+The File Upload component provides a modern, user-friendly interface for uploading files. It supports drag-and-drop, multiple files, file validation, progress tracking, and preview generation for images and documents.
+
+## Basic Usage
+
+Create a simple file upload:
+
+```blade
+<flux:file-upload
+    wire:model="file"
+    label="Upload file"
+/>
+```
+
+## Multiple Files
+
+Allow uploading multiple files:
+
+```blade
+<flux:file-upload
+    wire:model="files"
+    multiple
+    label="Upload files"
+/>
+```
+
+## With Validation
+
+Restrict file types and sizes:
+
+```blade
+<flux:file-upload
+    wire:model="avatar"
+    accept="image/*"
+    max-size="2048"
+    label="Upload avatar (max 2MB)"
+/>
+```
+
+```php
+public function rules()
+{
+    return [
+        'avatar' => 'required|image|max:2048',
+    ];
+}
+```
+
+## Drag and Drop Zone
+
+Create a prominent drop zone:
+
+```blade
+<flux:file-upload
+    wire:model="documents"
+    multiple
+    accept=".pdf,.doc,.docx"
+>
+    <div class="text-center py-12">
+        <flux:icon name="cloud-arrow-up" class="w-12 h-12 mx-auto text-gray-400" />
+        <p class="mt-4 text-lg font-medium">Drop files here</p>
+        <p class="text-sm text-gray-500">or click to browse</p>
+        <p class="text-xs text-gray-400 mt-2">PDF, DOC, DOCX up to 10MB</p>
+    </div>
+</flux:file-upload>
+```
+
+## With Preview
+
+Show image previews:
+
+```blade
+<flux:file-upload wire:model="photos" multiple accept="image/*">
+    <flux:file-upload.preview />
+</flux:file-upload>
+```
+
+## Custom File Item
+
+Customize how uploaded files are displayed:
+
+```blade
+<flux:file-upload wire:model="attachments" multiple>
+    @foreach($attachments as $index => $attachment)
+        <flux:file-item
+            :file="$attachment"
+            :removable="true"
+            wire:remove="removeFile({{ $index }})"
+        >
+            <div class="flex items-center gap-3">
+                <flux:icon :name="getFileIcon($attachment)" />
+                <div class="flex-1">
+                    <p class="font-medium">{{ $attachment->getClientOriginalName() }}</p>
+                    <p class="text-sm text-gray-500">{{ formatBytes($attachment->getSize()) }}</p>
+                </div>
+            </div>
+        </flux:file-item>
+    @endforeach
+</flux:file-upload>
+```
+
+## With Progress
+
+Show upload progress:
+
+```blade
+<flux:file-upload
+    wire:model="video"
+    accept="video/*"
+    show-progress
+/>
+```
+
+## Direct Upload
+
+Upload files immediately on selection:
+
+```blade
+<flux:file-upload
+    wire:model="file"
+    wire:change="handleUpload"
+/>
+```
+
+```php
+public function handleUpload()
+{
+    $this->validate([
+        'file' => 'required|file|max:10240',
+    ]);
+    
+    $path = $this->file->store('uploads', 'public');
+    
+    $this->reset('file');
+    
+    session()->flash('message', 'File uploaded successfully!');
+}
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Profile Images" icon="user-circle">
+    Allow users to upload and preview avatar images with size validation.
+  </Card>
+  
+  <Card title="Document Management" icon="file">
+    Upload contracts, invoices, or reports with file type restrictions.
+  </Card>
+  
+  <Card title="Media Gallery" icon="images">
+    Upload multiple photos or videos with thumbnail previews.
+  </Card>
+  
+  <Card title="Import Data" icon="file-import">
+    Accept CSV or Excel files for bulk data import operations.
+  </Card>
+</CardGroup>
+
+## Features
+
+### Upload Methods
+
+- Click to browse files
+- Drag and drop files
+- Paste from clipboard (images)
+- Multiple file selection
+
+### Validation
+
+- File type restrictions (MIME types)
+- File size limits
+- Maximum number of files
+- Custom validation rules
+
+### User Experience
+
+- Real-time upload progress
+- Image/document previews
+- File removal capability
+- Drag-over visual feedback
+- Error handling and display
+
+### File Processing
+
+- Automatic image optimization
+- Thumbnail generation
+- Virus scanning integration
+- Cloud storage support (S3, etc.)
+
+## File Type Validation
+
+Common accept attribute values:
+
+```blade
+<!-- Images only -->
+<flux:file-upload accept="image/*" />
+
+<!-- Specific image types -->
+<flux:file-upload accept=".jpg,.jpeg,.png,.gif" />
+
+<!-- Documents -->
+<flux:file-upload accept=".pdf,.doc,.docx" />
+
+<!-- Spreadsheets -->
+<flux:file-upload accept=".csv,.xlsx,.xls" />
+
+<!-- Videos -->
+<flux:file-upload accept="video/*" />
+
+<!-- Multiple types -->
+<flux:file-upload accept="image/*,.pdf,.doc,.docx" />
+```
+
+## Advanced Example
+
+Complete file upload implementation:
+
+```blade
+<flux:file-upload
+    wire:model="uploads"
+    multiple
+    accept="image/*,.pdf"
+    max-size="5120"
+    :max-files="5"
+>
+    <div class="text-center py-8">
+        <flux:icon name="cloud-arrow-up" class="w-10 h-10 mx-auto text-gray-400" />
+        <p class="mt-2 font-medium">Upload files</p>
+        <p class="text-sm text-gray-500">Drag and drop or click to browse</p>
+        <p class="text-xs text-gray-400 mt-1">Images or PDFs, up to 5MB each, max 5 files</p>
+    </div>
+    
+    @if($uploads)
+        <div class="mt-4 space-y-2">
+            @foreach($uploads as $index => $upload)
+                <flux:file-item :file="$upload" wire:remove="removeUpload({{ $index }})">
+                    <div class="flex items-center gap-3">
+                        @if(str_starts_with($upload->getMimeType(), 'image/'))
+                            <img src="{{ $upload->temporaryUrl() }}" class="w-12 h-12 object-cover rounded" />
+                        @else
+                            <flux:icon name="file-pdf" class="w-12 h-12 text-red-500" />
+                        @endif
+                        <div class="flex-1 min-w-0">
+                            <p class="font-medium truncate">{{ $upload->getClientOriginalName() }}</p>
+                            <p class="text-sm text-gray-500">{{ formatBytes($upload->getSize()) }}</p>
+                        </div>
+                    </div>
+                </flux:file-item>
+            @endforeach
+        </div>
+    @endif
+</flux:file-upload>
+
+@error('uploads.*')
+    <flux:error>{{ $message }}</flux:error>
+@enderror
+```
+
+<Tip>
+  For large files, consider implementing chunked uploads to improve reliability and user experience, especially for users with slower connections.
+</Tip>

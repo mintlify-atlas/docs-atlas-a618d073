@@ -1,0 +1,168 @@
+---
+title: 'Autocomplete'
+description: 'Smart search input with suggestions and filtering'
+icon: 'wand-magic-sparkles'
+---
+
+<Note>
+  The Autocomplete component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+## Overview
+
+The Autocomplete component provides intelligent search functionality with real-time suggestions, filtering, and keyboard navigation. It seamlessly integrates with Livewire for dynamic data fetching and offers a polished user experience for finding and selecting options.
+
+## Basic Usage
+
+Create a simple autocomplete input:
+
+```blade
+<flux:autocomplete
+    wire:model="selectedUser"
+    :options="$users"
+    placeholder="Search users..."
+/>
+```
+
+## With Livewire Search
+
+Implement server-side search with real-time filtering:
+
+```blade
+<flux:autocomplete
+    wire:model="userId"
+    wire:search="searchUsers"
+    placeholder="Find a user..."
+    :options="$searchResults"
+/>
+```
+
+```php
+class UserSelector extends Component
+{
+    public $userId;
+    public $searchResults = [];
+    
+    public function searchUsers($query)
+    {
+        $this->searchResults = User::where('name', 'like', "%{$query}%")
+            ->limit(10)
+            ->get()
+            ->map(fn($user) => [
+                'value' => $user->id,
+                'label' => $user->name,
+            ]);
+    }
+}
+```
+
+## Custom Display
+
+Customize how options are displayed:
+
+```blade
+<flux:autocomplete wire:model="productId" wire:search="searchProducts">
+    @foreach($products as $product)
+        <flux:autocomplete.option :value="$product->id">
+            <div class="flex items-center gap-3">
+                <img src="{{ $product->image }}" class="w-8 h-8 rounded" />
+                <div>
+                    <div class="font-medium">{{ $product->name }}</div>
+                    <div class="text-sm text-gray-500">${{ $product->price }}</div>
+                </div>
+            </div>
+        </flux:autocomplete.option>
+    @endforeach
+</flux:autocomplete>
+```
+
+## Multiple Selection
+
+Allow users to select multiple items:
+
+```blade
+<flux:autocomplete
+    wire:model="selectedTags"
+    :options="$availableTags"
+    multiple
+    placeholder="Add tags..."
+/>
+```
+
+## With Grouping
+
+Organize suggestions into categories:
+
+```blade
+<flux:autocomplete wire:model="contactId">
+    <flux:autocomplete.group label="Team Members">
+        @foreach($teamMembers as $member)
+            <flux:autocomplete.option :value="$member->id">
+                {{ $member->name }}
+            </flux:autocomplete.option>
+        @endforeach
+    </flux:autocomplete.group>
+    
+    <flux:autocomplete.group label="External Contacts">
+        @foreach($externalContacts as $contact)
+            <flux:autocomplete.option :value="$contact->id">
+                {{ $contact->name }}
+            </flux:autocomplete.option>
+        @endforeach
+    </flux:autocomplete.group>
+</flux:autocomplete>
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="User Search" icon="users">
+    Find and select users from a large database without loading all records at once.
+  </Card>
+  
+  <Card title="Product Finder" icon="magnifying-glass">
+    Help customers quickly locate products by name, SKU, or category.
+  </Card>
+  
+  <Card title="Tag Input" icon="tags">
+    Allow users to add multiple tags with autocomplete suggestions.
+  </Card>
+  
+  <Card title="Location Search" icon="location-dot">
+    Search for addresses, cities, or places with real-time suggestions.
+  </Card>
+</CardGroup>
+
+## Features
+
+### Smart Filtering
+
+- Real-time search as users type
+- Debounced server requests to reduce load
+- Fuzzy matching for better results
+
+### Keyboard Navigation
+
+- Arrow keys to navigate suggestions
+- Enter to select highlighted option
+- Escape to close dropdown
+- Tab for focus management
+
+### Performance
+
+- Lazy loading for large datasets
+- Virtual scrolling for thousands of options
+- Efficient re-rendering with Livewire
+
+## Accessibility
+
+The Autocomplete component follows ARIA best practices:
+
+- `role="combobox"` for proper screen reader support
+- `aria-autocomplete` and `aria-expanded` attributes
+- `aria-activedescendant` for keyboard navigation
+- Clear focus indicators and keyboard support
+
+<Tip>
+  Use autocomplete instead of long dropdowns when you have more than 10-15 options. It provides a much better user experience for finding specific items.
+</Tip>

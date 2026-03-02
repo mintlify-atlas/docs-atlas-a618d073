@@ -1,0 +1,327 @@
+---
+title: 'Tabs'
+description: 'Organized content in tabbed interfaces'
+icon: 'folder'
+---
+
+<Note>
+  The Tabs component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+## Overview
+
+The Tabs component organizes content into separate views that users can switch between. It's ideal for grouping related information, settings panels, or different data views without cluttering the interface.
+
+## Basic Usage
+
+Create simple tabs:
+
+```blade
+<flux:tabs>
+    <flux:tab label="Overview">
+        <p>Overview content goes here...</p>
+    </flux:tab>
+    
+    <flux:tab label="Details">
+        <p>Details content goes here...</p>
+    </flux:tab>
+    
+    <flux:tab label="Settings">
+        <p>Settings content goes here...</p>
+    </flux:tab>
+</flux:tabs>
+```
+
+## With Icons
+
+Add icons to tab labels:
+
+```blade
+<flux:tabs>
+    <flux:tab label="Dashboard" icon="home">
+        <p>Dashboard content...</p>
+    </flux:tab>
+    
+    <flux:tab label="Analytics" icon="chart-line">
+        <p>Analytics content...</p>
+    </flux:tab>
+    
+    <flux:tab label="Settings" icon="gear">
+        <p>Settings content...</p>
+    </flux:tab>
+</flux:tabs>
+```
+
+## Controlled Tabs
+
+Manage active tab with Livewire:
+
+```blade
+<flux:tabs wire:model="activeTab">
+    <flux:tab value="profile" label="Profile">
+        <livewire:profile-form />
+    </flux:tab>
+    
+    <flux:tab value="security" label="Security">
+        <livewire:security-settings />
+    </flux:tab>
+    
+    <flux:tab value="notifications" label="Notifications">
+        <livewire:notification-preferences />
+    </flux:tab>
+</flux:tabs>
+```
+
+```php
+public $activeTab = 'profile';
+
+public function mount()
+{
+    $this->activeTab = request()->query('tab', 'profile');
+}
+```
+
+## Vertical Tabs
+
+Display tabs vertically:
+
+```blade
+<flux:tabs orientation="vertical">
+    <flux:tab label="General">
+        <p>General settings...</p>
+    </flux:tab>
+    
+    <flux:tab label="Privacy">
+        <p>Privacy settings...</p>
+    </flux:tab>
+    
+    <flux:tab label="Billing">
+        <p>Billing settings...</p>
+    </flux:tab>
+</flux:tabs>
+```
+
+## With Badges
+
+Show counts or status indicators:
+
+```blade
+<flux:tabs>
+    <flux:tab label="All">
+        <flux:badge slot="badge">{{ $allCount }}</flux:badge>
+        <!-- Content -->
+    </flux:tab>
+    
+    <flux:tab label="Active">
+        <flux:badge slot="badge" color="green">{{ $activeCount }}</flux:badge>
+        <!-- Content -->
+    </flux:tab>
+    
+    <flux:tab label="Pending">
+        <flux:badge slot="badge" color="yellow">{{ $pendingCount }}</flux:badge>
+        <!-- Content -->
+    </flux:tab>
+</flux:tabs>
+```
+
+## Lazy Loading
+
+Load tab content only when activated:
+
+```blade
+<flux:tabs>
+    <flux:tab label="Overview" :lazy="false">
+        <p>Loaded immediately</p>
+    </flux:tab>
+    
+    <flux:tab label="Reports" lazy>
+        <livewire:heavy-reports-component />
+    </flux:tab>
+    
+    <flux:tab label="Exports" lazy>
+        <livewire:export-manager />
+    </flux:tab>
+</flux:tabs>
+```
+
+## URL Synchronization
+
+Sync active tab with URL:
+
+```blade
+<flux:tabs wire:model="activeTab" sync-url>
+    <flux:tab value="overview" label="Overview">
+        <!-- Content -->
+    </flux:tab>
+    
+    <flux:tab value="details" label="Details">
+        <!-- Content -->
+    </flux:tab>
+</flux:tabs>
+```
+
+This allows users to bookmark or share specific tabs.
+
+## Disabled Tabs
+
+Disable specific tabs:
+
+```blade
+<flux:tabs>
+    <flux:tab label="Available">
+        <p>This tab is accessible</p>
+    </flux:tab>
+    
+    <flux:tab label="Coming Soon" :disabled="true">
+        <p>This content is not yet available</p>
+    </flux:tab>
+</flux:tabs>
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Settings Panels" icon="gear">
+    Organize different settings categories (general, privacy, notifications) in separate tabs.
+  </Card>
+  
+  <Card title="Data Views" icon="table-list">
+    Show the same data in different formats (table, grid, chart) using tabs.
+  </Card>
+  
+  <Card title="User Profiles" icon="user">
+    Separate profile sections like posts, about, photos, and friends.
+  </Card>
+  
+  <Card title="Product Information" icon="box">
+    Display product description, specifications, reviews, and shipping info.
+  </Card>
+</CardGroup>
+
+## Features
+
+### Tab Navigation
+
+- Click to switch tabs
+- Keyboard navigation (Arrow keys, Home, End)
+- URL synchronization
+- Programmatic tab switching
+
+### Content Management
+
+- Lazy loading for performance
+- Conditional rendering
+- Animated transitions
+- Persistent state across navigation
+
+### Styling Options
+
+- Horizontal or vertical orientation
+- Underline or pill styling
+- Custom colors and sizes
+- Icons and badges
+
+### Accessibility
+
+- ARIA attributes (`role="tablist"`, `role="tab"`, `role="tabpanel`)
+- Keyboard navigation
+- Focus management
+- Screen reader support
+
+## Keyboard Navigation
+
+- **Arrow Left/Up**: Previous tab
+- **Arrow Right/Down**: Next tab
+- **Home**: First tab
+- **End**: Last tab
+- **Tab**: Move focus out of tab list
+
+## Advanced Example
+
+Feature-rich tabs implementation:
+
+```blade
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-bold">Project Management</h2>
+        <flux:button wire:click="exportData">Export</flux:button>
+    </div>
+    
+    <flux:tabs wire:model="view" sync-url>
+        <flux:tab value="overview" label="Overview" icon="home">
+            <div class="grid grid-cols-3 gap-6">
+                <flux:card>
+                    <flux:card.header>
+                        <h3 class="font-semibold">Total Tasks</h3>
+                    </flux:card.header>
+                    <flux:card.body>
+                        <p class="text-3xl font-bold">{{ $totalTasks }}</p>
+                    </flux:card.body>
+                </flux:card>
+                
+                <flux:card>
+                    <flux:card.header>
+                        <h3 class="font-semibold">Completed</h3>
+                    </flux:card.header>
+                    <flux:card.body>
+                        <p class="text-3xl font-bold text-green-600">{{ $completedTasks }}</p>
+                    </flux:card.body>
+                </flux:card>
+                
+                <flux:card>
+                    <flux:card.header>
+                        <h3 class="font-semibold">In Progress</h3>
+                    </flux:card.header>
+                    <flux:card.body>
+                        <p class="text-3xl font-bold text-blue-600">{{ $inProgressTasks }}</p>
+                    </flux:card.body>
+                </flux:card>
+            </div>
+        </flux:tab>
+        
+        <flux:tab value="tasks" label="Tasks" icon="list-check">
+            <flux:badge slot="badge">{{ $totalTasks }}</flux:badge>
+            <livewire:task-list />
+        </flux:tab>
+        
+        <flux:tab value="calendar" label="Calendar" icon="calendar" lazy>
+            <livewire:project-calendar />
+        </flux:tab>
+        
+        <flux:tab value="team" label="Team" icon="users">
+            <flux:badge slot="badge">{{ $teamMembers->count() }}</flux:badge>
+            <livewire:team-members />
+        </flux:tab>
+        
+        <flux:tab value="settings" label="Settings" icon="gear" :disabled="!$canManageSettings">
+            <livewire:project-settings />
+        </flux:tab>
+    </flux:tabs>
+</div>
+```
+
+## Best Practices
+
+### Tab Count
+
+Limit tabs to 5-7 for optimal usability. For more categories, consider using a different navigation pattern.
+
+### Label Clarity
+
+Use clear, concise labels that indicate what content users will find in each tab.
+
+### Default Selection
+
+Set a sensible default tab that shows the most important or frequently accessed content.
+
+### Responsive Design
+
+Consider converting horizontal tabs to a dropdown or accordion on mobile devices for better touch usability.
+
+### Loading States
+
+Show loading indicators when tab content is being fetched or processed.
+
+<Tip>
+  Use lazy loading for tabs that contain heavy components or data to improve initial page load performance. Only the active tab's content will be loaded initially.
+</Tip>

@@ -1,0 +1,137 @@
+---
+title: 'Accordion'
+description: 'Collapsible content sections with smooth animations'
+icon: 'chevron-down'
+---
+
+<Note>
+  The Accordion component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+## Overview
+
+The Accordion component allows you to display collapsible content sections, perfect for FAQs, nested navigation, or organizing large amounts of information in a compact, user-friendly format. It supports single or multiple open panels with smooth animations.
+
+## Basic Usage
+
+Create an accordion with multiple collapsible sections:
+
+```blade
+<flux:accordion>
+    <flux:accordion.item>
+        <flux:accordion.heading>
+            What is Flux?
+        </flux:accordion.heading>
+        <flux:accordion.content>
+            Flux is a modern UI component library for Livewire applications,
+            providing beautiful, accessible components out of the box.
+        </flux:accordion.content>
+    </flux:accordion.item>
+
+    <flux:accordion.item>
+        <flux:accordion.heading>
+            How do I get started?
+        </flux:accordion.heading>
+        <flux:accordion.content>
+            Install Flux via Composer, publish the components you need,
+            and start using them in your Blade templates.
+        </flux:accordion.content>
+    </flux:accordion.item>
+
+    <flux:accordion.item>
+        <flux:accordion.heading>
+            Is it accessible?
+        </flux:accordion.heading>
+        <flux:accordion.content>
+            Yes! All Flux components follow ARIA guidelines and support
+            keyboard navigation for full accessibility.
+        </flux:accordion.content>
+    </flux:accordion.item>
+</flux:accordion>
+```
+
+## Single Expansion
+
+Allow only one panel to be open at a time:
+
+```blade
+<flux:accordion mode="single">
+    <flux:accordion.item>
+        <flux:accordion.heading>Section 1</flux:accordion.heading>
+        <flux:accordion.content>Content for section 1</flux:accordion.content>
+    </flux:accordion.item>
+    
+    <flux:accordion.item>
+        <flux:accordion.heading>Section 2</flux:accordion.heading>
+        <flux:accordion.content>Content for section 2</flux:accordion.content>
+    </flux:accordion.item>
+</flux:accordion>
+```
+
+## Default Open State
+
+Set panels to be open by default:
+
+```blade
+<flux:accordion>
+    <flux:accordion.item expanded>
+        <flux:accordion.heading>
+            This section starts open
+        </flux:accordion.heading>
+        <flux:accordion.content>
+            This content is visible by default.
+        </flux:accordion.content>
+    </flux:accordion.item>
+</flux:accordion>
+```
+
+## With Icons
+
+Add visual indicators to accordion headings:
+
+```blade
+<flux:accordion>
+    <flux:accordion.item>
+        <flux:accordion.heading>
+            <flux:icon name="circle-question" />
+            Frequently Asked Question
+        </flux:accordion.heading>
+        <flux:accordion.content>
+            The answer to your question goes here.
+        </flux:accordion.content>
+    </flux:accordion.item>
+</flux:accordion>
+```
+
+## Use Cases
+
+<AccordionGroup>
+  <Accordion title="FAQ Pages">
+    Display frequently asked questions in a scannable, space-efficient format that allows users to expand only the questions relevant to them.
+  </Accordion>
+  
+  <Accordion title="Documentation Sections">
+    Organize technical documentation or help articles into collapsible sections, making it easier for users to navigate to specific topics.
+  </Accordion>
+  
+  <Accordion title="Form Sections">
+    Break long forms into logical sections that users can expand and collapse, reducing cognitive load and improving completion rates.
+  </Accordion>
+  
+  <Accordion title="Settings Panels">
+    Group related settings into collapsible categories, allowing users to focus on one configuration area at a time.
+  </Accordion>
+</AccordionGroup>
+
+## Accessibility
+
+The Accordion component is fully accessible:
+
+- Implements proper ARIA attributes (`aria-expanded`, `aria-controls`)
+- Supports keyboard navigation (Enter/Space to toggle, Tab to navigate)
+- Screen reader announcements for state changes
+- Focus management for enhanced usability
+
+<Tip>
+  Use accordions to progressively disclose information, keeping your interface clean while still providing access to detailed content when needed.
+</Tip>

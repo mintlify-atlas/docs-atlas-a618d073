@@ -1,0 +1,250 @@
+---
+title: Tooltip
+description: Contextual tooltips for displaying additional information on hover
+---
+
+The Tooltip component provides contextual information when users hover over or focus on an element. Perfect for explaining icons, showing keyboard shortcuts, or providing additional context without cluttering the interface.
+
+## Basic Usage
+
+```blade
+<flux:tooltip content="This is helpful information">
+    <flux:button>Hover me</flux:button>
+</flux:tooltip>
+```
+
+## Using Button Tooltip Shorthand
+
+Buttons have built-in tooltip support:
+
+```blade
+<flux:button tooltip="Save your changes">
+    Save
+</flux:button>
+```
+
+## Positioning
+
+Control where the tooltip appears:
+
+<Tabs>
+  <Tab title="Top (Default)">
+    ```blade
+    <flux:tooltip content="Top tooltip" position="top">
+        <flux:button>Top</flux:button>
+    </flux:tooltip>
+    ```
+  </Tab>
+  
+  <Tab title="Bottom">
+    ```blade
+    <flux:tooltip content="Bottom tooltip" position="bottom">
+        <flux:button>Bottom</flux:button>
+    </flux:tooltip>
+    ```
+  </Tab>
+  
+  <Tab title="Left">
+    ```blade
+    <flux:tooltip content="Left tooltip" position="left">
+        <flux:button>Left</flux:button>
+    </flux:tooltip>
+    ```
+  </Tab>
+  
+  <Tab title="Right">
+    ```blade
+    <flux:tooltip content="Right tooltip" position="right">
+        <flux:button>Right</flux:button>
+    </flux:tooltip>
+    ```
+  </Tab>
+</Tabs>
+
+## Alignment
+
+Control how the tooltip aligns relative to the trigger:
+
+```blade
+<flux:tooltip content="Tooltip" align="start">
+    <flux:button>Start</flux:button>
+</flux:tooltip>
+
+<flux:tooltip content="Tooltip" align="center">
+    <flux:button>Center</flux:button>
+</flux:tooltip>
+
+<flux:tooltip content="Tooltip" align="end">
+    <flux:button>End</flux:button>
+</flux:tooltip>
+```
+
+## With Keyboard Shortcuts
+
+Display keyboard shortcuts within tooltips:
+
+```blade
+<flux:tooltip content="Search" kbd="⌘K">
+    <flux:button icon="magnifying-glass" />
+</flux:tooltip>
+```
+
+Or using the content slot:
+
+```blade
+<flux:tooltip>
+    <flux:button icon="magnifying-glass" />
+    
+    <flux:tooltip.content kbd="⌘K">
+        Search
+    </flux:tooltip.content>
+</flux:tooltip>
+```
+
+## Custom Content
+
+Use slots for rich tooltip content:
+
+```blade
+<flux:tooltip>
+    <flux:button>Profile</flux:button>
+    
+    <flux:tooltip.content>
+        <div class="space-y-1">
+            <div class="font-semibold">John Doe</div>
+            <div class="text-xs text-zinc-400">john@example.com</div>
+        </div>
+    </flux:tooltip.content>
+</flux:tooltip>
+```
+
+## Interactive Tooltips
+
+Allow users to interact with tooltip content:
+
+```blade
+<flux:tooltip interactive>
+    <flux:button>Hover for actions</flux:button>
+    
+    <flux:tooltip.content>
+        <div class="space-y-2">
+            <a href="#" class="block hover:underline">View details</a>
+            <a href="#" class="block hover:underline">Edit item</a>
+        </div>
+    </flux:tooltip.content>
+</flux:tooltip>
+```
+
+Interactive tooltips don't dismiss when the user moves their mouse into the tooltip content.
+
+## Toggleable Tooltips
+
+Create click-to-open tooltips:
+
+```blade
+<flux:tooltip toggleable>
+    <flux:button>Click me</flux:button>
+    
+    <flux:tooltip.content>
+        This tooltip opens on click instead of hover.
+    </flux:tooltip.content>
+</flux:tooltip>
+```
+
+## With Livewire
+
+Control tooltip state with Livewire:
+
+```blade
+<flux:tooltip wire:model="showTooltip">
+    <flux:button>Controlled</flux:button>
+    
+    <flux:tooltip.content>
+        Controlled by Livewire property
+    </flux:tooltip.content>
+</flux:tooltip>
+```
+
+## Icon Tooltips
+
+Provide context for icon-only buttons:
+
+```blade
+<flux:tooltip content="Delete item">
+    <flux:button icon="trash" variant="ghost" />
+</flux:tooltip>
+
+<flux:tooltip content="Edit" kbd="E">
+    <flux:button icon="pencil" variant="ghost" />
+</flux:tooltip>
+
+<flux:tooltip content="Settings">
+    <flux:button icon="cog" variant="ghost" />
+</flux:tooltip>
+```
+
+## Form Field Hints
+
+Provide additional context for form fields:
+
+```blade
+<flux:field>
+    <flux:label>
+        API Key
+        <flux:tooltip content="You can find this in your account settings" position="right">
+            <flux:icon icon="information-circle" class="w-4 h-4 text-zinc-400" />
+        </flux:tooltip>
+    </flux:label>
+    <flux:input type="password" />
+</flux:field>
+```
+
+## Disabled Elements
+
+Tooltips can wrap disabled elements:
+
+```blade
+<flux:tooltip content="This action is not available">
+    <flux:button disabled>
+        Disabled Action
+    </flux:button>
+</flux:tooltip>
+```
+
+## Props Reference
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `content` | `string` | - | Tooltip text content |
+| `position` | `string` | `top` | Tooltip position: `top`, `bottom`, `left`, `right` |
+| `align` | `string` | `center` | Tooltip alignment: `start`, `center`, `end` |
+| `kbd` | `string` | - | Keyboard shortcut to display |
+| `interactive` | `boolean` | `false` | Allow interaction with tooltip content |
+| `toggleable` | `boolean` | `false` | Open on click instead of hover |
+| `wire:model` | `string` | - | Livewire property for controlling state |
+
+## Accessibility
+
+- Tooltips are triggered on both hover and focus
+- Keyboard users can access tooltips when focusing interactive elements
+- Tooltips automatically dismiss when focus is lost or mouse leaves
+- Use `aria-label` on the trigger element for screen reader users
+- Interactive tooltips remain open when focused
+
+## Best Practices
+
+1. **Keep It Brief**: Tooltips should contain concise, helpful information
+2. **Don't Hide Critical Info**: Never put essential information only in tooltips
+3. **Be Consistent**: Use consistent positioning throughout your app
+4. **Mobile Consideration**: Tooltips don't work well on touch devices
+5. **Timing**: Avoid tooltips on elements with click actions (use toggleable instead)
+
+## Related Components
+
+- [Dropdown](/components/dropdown) - For interactive menus
+- [Callout](/components/feedback#callout) - For inline contextual messages
+- [Modal](/components/feedback#modal) - For more complex overlays
+
+<Note>
+  The Tooltip component uses `<ui-tooltip>` internally and automatically adds the `.self` modifier to `wire:model` for optimal performance.
+</Note>

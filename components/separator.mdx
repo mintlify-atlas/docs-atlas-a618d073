@@ -1,0 +1,208 @@
+---
+title: Separator
+description: Visual dividers to separate content sections
+---
+
+The Separator component creates visual dividers between content sections. It supports horizontal and vertical orientations, with optional text labels.
+
+## Basic Usage
+
+```blade
+<div>
+    <p>Section 1</p>
+    <flux:separator />
+    <p>Section 2</p>
+</div>
+```
+
+## Orientation
+
+<Tabs>
+  <Tab title="Horizontal">
+    ```blade
+    <flux:separator orientation="horizontal" />
+    <!-- or -->
+    <flux:separator />
+    ```
+    
+    Horizontal separators span the full width (default).
+  </Tab>
+  
+  <Tab title="Vertical">
+    ```blade
+    <div class="flex items-center gap-4">
+        <span>Left</span>
+        <flux:separator orientation="vertical" />
+        <span>Right</span>
+    </div>
+    
+    <!-- or use the shorthand -->
+    <div class="flex items-center gap-4">
+        <span>Left</span>
+        <flux:separator vertical />
+        <span>Right</span>
+    </div>
+    ```
+    
+    Vertical separators are useful for inline content.
+  </Tab>
+</Tabs>
+
+## With Text
+
+Add descriptive text within the separator:
+
+```blade
+<flux:separator text="Or" />
+
+<flux:separator text="Continue with" />
+```
+
+This creates a centered label with separator lines on both sides, commonly used in forms:
+
+```blade
+<form>
+    <flux:input type="email" placeholder="Email" />
+    <flux:button type="submit" variant="primary">Sign in with Email</flux:button>
+    
+    <flux:separator text="Or continue with" />
+    
+    <flux:button icon="github">GitHub</flux:button>
+    <flux:button icon="google">Google</flux:button>
+</form>
+```
+
+## Variants
+
+Control the visual prominence:
+
+<Tabs>
+  <Tab title="Default">
+    ```blade
+    <flux:separator />
+    ```
+    
+    Standard separator with medium opacity.
+  </Tab>
+  
+  <Tab title="Subtle">
+    ```blade
+    <flux:separator variant="subtle" />
+    ```
+    
+    More subtle, lighter separator.
+  </Tab>
+</Tabs>
+
+## Usage in Lists
+
+Separate items in vertical lists:
+
+```blade
+<div class="space-y-4">
+    <div>
+        <h3 class="font-semibold">Item 1</h3>
+        <p class="text-sm text-zinc-500">Description for item 1</p>
+    </div>
+    
+    <flux:separator />
+    
+    <div>
+        <h3 class="font-semibold">Item 2</h3>
+        <p class="text-sm text-zinc-500">Description for item 2</p>
+    </div>
+    
+    <flux:separator />
+    
+    <div>
+        <h3 class="font-semibold">Item 3</h3>
+        <p class="text-sm text-zinc-500">Description for item 3</p>
+    </div>
+</div>
+```
+
+## Usage in Navigation
+
+Separate navigation groups:
+
+```blade
+<flux:navlist>
+    <flux:navlist.item href="/dashboard">Dashboard</flux:navlist.item>
+    <flux:navlist.item href="/projects">Projects</flux:navlist.item>
+    
+    <flux:separator />
+    
+    <flux:navlist.item href="/settings">Settings</flux:navlist.item>
+    <flux:navlist.item href="/profile">Profile</flux:navlist.item>
+</flux:navlist>
+```
+
+## Inline Separators
+
+Use vertical separators in toolbars or inline layouts:
+
+```blade
+<div class="flex items-center gap-2">
+    <flux:button variant="ghost" icon="bold" />
+    <flux:button variant="ghost" icon="italic" />
+    <flux:button variant="ghost" icon="underline" />
+    
+    <flux:separator vertical />
+    
+    <flux:button variant="ghost" icon="list-bullet" />
+    <flux:button variant="ghost" icon="numbered-list" />
+</div>
+```
+
+## In Flex Layouts
+
+Vertical separators automatically adjust height:
+
+```blade
+<div class="flex items-stretch h-24">
+    <div class="flex-1">Left content</div>
+    <flux:separator vertical />
+    <div class="flex-1">Right content</div>
+</div>
+```
+
+## Custom Styling
+
+Override the appearance with Tailwind classes:
+
+```blade
+<!-- Thicker separator -->
+<flux:separator class="h-px" />
+
+<!-- Custom color -->
+<flux:separator class="bg-blue-500" />
+
+<!-- Dashed style -->
+<flux:separator class="border-dashed border-t border-zinc-300" style="height: 0; background: none;" />
+```
+
+## Props Reference
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `orientation` | `string` | `horizontal` | Separator orientation: `horizontal`, `vertical` |
+| `vertical` | `boolean` | `false` | Shorthand for `orientation="vertical"` |
+| `variant` | `string` | - | Visual variant: `subtle` for lighter appearance |
+| `text` | `string` | - | Optional text label to display |
+
+## Accessibility
+
+- Separators use `role="none"` for proper semantics
+- The `data-orientation` attribute helps with styling and behavior
+- Text separators maintain readable contrast ratios
+
+## Best Practices
+
+1. **Use Sparingly**: Too many separators can make content feel fragmented
+2. **Group Related Content**: Use separators to delineate distinct sections
+3. **Consider White Space**: Sometimes padding is better than a visible line
+4. **Match Context**: Use subtle variants for less important divisions
+
+<Note>
+  The Separator component uses `[print-color-adjust:exact]` to ensure separators are visible when printing.
+</Note>

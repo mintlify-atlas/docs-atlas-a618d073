@@ -1,0 +1,236 @@
+---
+title: flux:icon
+description: Import third-party icons from Lucide for use in your Flux application
+---
+
+The `flux:icon` command imports icons from the [Lucide](https://lucide.dev) icon library, converting them into Flux-compatible Blade components. This is useful when you need icons that aren't included in the default Heroicons set.
+
+## Usage
+
+```bash
+php artisan flux:icon
+```
+
+You can also specify icon names as arguments to import them directly:
+
+```bash
+php artisan flux:icon {icons?*}
+```
+
+## Arguments
+
+<ParamField path="icons" type="array" optional>
+  One or more icon names to import from Lucide. Icon names should match those found on [lucide.dev/icons](https://lucide.dev/icons).
+  
+  ```bash
+  php artisan flux:icon arrow-left arrow-right home
+  ```
+</ParamField>
+
+## How It Works
+
+<Steps>
+  <Step title="Icon name input">
+    If you don't provide icon names as arguments, the command prompts you to enter an icon name. You can browse available icons at [lucide.dev/icons](https://lucide.dev/icons).
+  </Step>
+
+  <Step title="Fetch from Lucide">
+    The command fetches the SVG source from Lucide's GitHub repository:
+    ```
+    https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/{icon}.svg
+    ```
+  </Step>
+
+  <Step title="Generate Blade component">
+    The SVG is wrapped in a Flux-compatible Blade template with:
+    - Proper variant support (`outline`, `mini`, `micro`)
+    - Dynamic stroke width based on variant
+    - Flux CSS classes and attributes
+    - Credit comment to Lucide
+  </Step>
+
+  <Step title="Save to resources">
+    The icon is saved to:
+    ```
+    resources/views/flux/icon/{icon-name}.blade.php
+    ```
+  </Step>
+</Steps>
+
+## Generated Icon Structure
+
+Each imported icon is converted to a Blade component with the following structure:
+
+```blade
+@blaze(fold: true)
+
+{{-- Credit: Lucide (https://lucide.dev) --}}
+
+@props([
+    'variant' => 'outline',
+])
+
+@php
+if ($variant === 'solid') {
+    throw new \Exception('The "solid" variant is not supported in Lucide.');
+}
+
+$classes = Flux::classes('shrink-0')
+    ->add(match($variant) {
+        'outline' => '[:where(&)]:size-6',
+        'solid' => '[:where(&)]:size-6',
+        'mini' => '[:where(&)]:size-5',
+        'micro' => '[:where(&)]:size-4',
+    });
+
+$strokeWidth = match ($variant) {
+    'outline' => 2,
+    'mini' => 2.25,
+    'micro' => 2.5,
+};
+@endphp
+
+<svg
+    {{ $attributes->class($classes) }}
+    data-flux-icon
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="{{ $strokeWidth }}"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+    data-slot="icon"
+>
+    <!-- Icon paths here -->
+</svg>
+```
+
+## Examples
+
+### Interactive import
+
+```bash
+php artisan flux:icon
+
+┌────────────────────────────────────────────────────────────┐
+│ Need an icon not included in Heroicons?                   │
+└────────────────────────────────────────────────────────────┘
+
+  ℹ Search for the perfect icon at: https://lucide.dev/icons
+
+┌ Which icon would you like to import from Lucide? ──────────┐
+│ arrow-left                                                  │
+└─────────────────────────────────────────────────────────────┘
+  e.g. arrow-left
+
+  ⠋ Fetching icon...
+
+  ✓ Published icon: /path/to/resources/views/flux/icon/arrow-left.blade.php
+
+┌ Would you like to import another icon? ─────────────────────┐
+│ ● Yes / ○ No                                                │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Direct import with arguments
+
+```bash
+php artisan flux:icon arrow-left arrow-right home
+
+  ⠋ Fetching icon...
+  ✓ Published icon: /path/to/resources/views/flux/icon/arrow-left.blade.php
+  
+  ⠋ Fetching icon...
+  ✓ Published icon: /path/to/resources/views/flux/icon/arrow-right.blade.php
+  
+  ⠋ Fetching icon...
+  ✓ Published icon: /path/to/resources/views/flux/icon/home.blade.php
+```
+
+### Import multiple icons interactively
+
+```bash
+php artisan flux:icon
+
+# Import first icon
+┌ Which icon would you like to import from Lucide? ──────────┐
+│ calendar                                                    │
+└─────────────────────────────────────────────────────────────┘
+
+  ✓ Published icon: /path/to/resources/views/flux/icon/calendar.blade.php
+
+┌ Would you like to import another icon? ─────────────────────┐
+│ ● Yes / ○ No                                                │
+└─────────────────────────────────────────────────────────────┘
+
+# Import second icon
+┌ Which icon would you like to import from Lucide? ──────────┐
+│ mail                                                        │
+└─────────────────────────────────────────────────────────────┘
+
+  ✓ Published icon: /path/to/resources/views/flux/icon/mail.blade.php
+
+┌ Would you like to import another icon? ─────────────────────┐
+│ ○ Yes / ● No                                                │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Using Imported Icons
+
+Once imported, use the icons in your Blade templates like any other Flux icon:
+
+```blade
+<flux:icon.arrow-left />
+
+<flux:icon.arrow-left variant="mini" />
+
+<flux:icon.arrow-left variant="micro" class="text-blue-500" />
+```
+
+## Icon Variants
+
+Lucide icons support the following variants:
+
+- `outline` (default) - 24×24px, stroke width 2
+- `mini` - 20×20px, stroke width 2.25
+- `micro` - 16×16px, stroke width 2.5
+
+<Warning>
+  The `solid` variant is not supported for Lucide icons and will throw an exception if used.
+</Warning>
+
+## Finding Icons
+
+Browse the complete Lucide icon library at [lucide.dev/icons](https://lucide.dev/icons). Use the exact icon name from the URL or icon title:
+
+- Icon: "Arrow Left" → Use: `arrow-left`
+- Icon: "Check Circle" → Use: `check-circle`
+- Icon: "Settings" → Use: `settings`
+
+## Troubleshooting
+
+### Icon not found
+
+```bash
+php artisan flux:icon invalid-icon-name
+
+  ✗ Failed to fetch icon: invalid-icon-name
+```
+
+Make sure:
+- The icon name exactly matches the name on [lucide.dev](https://lucide.dev/icons)
+- Use lowercase with hyphens (e.g., `arrow-left`, not `ArrowLeft`)
+- Check for typos in the icon name
+
+### Network errors
+
+If you encounter network errors, ensure:
+- You have an active internet connection
+- GitHub is accessible from your server
+- There are no firewall rules blocking the request
+
+<Note>
+  Imported icons are fetched directly from Lucide's GitHub repository and converted to work seamlessly with Flux's icon system.
+</Note>

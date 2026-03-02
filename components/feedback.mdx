@@ -1,0 +1,498 @@
+---
+title: Feedback Components
+description: Components for displaying status, alerts, and user feedback
+---
+
+Flux provides components for communicating status, displaying alerts, and providing feedback to users.
+
+## Badge
+
+Status badges and labels with color variants:
+
+### Basic Usage
+
+```blade
+<flux:badge>Default</flux:badge>
+<flux:badge color="blue">Info</flux:badge>
+<flux:badge color="green">Success</flux:badge>
+<flux:badge color="red">Error</flux:badge>
+<flux:badge color="yellow">Warning</flux:badge>
+```
+
+### Sizes
+
+```blade
+<flux:badge size="sm">Small</flux:badge>
+<flux:badge>Default</flux:badge>
+<flux:badge size="lg">Large</flux:badge>
+```
+
+### With Icons
+
+```blade
+<flux:badge icon="check-circle" color="green">Verified</flux:badge>
+<flux:badge icon="exclamation-circle" color="red">Alert</flux:badge>
+<flux:badge icon="information-circle" color="blue">Info</flux:badge>
+```
+
+### Trailing Icons
+
+```blade
+<flux:badge icon:trailing="x-mark" color="zinc">Dismissible</flux:badge>
+```
+
+### Variants
+
+<Tabs>
+  <Tab title="Default">
+    ```blade
+    <flux:badge color="blue">Default Style</flux:badge>
+    ```
+    Semi-transparent background with colored text.
+  </Tab>
+  
+  <Tab title="Solid">
+    ```blade
+    <flux:badge variant="solid" color="blue">Solid Style</flux:badge>
+    ```
+    Solid background with white text.
+  </Tab>
+</Tabs>
+
+### Rounded
+
+```blade
+<flux:badge rounded>Pill Badge</flux:badge>
+<flux:badge rounded color="blue">Status</flux:badge>
+```
+
+### Interactive Badges
+
+Badges as clickable buttons:
+
+```blade
+<flux:badge wire:click="removeTag('design')" icon:trailing="x-mark">
+    Design
+</flux:badge>
+```
+
+### Available Colors
+
+```blade
+<flux:badge color="zinc">Zinc</flux:badge>
+<flux:badge color="red">Red</flux:badge>
+<flux:badge color="orange">Orange</flux:badge>
+<flux:badge color="amber">Amber</flux:badge>
+<flux:badge color="yellow">Yellow</flux:badge>
+<flux:badge color="lime">Lime</flux:badge>
+<flux:badge color="green">Green</flux:badge>
+<flux:badge color="emerald">Emerald</flux:badge>
+<flux:badge color="teal">Teal</flux:badge>
+<flux:badge color="cyan">Cyan</flux:badge>
+<flux:badge color="sky">Sky</flux:badge>
+<flux:badge color="blue">Blue</flux:badge>
+<flux:badge color="indigo">Indigo</flux:badge>
+<flux:badge color="violet">Violet</flux:badge>
+<flux:badge color="purple">Purple</flux:badge>
+<flux:badge color="fuchsia">Fuchsia</flux:badge>
+<flux:badge color="pink">Pink</flux:badge>
+<flux:badge color="rose">Rose</flux:badge>
+```
+
+### Badge Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `color` | `string` | `zinc` | Badge color |
+| `variant` | `string` | - | Visual variant: `solid` |
+| `size` | `string` | - | Size: `sm`, `lg` |
+| `icon` | `string` | - | Leading icon name |
+| `icon:trailing` | `string` | - | Trailing icon name |
+| `rounded` | `boolean` | `false` | Pill-shaped badge |
+
+---
+
+## Callout
+
+Highlighted messages and alerts:
+
+### Basic Usage
+
+```blade
+<flux:callout>
+    This is a callout message with important information.
+</flux:callout>
+```
+
+### Variants
+
+<Tabs>
+  <Tab title="Info">
+    ```blade
+    <flux:callout variant="info" icon="information-circle">
+        <flux:callout.heading>Did you know?</flux:callout.heading>
+        <flux:callout.text>You can customize your dashboard layout.</flux:callout.text>
+    </flux:callout>
+    ```
+  </Tab>
+  
+  <Tab title="Success">
+    ```blade
+    <flux:callout variant="success" icon="check-circle">
+        <flux:callout.heading>Success!</flux:callout.heading>
+        <flux:callout.text>Your changes have been saved.</flux:callout.text>
+    </flux:callout>
+    ```
+  </Tab>
+  
+  <Tab title="Warning">
+    ```blade
+    <flux:callout variant="warning" icon="exclamation-triangle">
+        <flux:callout.heading>Warning</flux:callout.heading>
+        <flux:callout.text>This action cannot be undone.</flux:callout.text>
+    </flux:callout>
+    ```
+  </Tab>
+  
+  <Tab title="Danger">
+    ```blade
+    <flux:callout variant="danger" icon="exclamation-circle">
+        <flux:callout.heading>Error</flux:callout.heading>
+        <flux:callout.text>There was a problem processing your request.</flux:callout.text>
+    </flux:callout>
+    ```
+  </Tab>
+</Tabs>
+
+### With Icon
+
+```blade
+<flux:callout icon="light-bulb" color="yellow">
+    <flux:callout.text>Pro tip: Use keyboard shortcuts to work faster!</flux:callout.text>
+</flux:callout>
+```
+
+### With Actions
+
+```blade
+<flux:callout icon="information-circle" color="blue">
+    <flux:callout.heading>New feature available</flux:callout.heading>
+    <flux:callout.text>
+        We've added dark mode support to the dashboard.
+    </flux:callout.text>
+    
+    <flux:callout.actions>
+        <flux:button size="sm">Learn more</flux:button>
+        <flux:button size="sm" variant="ghost">Dismiss</flux:button>
+    </flux:callout.actions>
+</flux:callout>
+```
+
+### Inline Layout
+
+Actions appear inline on larger screens:
+
+```blade
+<flux:callout icon="exclamation-triangle" color="yellow" inline>
+    <flux:callout.heading>Confirm Action</flux:callout.heading>
+    <flux:callout.text>Are you sure you want to delete this item?</flux:callout.text>
+    
+    <flux:callout.actions>
+        <flux:button variant="danger" size="sm">Delete</flux:button>
+        <flux:button variant="ghost" size="sm">Cancel</flux:button>
+    </flux:callout.actions>
+</flux:callout>
+```
+
+### Custom Colors
+
+```blade
+<flux:callout color="purple" icon="sparkles">
+    <flux:callout.text>This is a custom colored callout!</flux:callout.text>
+</flux:callout>
+```
+
+### Callout Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `string` | - | Preset variant: `success`, `danger`, `warning`, `secondary` |
+| `color` | `string` | `white` | Callout color theme |
+| `icon` | `string` | - | Leading icon name |
+| `heading` | `string` | - | Heading text (shorthand) |
+| `text` | `string` | - | Body text (shorthand) |
+| `inline` | `boolean` | `false` | Inline action layout |
+
+---
+
+## Modal
+
+Dialog overlays and flyouts:
+
+### Basic Usage
+
+```blade
+<flux:modal name="edit-profile">
+    <flux:heading>Edit Profile</flux:heading>
+    
+    <form wire:submit="save" class="space-y-6">
+        <flux:field>
+            <flux:label>Name</flux:label>
+            <flux:input wire:model="name" />
+        </flux:field>
+        
+        <flux:field>
+            <flux:label>Email</flux:label>
+            <flux:input type="email" wire:model="email" />
+        </flux:field>
+        
+        <div class="flex gap-2 justify-end">
+            <flux:modal.close>
+                <flux:button variant="ghost">Cancel</flux:button>
+            </flux:modal.close>
+            <flux:button type="submit" variant="primary">Save Changes</flux:button>
+        </div>
+    </form>
+</flux:modal>
+```
+
+### Opening Modals
+
+Use the modal trigger or Livewire:
+
+```blade
+<!-- With trigger component -->
+<flux:modal>
+    <flux:modal.trigger>
+        <flux:button>Open Modal</flux:button>
+    </flux:modal.trigger>
+    
+    <div>
+        Modal content here
+    </div>
+</flux:modal>
+
+<!-- With wire:click -->
+<flux:button wire:click="$dispatch('modal-show', { name: 'edit-profile' })">
+    Open Modal
+</flux:button>
+```
+
+### Named Modals
+
+```blade
+<flux:modal name="confirm-delete">
+    <flux:heading>Confirm Deletion</flux:heading>
+    <flux:text>Are you sure you want to delete this item?</flux:text>
+    
+    <div class="flex gap-2 justify-end mt-6">
+        <flux:modal.close>
+            <flux:button variant="ghost">Cancel</flux:button>
+        </flux:modal.close>
+        <flux:button wire:click="delete" variant="danger">Delete</flux:button>
+    </div>
+</flux:modal>
+
+<!-- Trigger -->
+<flux:button wire:click="$dispatch('modal-show', { name: 'confirm-delete' })">
+    Delete Item
+</flux:button>
+```
+
+### Livewire Control
+
+```blade
+<flux:modal wire:model="showModal">
+    <flux:heading>Modal Title</flux:heading>
+    <!-- Content -->
+</flux:modal>
+
+<!-- Component -->
+<flux:button wire:click="$toggle('showModal')">Toggle Modal</flux:button>
+```
+
+### Flyouts
+
+Side panels that slide in:
+
+```blade
+<flux:modal variant="flyout" position="right">
+    <flux:heading>Filter Options</flux:heading>
+    
+    <!-- Filter form content -->
+</flux:modal>
+```
+
+Positions: `right` (default), `left`, `bottom`
+
+### Variants
+
+<Tabs>
+  <Tab title="Default">
+    ```blade
+    <flux:modal>
+        <div class="p-6">
+            Default modal with padding and styling
+        </div>
+    </flux:modal>
+    ```
+  </Tab>
+  
+  <Tab title="Bare">
+    ```blade
+    <flux:modal variant="bare">
+        <div>
+            Bare modal without default styling
+        </div>
+    </flux:modal>
+    ```
+  </Tab>
+  
+  <Tab title="Floating Flyout">
+    ```blade
+    <flux:modal variant="floating" flyout position="right">
+        <div>Floating flyout with rounded corners</div>
+    </flux:modal>
+    ```
+  </Tab>
+</Tabs>
+
+### Closable
+
+Control the close button:
+
+```blade
+<!-- With close button (default) -->
+<flux:modal closable>
+    Content
+</flux:modal>
+
+<!-- Without close button -->
+<flux:modal :closable="false">
+    Content
+</flux:modal>
+```
+
+### Dismissible
+
+Control click-outside-to-close:
+
+```blade
+<!-- Dismissible (default) -->
+<flux:modal>
+    Content
+</flux:modal>
+
+<!-- Not dismissible -->
+<flux:modal :dismissible="false">
+    Content - must use close button or action
+</flux:modal>
+```
+
+### Modal Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | - | Unique modal identifier |
+| `variant` | `string` | - | Visual variant: `bare`, `floating` |
+| `flyout` | `boolean` | `false` | Side panel style |
+| `position` | `string` | `right` | Flyout position: `right`, `left`, `bottom` |
+| `closable` | `boolean` | `true` | Show close button |
+| `dismissible` | `boolean` | `true` | Close on outside click |
+| `wire:model` | `string` | - | Livewire property for state |
+
+---
+
+## Skeleton
+
+Loading placeholders:
+
+### Basic Usage
+
+```blade
+<flux:skeleton />
+```
+
+### Multiple Lines
+
+```blade
+<flux:skeleton.group>
+    <flux:skeleton.line class="w-full h-8" />
+    <flux:skeleton.line class="w-3/4 h-4" />
+    <flux:skeleton.line class="w-5/6 h-4" />
+</flux:skeleton.group>
+```
+
+### Animation
+
+<Tabs>
+  <Tab title="Pulse">
+    ```blade
+    <flux:skeleton animate="pulse" />
+    ```
+  </Tab>
+  
+  <Tab title="Shimmer">
+    ```blade
+    <flux:skeleton animate="shimmer" />
+    ```
+  </Tab>
+  
+  <Tab title="None">
+    ```blade
+    <flux:skeleton animate="none" />
+    ```
+  </Tab>
+</Tabs>
+
+### Custom Shapes
+
+```blade
+<!-- Card skeleton -->
+<div class="border rounded-lg p-4 space-y-3">
+    <flux:skeleton class="w-12 h-12 rounded-full" />
+    <flux:skeleton class="w-3/4 h-4" />
+    <flux:skeleton class="w-full h-4" />
+    <flux:skeleton class="w-5/6 h-4" />
+</div>
+
+<!-- Avatar + text -->
+<div class="flex items-center gap-3">
+    <flux:skeleton class="w-10 h-10 rounded-full" />
+    <div class="flex-1 space-y-2">
+        <flux:skeleton class="w-32 h-4" />
+        <flux:skeleton class="w-24 h-3" />
+    </div>
+</div>
+```
+
+### Loading States
+
+```blade
+@if($loading)
+    <flux:skeleton.group>
+        <flux:skeleton.line class="w-full h-8" />
+        <flux:skeleton.line class="w-3/4 h-4" />
+        <flux:skeleton.line class="w-5/6 h-4" />
+    </flux:skeleton.group>
+@else
+    <!-- Actual content -->
+@endif
+```
+
+---
+
+## Card
+
+Content cards:
+
+```blade
+<flux:card>
+    <flux:heading>Card Title</flux:heading>
+    <flux:text>Card content goes here.</flux:text>
+</flux:card>
+```
+
+<Note>
+  Feedback components help communicate system status and guide users through your application. Use them consistently to create a clear and predictable user experience.
+</Note>

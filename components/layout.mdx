@@ -1,0 +1,334 @@
+---
+title: Layout Components
+description: Structural components for building application layouts
+---
+
+Flux provides foundational layout components to structure your application's UI, including headers, sidebars, footers, and containers.
+
+## Header
+
+Application header with sticky positioning support:
+
+### Basic Usage
+
+```blade
+<flux:header>
+    <flux:brand href="/" logo="/logo.svg" />
+    
+    <div class="ml-auto flex items-center gap-4">
+        <flux:button href="/login">Login</flux:button>
+        <flux:button variant="primary" href="/signup">Sign Up</flux:button>
+    </div>
+</flux:header>
+```
+
+### Sticky Header
+
+Make the header stick to the top on scroll:
+
+```blade
+<flux:header sticky>
+    <flux:brand href="/" logo="/logo.svg" />
+    <flux:navbar>
+        <flux:navbar.item href="/products">Products</flux:navbar.item>
+        <flux:navbar.item href="/pricing">Pricing</flux:navbar.item>
+        <flux:navbar.item href="/docs">Docs</flux:navbar.item>
+    </flux:navbar>
+</flux:header>
+```
+
+### With Container
+
+Center content with max-width constraints:
+
+```blade
+<flux:header container>
+    <flux:brand href="/" logo="/logo.svg" />
+    <!-- Content will be centered with max-width -->
+</flux:header>
+```
+
+### Header Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `sticky` | `boolean` | `false` | Enable sticky positioning |
+| `container` | `boolean` | `false` | Wrap content in centered container |
+
+---
+
+## Sidebar
+
+Collapsible navigation sidebar for application layouts:
+
+### Basic Usage
+
+```blade
+<flux:sidebar>
+    <flux:sidebar.brand href="/" logo="/logo.svg" name="My App" />
+    
+    <flux:navlist>
+        <flux:navlist.item href="/dashboard" icon="home">Dashboard</flux:navlist.item>
+        <flux:navlist.item href="/projects" icon="folder">Projects</flux:navlist.item>
+        <flux:navlist.item href="/team" icon="users">Team</flux:navlist.item>
+    </flux:navlist>
+    
+    <flux:spacer />
+    
+    <flux:navlist>
+        <flux:navlist.item href="/settings" icon="cog">Settings</flux:navlist.item>
+    </flux:navlist>
+</flux:sidebar>
+```
+
+### Collapsible Sidebar
+
+Make the sidebar collapsible on desktop:
+
+```blade
+<flux:sidebar collapsible>
+    <flux:sidebar.toggle />
+    
+    <flux:sidebar.brand href="/" logo="/logo.svg" />
+    
+    <flux:navlist>
+        <flux:navlist.item href="/dashboard" icon="home">Dashboard</flux:navlist.item>
+        <flux:navlist.item href="/projects" icon="folder">Projects</flux:navlist.item>
+    </flux:navlist>
+</flux:sidebar>
+```
+
+### Mobile Collapsible
+
+Collapse on mobile devices only:
+
+```blade
+<flux:sidebar collapsible="mobile">
+    <!-- Automatically hidden on mobile, toggleable via sidebar.toggle -->
+    <flux:navlist>
+        <flux:navlist.item href="/dashboard" icon="home">Dashboard</flux:navlist.item>
+    </flux:navlist>
+</flux:sidebar>
+```
+
+### Sticky Sidebar
+
+Make sidebar content scroll independently:
+
+```blade
+<flux:sidebar sticky>
+    <!-- Sidebar content scrolls while page content scrolls independently -->
+</flux:sidebar>
+```
+
+### Sidebar Components
+
+#### Sidebar Brand
+
+```blade
+<flux:sidebar.brand 
+    href="/" 
+    logo="/logo.svg" 
+    name="My Application"
+/>
+```
+
+#### Sidebar Toggle
+
+```blade
+<flux:sidebar.toggle />
+```
+
+Displays a toggle button to collapse/expand the sidebar.
+
+#### Sidebar Navigation
+
+```blade
+<flux:sidebar.nav>
+    <flux:sidebar.item href="/dashboard" icon="home">Dashboard</flux:sidebar.item>
+    <flux:sidebar.item href="/analytics" icon="chart-bar">Analytics</flux:sidebar.item>
+</flux:sidebar.nav>
+```
+
+#### Sidebar Group
+
+Group related navigation items:
+
+```blade
+<flux:sidebar.group heading="Projects">
+    <flux:sidebar.item href="/projects/active">Active</flux:sidebar.item>
+    <flux:sidebar.item href="/projects/archived">Archived</flux:sidebar.item>
+</flux:sidebar.group>
+```
+
+#### Sidebar Collapse
+
+Collapsible navigation groups:
+
+```blade
+<flux:sidebar.collapse heading="Settings">
+    <flux:sidebar.item href="/settings/profile">Profile</flux:sidebar.item>
+    <flux:sidebar.item href="/settings/security">Security</flux:sidebar.item>
+    <flux:sidebar.item href="/settings/billing">Billing</flux:sidebar.item>
+</flux:sidebar.collapse>
+```
+
+### Sidebar Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `collapsible` | `boolean\|string` | `false` | Enable collapsing: `true`, `false`, or `mobile` |
+| `sticky` | `boolean` | `false` | Enable sticky positioning |
+
+---
+
+## Footer
+
+Application footer:
+
+### Basic Usage
+
+```blade
+<flux:footer>
+    <div class="text-sm text-zinc-500">
+        © 2024 My Company. All rights reserved.
+    </div>
+</flux:footer>
+```
+
+### With Container
+
+```blade
+<flux:footer container>
+    <div class="flex justify-between items-center">
+        <div class="text-sm text-zinc-500">
+            © 2024 My Company
+        </div>
+        <div class="flex gap-4">
+            <a href="/privacy" class="text-sm hover:underline">Privacy</a>
+            <a href="/terms" class="text-sm hover:underline">Terms</a>
+        </div>
+    </div>
+</flux:footer>
+```
+
+---
+
+## Container
+
+Centered content container with max-width:
+
+### Basic Usage
+
+```blade
+<flux:container>
+    <h1>Page Content</h1>
+    <p>This content is centered with a maximum width.</p>
+</flux:container>
+```
+
+### In Layouts
+
+```blade
+<flux:main>
+    <flux:container>
+        <flux:heading>Dashboard</flux:heading>
+        
+        <!-- Your page content -->
+    </flux:container>
+</flux:main>
+```
+
+The container applies:
+- Centered horizontal margins (`mx-auto`)
+- Maximum width of 1280px (`max-w-7xl`)
+- Responsive padding (`px-6 lg:px-8`)
+
+---
+
+## Complete Layout Example
+
+Here's a complete application layout combining all components:
+
+```blade
+<flux:layout>
+    <flux:sidebar collapsible="mobile" sticky>
+        <flux:sidebar.toggle />
+        
+        <flux:sidebar.brand 
+            href="/" 
+            logo="/logo.svg" 
+            name="My App"
+        />
+        
+        <flux:navlist>
+            <flux:navlist.item href="/dashboard" icon="home">Dashboard</flux:navlist.item>
+            <flux:navlist.item href="/projects" icon="folder">Projects</flux:navlist.item>
+            <flux:navlist.item href="/team" icon="users">Team</flux:navlist.item>
+        </flux:navlist>
+        
+        <flux:spacer />
+        
+        <flux:sidebar.profile />
+    </flux:sidebar>
+    
+    <flux:header container sticky>
+        <flux:sidebar.toggle class="lg:hidden" />
+        
+        <flux:navbar class="ml-auto">
+            <flux:button variant="ghost" icon="bell" />
+            <flux:dropdown position="bottom" align="end">
+                <flux:button variant="ghost">
+                    <img src="{{ auth()->user()->avatar }}" class="w-6 h-6 rounded-full" />
+                </flux:button>
+                <flux:menu>
+                    <flux:menu.item href="/profile">Profile</flux:menu.item>
+                    <flux:menu.item href="/settings">Settings</flux:menu.item>
+                    <flux:menu.separator />
+                    <flux:menu.item wire:click="logout">Logout</flux:menu.item>
+                </flux:menu>
+            </flux:dropdown>
+        </flux:navbar>
+    </flux:header>
+    
+    <flux:main>
+        <flux:container>
+            {{ $slot }}
+        </flux:container>
+    </flux:main>
+    
+    <flux:footer container>
+        <div class="text-sm text-zinc-500">
+            © 2024 My Company. All rights reserved.
+        </div>
+    </flux:footer>
+</flux:layout>
+```
+
+---
+
+## Grid Areas
+
+Layout components use CSS Grid areas for positioning:
+
+```css
+[grid-area:header]   /* Header */
+[grid-area:sidebar]  /* Sidebar */
+[grid-area:main]     /* Main content */
+[grid-area:footer]   /* Footer */
+```
+
+This ensures proper layout flow and responsive behavior.
+
+---
+
+## Responsive Design
+
+- Sidebars automatically adjust for mobile viewports
+- Container padding adapts to screen size
+- Headers can be made sticky for better navigation
+- Mobile-first approach with desktop enhancements
+
+<Note>
+  Use `flux:layout` as the root component to ensure proper grid layout for headers, sidebars, main content, and footers.
+</Note>

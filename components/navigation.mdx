@@ -1,0 +1,311 @@
+---
+title: Navigation Components
+description: Components for building navigation menus and breadcrumbs
+---
+
+Flux provides versatile navigation components for building horizontal navbars, vertical navigation lists, context menus, and breadcrumb trails.
+
+## Navbar
+
+Horizontal navigation bar for top-level navigation:
+
+### Basic Usage
+
+```blade
+<flux:navbar>
+    <flux:navbar.item href="/dashboard" current>Dashboard</flux:navbar.item>
+    <flux:navbar.item href="/projects">Projects</flux:navbar.item>
+    <flux:navbar.item href="/team">Team</flux:navbar.item>
+    <flux:navbar.item href="/settings">Settings</flux:navbar.item>
+</flux:navbar>
+```
+
+### With Icons
+
+```blade
+<flux:navbar>
+    <flux:navbar.item href="/dashboard" icon="home">Dashboard</flux:navbar.item>
+    <flux:navbar.item href="/inbox" icon="inbox">Inbox</flux:navbar.item>
+    <flux:navbar.item href="/calendar" icon="calendar">Calendar</flux:navbar.item>
+</flux:navbar>
+```
+
+### With Badges
+
+```blade
+<flux:navbar>
+    <flux:navbar.item href="/dashboard">Dashboard</flux:navbar.item>
+    <flux:navbar.item href="/inbox">
+        Inbox
+        <flux:navbar.badge>12</flux:navbar.badge>
+    </flux:navbar.item>
+    <flux:navbar.item href="/tasks">
+        Tasks
+        <flux:navbar.badge>3</flux:navbar.badge>
+    </flux:navbar.item>
+</flux:navbar>
+```
+
+### Scrollable Navbar
+
+Enable horizontal scrolling for many items:
+
+```blade
+<flux:navbar scrollable>
+    <flux:navbar.item href="/overview">Overview</flux:navbar.item>
+    <flux:navbar.item href="/analytics">Analytics</flux:navbar.item>
+    <flux:navbar.item href="/reports">Reports</flux:navbar.item>
+    <flux:navbar.item href="/insights">Insights</flux:navbar.item>
+    <!-- More items... -->
+</flux:navbar>
+```
+
+### Navbar Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `scrollable` | `boolean` | `false` | Enable horizontal scrolling |
+
+---
+
+## Navlist
+
+Vertical navigation list, commonly used in sidebars:
+
+### Basic Usage
+
+```blade
+<flux:navlist>
+    <flux:navlist.item href="/dashboard" icon="home" current>Dashboard</flux:navlist.item>
+    <flux:navlist.item href="/projects" icon="folder">Projects</flux:navlist.item>
+    <flux:navlist.item href="/team" icon="users">Team</flux:navlist.item>
+    <flux:navlist.item href="/settings" icon="cog">Settings</flux:navlist.item>
+</flux:navlist>
+```
+
+### With Groups
+
+```blade
+<flux:navlist>
+    <flux:navlist.group heading="Workspace">
+        <flux:navlist.item href="/dashboard" icon="home">Dashboard</flux:navlist.item>
+        <flux:navlist.item href="/projects" icon="folder">Projects</flux:navlist.item>
+    </flux:navlist.group>
+    
+    <flux:separator />
+    
+    <flux:navlist.group heading="Settings">
+        <flux:navlist.item href="/profile" icon="user">Profile</flux:navlist.item>
+        <flux:navlist.item href="/preferences" icon="cog">Preferences</flux:navlist.item>
+    </flux:navlist.group>
+</flux:navlist>
+```
+
+### With Badges
+
+```blade
+<flux:navlist>
+    <flux:navlist.item href="/inbox" icon="inbox">
+        Inbox
+        <flux:navlist.badge>12</flux:navlist.badge>
+    </flux:navlist.item>
+    <flux:navlist.item href="/drafts" icon="document">
+        Drafts
+        <flux:navlist.badge>3</flux:navlist.badge>
+    </flux:navlist.item>
+</flux:navlist>
+```
+
+### Current State
+
+Highlight the active page:
+
+```blade
+<flux:navlist>
+    <flux:navlist.item href="/dashboard" :current="request()->is('dashboard')">Dashboard</flux:navlist.item>
+    <flux:navlist.item href="/projects" :current="request()->is('projects')">Projects</flux:navlist.item>
+</flux:navlist>
+```
+
+---
+
+## Navmenu
+
+Contextual navigation menu for dropdowns and popovers:
+
+### Basic Usage
+
+```blade
+<flux:dropdown>
+    <flux:button icon:trailing="chevron-down">Actions</flux:button>
+    
+    <flux:navmenu>
+        <flux:navmenu.item icon="pencil">Edit</flux:navmenu.item>
+        <flux:navmenu.item icon="document-duplicate">Duplicate</flux:navmenu.item>
+        <flux:navmenu.item icon="archive-box">Archive</flux:navmenu.item>
+        <flux:navmenu.separator />
+        <flux:navmenu.item icon="trash" variant="danger">Delete</flux:navmenu.item>
+    </flux:navmenu>
+</flux:dropdown>
+```
+
+### With Keyboard Shortcuts
+
+```blade
+<flux:navmenu>
+    <flux:navmenu.item icon="pencil" kbd="E">Edit</flux:navmenu.item>
+    <flux:navmenu.item icon="document-duplicate" kbd="D">Duplicate</flux:navmenu.item>
+    <flux:navmenu.item icon="trash" kbd="⌘⌫">Delete</flux:navmenu.item>
+</flux:navmenu>
+```
+
+### With Links
+
+```blade
+<flux:navmenu>
+    <flux:navmenu.item href="/profile" icon="user">View Profile</flux:navmenu.item>
+    <flux:navmenu.item href="/settings" icon="cog">Settings</flux:navmenu.item>
+    <flux:navmenu.separator />
+    <flux:navmenu.item href="/logout" icon="arrow-right-on-rectangle">Sign Out</flux:navmenu.item>
+</flux:navmenu>
+```
+
+### With Livewire Actions
+
+```blade
+<flux:navmenu>
+    <flux:navmenu.item wire:click="edit" icon="pencil">Edit</flux:navmenu.item>
+    <flux:navmenu.item wire:click="duplicate" icon="document-duplicate">Duplicate</flux:navmenu.item>
+    <flux:navmenu.separator />
+    <flux:navmenu.item wire:click="delete" wire:confirm="Are you sure?" icon="trash" variant="danger">
+        Delete
+    </flux:navmenu.item>
+</flux:navmenu>
+```
+
+### Navmenu Separator
+
+```blade
+<flux:navmenu>
+    <flux:navmenu.item icon="eye">View</flux:navmenu.item>
+    <flux:navmenu.item icon="pencil">Edit</flux:navmenu.item>
+    
+    <flux:navmenu.separator />
+    
+    <flux:navmenu.item icon="trash" variant="danger">Delete</flux:navmenu.item>
+</flux:navmenu>
+```
+
+---
+
+## Breadcrumbs
+
+Breadcrumb navigation for hierarchical page structure:
+
+### Basic Usage
+
+```blade
+<flux:breadcrumbs>
+    <flux:breadcrumbs.item href="/">Home</flux:breadcrumbs.item>
+    <flux:breadcrumbs.item href="/projects">Projects</flux:breadcrumbs.item>
+    <flux:breadcrumbs.item href="/projects/website">Website</flux:breadcrumbs.item>
+    <flux:breadcrumbs.item current>Settings</flux:breadcrumbs.item>
+</flux:breadcrumbs>
+```
+
+### With Icons
+
+```blade
+<flux:breadcrumbs>
+    <flux:breadcrumbs.item href="/" icon="home">Home</flux:breadcrumbs.item>
+    <flux:breadcrumbs.item href="/projects" icon="folder">Projects</flux:breadcrumbs.item>
+    <flux:breadcrumbs.item current>Current Page</flux:breadcrumbs.item>
+</flux:breadcrumbs>
+```
+
+### Dynamic Breadcrumbs
+
+```blade
+<flux:breadcrumbs>
+    <flux:breadcrumbs.item href="/">Home</flux:breadcrumbs.item>
+    
+    @foreach($breadcrumbs as $breadcrumb)
+        <flux:breadcrumbs.item 
+            :href="$breadcrumb['url'] ?? null" 
+            :current="$loop->last"
+        >
+            {{ $breadcrumb['title'] }}
+        </flux:breadcrumbs.item>
+    @endforeach
+</flux:breadcrumbs>
+```
+
+---
+
+## Complete Navigation Examples
+
+### Application Header with Navbar
+
+```blade
+<flux:header container>
+    <flux:brand href="/" logo="/logo.svg" />
+    
+    <flux:navbar class="ml-8">
+        <flux:navbar.item href="/dashboard" current>Dashboard</flux:navbar.item>
+        <flux:navbar.item href="/projects">Projects</flux:navbar.item>
+        <flux:navbar.item href="/team">Team</flux:navbar.item>
+    </flux:navbar>
+    
+    <div class="ml-auto">
+        <flux:dropdown position="bottom" align="end">
+            <flux:button variant="ghost" size="sm">
+                <img src="{{ auth()->user()->avatar }}" class="w-6 h-6 rounded-full" />
+            </flux:button>
+            <flux:navmenu>
+                <flux:navmenu.item href="/profile" icon="user">Profile</flux:navmenu.item>
+                <flux:navmenu.item href="/settings" icon="cog">Settings</flux:navmenu.item>
+                <flux:navmenu.separator />
+                <flux:navmenu.item wire:click="logout" icon="arrow-right-on-rectangle">Sign Out</flux:navmenu.item>
+            </flux:navmenu>
+        </flux:dropdown>
+    </div>
+</flux:header>
+```
+
+### Sidebar Navigation
+
+```blade
+<flux:sidebar>
+    <flux:sidebar.brand href="/" logo="/logo.svg" name="My App" />
+    
+    <flux:navlist>
+        <flux:navlist.item href="/dashboard" icon="home" current>Dashboard</flux:navlist.item>
+        <flux:navlist.item href="/inbox" icon="inbox">
+            Inbox
+            <flux:navlist.badge>5</flux:navlist.badge>
+        </flux:navlist.item>
+        <flux:navlist.item href="/projects" icon="folder">Projects</flux:navlist.item>
+        <flux:navlist.item href="/team" icon="users">Team</flux:navlist.item>
+    </flux:navlist>
+    
+    <flux:separator />
+    
+    <flux:navlist>
+        <flux:navlist.item href="/settings" icon="cog">Settings</flux:navlist.item>
+    </flux:navlist>
+</flux:sidebar>
+```
+
+---
+
+## Accessibility
+
+- Navigation items include proper ARIA attributes
+- Current page is indicated with `aria-current="page"`
+- Keyboard navigation is fully supported
+- Focus states are clearly visible
+- Screen reader friendly labels
+
+<Note>
+  Use the `current` attribute to highlight the active navigation item. This can be set manually or computed using Laravel's `request()->is()` helper.
+</Note>

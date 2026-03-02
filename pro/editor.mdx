@@ -1,0 +1,245 @@
+---
+title: 'Rich Text Editor'
+description: 'Rich text editor with formatting controls'
+icon: 'pen-to-square'
+---
+
+<Note>
+  The Editor component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+## Overview
+
+The Editor component provides a powerful WYSIWYG rich text editing experience. Built for content creation, it includes formatting tools, media embedding, and seamless Livewire integration for real-time content updates.
+
+## Basic Usage
+
+Create a simple rich text editor:
+
+```blade
+<flux:editor
+    wire:model="content"
+    placeholder="Start writing..."
+/>
+```
+
+## With Toolbar
+
+Customize available formatting options:
+
+```blade
+<flux:editor
+    wire:model="post.content"
+    :tools="['bold', 'italic', 'underline', 'link', 'heading', 'list']"
+/>
+```
+
+## Full Featured
+
+Enable all editing capabilities:
+
+```blade
+<flux:editor
+    wire:model="article.body"
+    :tools="[
+        'heading',
+        'bold',
+        'italic',
+        'underline',
+        'strike',
+        'link',
+        'bulletList',
+        'orderedList',
+        'blockquote',
+        'codeBlock',
+        'image',
+        'table',
+        'horizontalRule',
+    ]"
+    placeholder="Write your article..."
+/>
+```
+
+## With Character Limit
+
+Set a maximum character count:
+
+```blade
+<flux:editor
+    wire:model="bio"
+    :max-length="500"
+    show-count
+/>
+```
+
+## Read-only Mode
+
+Display formatted content without editing:
+
+```blade
+<flux:editor
+    :content="$post->content"
+    readonly
+/>
+```
+
+## Custom Styling
+
+Apply custom editor styling:
+
+```blade
+<flux:editor
+    wire:model="content"
+    class="min-h-[400px]"
+    :editor-class="'prose prose-lg max-w-none'"
+/>
+```
+
+## With Image Upload
+
+Enable image uploading:
+
+```blade
+<flux:editor
+    wire:model="content"
+    :tools="['image']"
+    wire:upload-image="handleImageUpload"
+/>
+```
+
+```php
+public function handleImageUpload($image)
+{
+    $path = $image->store('editor-images', 'public');
+    
+    return Storage::url($path);
+}
+```
+
+## Markdown Support
+
+Enable markdown shortcuts:
+
+```blade
+<flux:editor
+    wire:model="content"
+    markdown
+/>
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Blog Posts" icon="newspaper">
+    Create and edit blog articles with full formatting capabilities.
+  </Card>
+  
+  <Card title="Documentation" icon="book">
+    Write technical documentation with code blocks and structured content.
+  </Card>
+  
+  <Card title="Email Composition" icon="envelope">
+    Compose formatted emails with links, lists, and basic styling.
+  </Card>
+  
+  <Card title="Product Descriptions" icon="tag">
+    Create rich product descriptions with images and formatting.
+  </Card>
+</CardGroup>
+
+## Features
+
+### Text Formatting
+
+- **Bold**, _italic_, underline, and strikethrough
+- Headings (H1 through H6)
+- Text alignment (left, center, right, justify)
+- Text and background colors
+- Font size adjustments
+
+### Content Blocks
+
+- Bullet and numbered lists
+- Blockquotes
+- Code blocks with syntax highlighting
+- Horizontal rules
+- Tables
+
+### Media & Links
+
+- Image embedding and upload
+- Video embedding (YouTube, Vimeo)
+- Link insertion with title attributes
+- File attachments
+
+### Productivity
+
+- Markdown shortcuts (type `#` for heading, `*` for list)
+- Keyboard shortcuts (Cmd/Ctrl + B for bold, etc.)
+- Undo/redo functionality
+- Word and character count
+- Auto-save drafts
+
+## Toolbar Configuration
+
+Available toolbar options:
+
+| Tool | Description |
+|------|-------------|
+| `heading` | Heading levels 1-6 |
+| `bold` | Bold text |
+| `italic` | Italic text |
+| `underline` | Underline text |
+| `strike` | Strikethrough text |
+| `link` | Insert/edit links |
+| `bulletList` | Bullet point list |
+| `orderedList` | Numbered list |
+| `blockquote` | Blockquote styling |
+| `codeBlock` | Code block |
+| `image` | Insert image |
+| `video` | Embed video |
+| `table` | Insert table |
+| `horizontalRule` | Horizontal divider |
+| `textAlign` | Text alignment |
+| `textColor` | Text color |
+| `highlight` | Background color |
+
+## Keyboard Shortcuts
+
+- **Cmd/Ctrl + B** - Bold
+- **Cmd/Ctrl + I** - Italic
+- **Cmd/Ctrl + U** - Underline
+- **Cmd/Ctrl + K** - Insert link
+- **Cmd/Ctrl + Z** - Undo
+- **Cmd/Ctrl + Shift + Z** - Redo
+- **Cmd/Ctrl + Shift + 7** - Ordered list
+- **Cmd/Ctrl + Shift + 8** - Bullet list
+
+## Output Format
+
+The editor stores content as HTML:
+
+```php
+// In your component
+public $content; // Stores HTML output
+
+// Display in your view
+{!! $content !!}
+
+// Or sanitize first
+{!! clean($content) !!}
+```
+
+## Accessibility
+
+The Editor component includes:
+
+- ARIA labels for toolbar buttons
+- Keyboard navigation throughout
+- Screen reader support
+- Focus management
+- Semantic HTML output
+
+<Tip>
+  For security, always sanitize editor output before displaying it. Consider using packages like HTMLPurifier or Laravel's built-in `clean()` helper.
+</Tip>

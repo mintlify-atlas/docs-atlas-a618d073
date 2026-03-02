@@ -1,0 +1,119 @@
+---
+title: Component Overview
+description: Explore the complete collection of free UI components included in Flux
+---
+
+Flux includes a comprehensive set of beautifully designed UI components built specifically for Laravel and Livewire applications. All components are fully accessible, customizable, and ready to use in your projects.
+
+## Form Components
+
+Build robust forms with Flux's extensive form component library:
+
+- **[Input](/components/form-inputs#input)** - Text inputs with support for icons, validation states, and loading indicators
+- **[Textarea](/components/form-inputs#textarea)** - Multi-line text inputs with configurable resize behavior
+- **[Select](/components/form-inputs#select)** - Native select dropdowns with custom styling
+- **[Checkbox](/components/form-inputs#checkbox)** - Checkboxes with multiple variants (default, buttons, cards, pills)
+- **[Radio](/components/form-inputs#radio)** - Radio buttons with multiple variants (default, buttons, cards, pills, segmented)
+- **[Switch](/components/form-inputs#switch)** - Toggle switches for boolean values
+- **[Field](/components/form-inputs#field)** - Form field wrapper with label, description, and error handling
+- **[Fieldset](/components/form-inputs#fieldset)** - Group related form controls together
+
+## Action Components
+
+Components for user interactions and actions:
+
+- **[Button](/components/button)** - Versatile button component with multiple variants and sizes
+- **[Dropdown](/components/dropdown)** - Dropdown menus and popovers
+- **[Tooltip](/components/tooltip)** - Contextual tooltips for additional information
+
+## Layout Components
+
+Structure your application with these layout primitives:
+
+- **[Header](/components/layout#header)** - Application header with optional sticky positioning
+- **[Sidebar](/components/layout#sidebar)** - Collapsible navigation sidebar
+- **[Footer](/components/layout#footer)** - Application footer
+- **[Container](/components/layout#container)** - Centered content container with max-width
+- **[Separator](/components/separator)** - Visual dividers between content sections
+
+## Navigation Components
+
+Help users navigate through your application:
+
+- **[Navbar](/components/navigation#navbar)** - Horizontal navigation bar
+- **[Navlist](/components/navigation#navlist)** - Vertical navigation list
+- **[Navmenu](/components/navigation#navmenu)** - Contextual navigation menu
+- **[Breadcrumbs](/components/navigation#breadcrumbs)** - Breadcrumb navigation trails
+
+## Feedback Components
+
+Provide feedback and status information to users:
+
+- **[Badge](/components/feedback#badge)** - Status badges and labels with color variants
+- **[Callout](/components/feedback#callout)** - Highlighted messages and alerts
+- **[Modal](/components/feedback#modal)** - Dialog overlays and flyouts
+- **[Skeleton](/components/feedback#skeleton)** - Loading placeholders with animation
+
+## Display Components
+
+Components for displaying content:
+
+- **[Icon](/components/icon)** - 300+ Heroicons with multiple variants
+- **[Card](/components/feedback#card)** - Content cards
+
+## Getting Started
+
+All Flux components follow consistent patterns:
+
+1. **Livewire Integration** - Seamless `wire:model` binding
+2. **Validation** - Automatic error state handling
+3. **Dark Mode** - Built-in dark mode support
+4. **Accessibility** - ARIA attributes and keyboard navigation
+5. **Customization** - Easily override styles with Tailwind classes
+
+<Note>
+  Each component supports standard HTML attributes and Alpine.js directives alongside Flux-specific props.
+</Note>
+
+## Component Patterns
+
+### Basic Usage
+
+All Flux components use the `flux:` namespace:
+
+```blade
+<flux:button>Click me</flux:button>
+```
+
+### Attributes
+
+Pass attributes like any HTML element:
+
+```blade
+<flux:button variant="primary" size="sm" icon="check">
+    Save Changes
+</flux:button>
+```
+
+### Slots
+
+Many components support named slots for flexible composition:
+
+```blade
+<flux:callout icon="information-circle">
+    <flux:callout.heading>Important Note</flux:callout.heading>
+    <flux:callout.text>Please review the changes carefully.</flux:callout.text>
+</flux:callout>
+```
+
+### Livewire Binding
+
+Form components work seamlessly with Livewire:
+
+```blade
+<flux:input wire:model="name" placeholder="Enter your name" />
+```
+
+## Next Steps
+
+Explore individual component documentation to learn about specific props, variants, and usage examples.

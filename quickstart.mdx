@@ -1,80 +1,374 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quick Start
+description: Get up and running with Flux components in minutes
 ---
 
-## Get started in three steps
+# Quick Start
 
-Get your documentation site running locally and make your first customization.
-
-### Step 1: Set up your local environment
-
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
+This guide will walk you through creating your first Flux components. You'll learn the basics of using Flux's component syntax and build a simple interface.
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  Make sure you've completed the [installation guide](/installation) before proceeding.
 </Note>
+
+## Your First Component
+
+Let's start with the most basic Flux component - a button.
+
+### Create a Livewire Component
+
+<Steps>
+  <Step title="Generate a Livewire component">
+    ```bash
+    php artisan make:livewire Welcome
+    ```
+  </Step>
+
+  <Step title="Add Flux components to the view">
+    Open `resources/views/livewire/welcome.blade.php` and replace the contents:
+
+    ```blade resources/views/livewire/welcome.blade.php
+    <div class="p-8">
+        <flux:heading size="lg">Welcome to Flux</flux:heading>
+        <flux:subheading>Build beautiful interfaces with Livewire</flux:subheading>
+
+        <div class="mt-4">
+            <flux:button>Get Started</flux:button>
+        </div>
+    </div>
+    ```
+  </Step>
+
+  <Step title="View your component">
+    Add a route to test your component in `routes/web.php`:
+
+    ```php routes/web.php
+    Route::get('/welcome', App\Livewire\Welcome::class);
+    ```
+
+    Visit `/welcome` in your browser to see your first Flux components!
+  </Step>
+</Steps>
+
+## Button Variants
+
+Flux buttons come with multiple variants and sizes. Let's explore them:
+
+```blade
+<div class="flex gap-2">
+    <flux:button variant="primary">Primary</flux:button>
+    <flux:button variant="outline">Outline</flux:button>
+    <flux:button variant="filled">Filled</flux:button>
+    <flux:button variant="ghost">Ghost</flux:button>
+    <flux:button variant="danger">Danger</flux:button>
+</div>
+```
+
+### Button Sizes
+
+```blade
+<div class="flex items-center gap-2">
+    <flux:button size="xs">Extra Small</flux:button>
+    <flux:button size="sm">Small</flux:button>
+    <flux:button size="base">Base</flux:button>
+</div>
+```
+
+### Buttons with Icons
+
+Flux includes hundreds of Heroicons out of the box:
+
+```blade
+<div class="flex gap-2">
+    <flux:button icon="plus">Create</flux:button>
+    <flux:button icon="trash" variant="danger">Delete</flux:button>
+    <flux:button icon="arrow-path">Refresh</flux:button>
+    <flux:button icon="cog" variant="ghost" square />
+</div>
+```
+
+<Tip>
+  Use the `square` attribute to create icon-only buttons. The button automatically becomes square when there's no text content.
+</Tip>
+
+## Working with Forms
+
+Let's build a simple form with Flux components:
+
+<Steps>
+  <Step title="Create a form component">
+    ```bash
+    php artisan make:livewire UserForm
+    ```
+  </Step>
+
+  <Step title="Add properties to the class">
+    ```php app/Livewire/UserForm.php
+    <?php
+
+    namespace App\Livewire;
+
+    use Livewire\Component;
+
+    class UserForm extends Component
+    {
+        public $name = '';
+        public $email = '';
+
+        public function save()
+        {
+            $this->validate([
+                'name' => 'required|min:3',
+                'email' => 'required|email',
+            ]);
+
+            // Save logic here...
+            session()->flash('message', 'User saved successfully!');
+        }
+
+        public function render()
+        {
+            return view('livewire.user-form');
+        }
+    }
+    ```
+  </Step>
+
+  <Step title="Build the form view">
+    ```blade resources/views/livewire/user-form.blade.php
+    <div class="max-w-md mx-auto p-8">
+        <flux:heading size="lg">Create User</flux:heading>
+        <flux:subheading>Enter the user details below</flux:subheading>
+
+        <flux:separator class="my-6" />
+
+        <form wire:submit="save" class="space-y-6">
+            <flux:field>
+                <flux:label>Name</flux:label>
+                <flux:input wire:model="name" placeholder="John Doe" />
+                <flux:error name="name" />
+            </flux:field>
+
+            <flux:field>
+                <flux:label>Email</flux:label>
+                <flux:input type="email" wire:model="email" placeholder="[email protected]" />
+                <flux:error name="email" />
+            </flux:field>
+
+            <div class="flex gap-2">
+                <flux:button type="submit" variant="primary">Save User</flux:button>
+                <flux:button type="button" variant="ghost">Cancel</flux:button>
+            </div>
+        </form>
+
+        @if (session()->has('message'))
+            <div class="mt-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <flux:text class="text-green-800 dark:text-green-200">
+                    {{ session('message') }}
+                </flux:text>
+            </div>
+        @endif
+    </div>
+    ```
+  </Step>
+</Steps>
+
+<Note>
+  Flux automatically shows loading states on buttons when they have `type="submit"` or `wire:click` attributes. The button will display a loading spinner when the form is submitting.
+</Note>
+
+## Input Features
+
+Flux inputs come with powerful built-in features:
+
+### Icons and Addons
+
+```blade
+<flux:input icon="magnifying-glass" placeholder="Search..." />
+<flux:input icon="user" icon-trailing="chevron-down" placeholder="Select user" />
+```
+
+### Loading States
+
+```blade
+<flux:input wire:model.live="search" placeholder="Search..." />
+```
+
+The input automatically shows a loading indicator when Livewire is processing the request.
+
+### Input Variants
+
+```blade
+<flux:input variant="outline" placeholder="Outline (default)" />
+<flux:input variant="filled" placeholder="Filled variant" />
+```
+
+## Dropdowns and Tooltips
+
+Create interactive dropdowns and tooltips:
+
+### Basic Dropdown
+
+```blade
+<flux:dropdown position="bottom" align="start">
+    <flux:button icon-trailing="chevron-down">Options</flux:button>
+
+    <flux:menu>
+        <flux:menu.item icon="pencil">Edit</flux:menu.item>
+        <flux:menu.item icon="document-duplicate">Duplicate</flux:menu.item>
+        <flux:separator variant="subtle" />
+        <flux:menu.item icon="trash" variant="danger">Delete</flux:menu.item>
+    </flux:menu>
+</flux:dropdown>
+```
+
+### Tooltips
+
+```blade
+<flux:button tooltip="Click to refresh the page" icon="arrow-path" square />
+```
+
+<Tip>
+  Tooltips work on any Flux component. Just add the `tooltip` attribute with your message.
+</Tip>
+
+## Separators
+
+Use separators to divide content:
+
+### Horizontal Separator
+
+```blade
+<flux:separator />
+<flux:separator variant="subtle" />
+```
+
+### Separator with Text
+
+```blade
+<flux:separator text="OR" />
+```
+
+### Vertical Separator
+
+```blade
+<div class="flex items-center gap-4 h-12">
+    <flux:button>Save</flux:button>
+    <flux:separator vertical />
+    <flux:button variant="ghost">Cancel</flux:button>
+</div>
+```
+
+## Icons
+
+Flux includes the complete Heroicons library. Use icons standalone or within other components:
+
+```blade
+<flux:icon icon="check-circle" variant="micro" />
+<flux:icon icon="star" variant="mini" />
+<flux:icon icon="heart" variant="outline" class="size-8" />
+```
+
+### Available Icon Variants
+
+- `micro` - 16×16px (default)
+- `mini` - 20×20px
+- `outline` - 24×24px outline style
+
+<Card title="Browse All Icons" icon="grid" href="https://heroicons.com">
+  View the complete Heroicons library to find the perfect icon
+</Card>
+
+## Building a Complete Example
+
+Let's combine what we've learned into a complete example:
+
+```blade resources/views/livewire/dashboard.blade.php
+<div class="max-w-4xl mx-auto p-8">
+    <div class="flex items-start justify-between">
+        <div>
+            <flux:heading size="xl">Dashboard</flux:heading>
+            <flux:subheading>Welcome back! Here's what's happening.</flux:subheading>
+        </div>
+
+        <flux:dropdown position="bottom" align="end">
+            <flux:button icon="cog" variant="ghost" square />
+
+            <flux:menu>
+                <flux:menu.item icon="user">Profile</flux:menu.item>
+                <flux:menu.item icon="cog-6-tooth">Settings</flux:menu.item>
+                <flux:separator variant="subtle" />
+                <flux:menu.item icon="arrow-right-on-rectangle">Sign out</flux:menu.item>
+            </flux:menu>
+        </flux:dropdown>
+    </div>
+
+    <flux:separator class="my-6" />
+
+    <div class="grid gap-6 md:grid-cols-3">
+        <div class="p-6 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700">
+            <div class="flex items-center gap-3">
+                <flux:icon icon="users" class="size-6 text-blue-500" />
+                <flux:heading>Total Users</flux:heading>
+            </div>
+            <flux:text class="mt-2 text-2xl font-semibold">1,234</flux:text>
+        </div>
+
+        <div class="p-6 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700">
+            <div class="flex items-center gap-3">
+                <flux:icon icon="chart-bar" class="size-6 text-green-500" />
+                <flux:heading>Revenue</flux:heading>
+            </div>
+            <flux:text class="mt-2 text-2xl font-semibold">$12,345</flux:text>
+        </div>
+
+        <div class="p-6 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700">
+            <div class="flex items-center gap-3">
+                <flux:icon icon="shopping-cart" class="size-6 text-purple-500" />
+                <flux:heading>Orders</flux:heading>
+            </div>
+            <flux:text class="mt-2 text-2xl font-semibold">456</flux:text>
+        </div>
+    </div>
+
+    <div class="mt-6 flex gap-2">
+        <flux:button variant="primary" icon="plus">New Item</flux:button>
+        <flux:button variant="outline" icon="arrow-path">Refresh</flux:button>
+    </div>
+</div>
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Explore Components" icon="grid" href="https://fluxui.dev">
+    Browse the full component library with interactive examples
+  </Card>
+  <Card title="Upgrade to Pro" icon="star" href="https://fluxui.dev/pricing">
+    Unlock advanced components like tables, modals, and form elements
+  </Card>
+  <Card title="Customization" icon="palette" href="/customization">
+    Learn how to customize Flux components for your design system
+  </Card>
+  <Card title="Dark Mode" icon="moon" href="/dark-mode">
+    Implement dark mode in your Flux application
+  </Card>
+</CardGroup>
+
+## Tips and Best Practices
+
+<Tip>
+  Use `wire:model.live` on inputs for real-time validation and reactivity. Flux will automatically show loading indicators during requests.
+</Tip>
+
+<Tip>
+  Combine Flux components with Tailwind utility classes for custom layouts and spacing. All Flux components accept standard HTML attributes.
+</Tip>
+
+<Tip>
+  Use the `tooltip` attribute on any interactive element to provide helpful context to users.
+</Tip>
+
+<Warning>
+  Always validate user input on the server side, even when using client-side validation. Flux components integrate seamlessly with Laravel's validation.
+</Warning>

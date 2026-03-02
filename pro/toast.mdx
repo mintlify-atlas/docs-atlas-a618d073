@@ -1,0 +1,361 @@
+---
+title: 'Toast Notifications'
+description: 'Non-intrusive notifications and alerts'
+icon: 'bell'
+---
+
+<Note>
+  The Toast component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+## Overview
+
+The Toast component provides elegant, non-intrusive notifications that appear temporarily to inform users of actions, updates, or errors. They automatically dismiss after a set duration while allowing users to dismiss them manually if needed.
+
+## Basic Usage
+
+Show a simple toast notification:
+
+```blade
+<!-- Add toast container to your layout -->
+<flux:toaster />
+```
+
+```php
+// In your Livewire component
+public function save()
+{
+    // Save logic...
+    
+    $this->toast('Profile updated successfully!');
+}
+```
+
+## Toast Types
+
+Show different notification types:
+
+```php
+// Success
+$this->toast('Task completed!', 'success');
+
+// Error
+$this->toast('Something went wrong', 'error');
+
+// Warning
+$this->toast('Are you sure?', 'warning');
+
+// Info
+$this->toast('New message received', 'info');
+```
+
+## With Title and Description
+
+Show detailed notifications:
+
+```php
+$this->toast(
+    title: 'Email sent',
+    description: 'Your message was delivered to john@example.com',
+    type: 'success'
+);
+```
+
+## Custom Duration
+
+Control how long toasts stay visible:
+
+```php
+// Show for 5 seconds (default is 3)
+$this->toast('This stays longer', duration: 5000);
+
+// Show indefinitely (user must dismiss)
+$this->toast('Important message', duration: null);
+```
+
+## With Actions
+
+Add action buttons to toasts:
+
+```php
+$this->toast(
+    title: 'File deleted',
+    description: 'Invoice.pdf was moved to trash',
+    action: [
+        'label' => 'Undo',
+        'method' => 'undoDelete',
+    ]
+);
+```
+
+```blade
+public function undoDelete()
+{
+    // Restore the file
+    $this->toast('File restored', 'success');
+}
+```
+
+## Positioning
+
+Control where toasts appear:
+
+```blade
+<!-- Top right (default) -->
+<flux:toaster position="top-right" />
+
+<!-- Top center -->
+<flux:toaster position="top-center" />
+
+<!-- Bottom right -->
+<flux:toaster position="bottom-right" />
+
+<!-- Bottom center -->
+<flux:toaster position="bottom-center" />
+
+<!-- Bottom left -->
+<flux:toaster position="bottom-left" />
+```
+
+## Promise Toasts
+
+Show loading, success, and error states:
+
+```php
+public function processPayment()
+{
+    $this->toastPromise(
+        promise: fn() => $this->payment->process(),
+        loading: 'Processing payment...',
+        success: 'Payment successful!',
+        error: 'Payment failed. Please try again.',
+    );
+}
+```
+
+## Custom Styling
+
+Customize toast appearance:
+
+```php
+$this->toast(
+    title: 'Custom toast',
+    description: 'With custom colors',
+    type: 'success',
+    class: 'bg-gradient-to-r from-green-400 to-blue-500',
+);
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Form Feedback" icon="check">
+    Confirm successful form submissions or show validation errors.
+  </Card>
+  
+  <Card title="Background Tasks" icon="spinner">
+    Notify users when background processes complete.
+  </Card>
+  
+  <Card title="Real-time Updates" icon="bolt">
+    Show notifications for new messages, mentions, or activity.
+  </Card>
+  
+  <Card title="Undo Actions" icon="rotate-left">
+    Provide quick undo functionality for destructive actions.
+  </Card>
+</CardGroup>
+
+## Features
+
+### Notification Types
+
+- Success (green) - Confirm successful actions
+- Error (red) - Show errors and failures
+- Warning (yellow) - Display warnings and cautions
+- Info (blue) - Provide neutral information
+
+### Behavior
+
+- Auto-dismiss after duration
+- Manual dismiss with close button
+- Pause on hover
+- Queue multiple toasts
+- Stack limit to prevent overflow
+
+### Customization
+
+- Configurable position
+- Custom duration
+- Action buttons
+- Icons and images
+- Custom styling
+
+### Accessibility
+
+- ARIA live regions for screen readers
+- Keyboard dismissal (Escape key)
+- Focus management
+- Reduced motion support
+
+## Advanced Examples
+
+### File Upload Progress
+
+```php
+public function uploadFile()
+{
+    $toastId = $this->toastLoading('Uploading file...');
+    
+    try {
+        // Upload logic
+        $this->file->store('uploads');
+        
+        $this->updateToast(
+            id: $toastId,
+            title: 'Upload complete',
+            description: 'File uploaded successfully',
+            type: 'success'
+        );
+    } catch (Exception $e) {
+        $this->updateToast(
+            id: $toastId,
+            title: 'Upload failed',
+            description: $e->getMessage(),
+            type: 'error'
+        );
+    }
+}
+```
+
+### Multi-step Process
+
+```php
+public function importData()
+{
+    $toastId = $this->toastLoading('Importing data...');
+    
+    $this->updateToast($toastId, title: 'Validating data...');
+    $this->validate();
+    
+    $this->updateToast($toastId, title: 'Processing records...');
+    $this->processRecords();
+    
+    $this->updateToast($toastId, title: 'Finalizing import...');
+    $this->finalize();
+    
+    $this->updateToast(
+        id: $toastId,
+        title: 'Import complete',
+        description: "Imported {$this->recordCount} records",
+        type: 'success'
+    );
+}
+```
+
+### Undo Destructive Action
+
+```php
+public function deleteItem($id)
+{
+    $item = Item::find($id);
+    $item->delete();
+    
+    $this->toast(
+        title: 'Item deleted',
+        description: "{$item->name} was deleted",
+        type: 'success',
+        duration: 5000,
+        action: [
+            'label' => 'Undo',
+            'method' => 'restoreItem',
+            'params' => [$id],
+        ]
+    );
+}
+
+public function restoreItem($id)
+{
+    Item::withTrashed()->find($id)->restore();
+    $this->toast('Item restored', 'success');
+}
+```
+
+### Batch Operations
+
+```php
+public function bulkDelete($ids)
+{
+    $count = count($ids);
+    
+    Item::whereIn('id', $ids)->delete();
+    
+    $this->toast(
+        title: "Deleted {$count} items",
+        description: 'Items were moved to trash',
+        type: 'success',
+        action: [
+            'label' => 'Undo all',
+            'method' => 'restoreMultiple',
+            'params' => [$ids],
+        ]
+    );
+}
+```
+
+## Best Practices
+
+### Message Content
+
+- Keep messages concise and action-oriented
+- Use present tense ("Saved" not "Saving")
+- Include specific details when helpful
+- Avoid technical jargon
+
+### Timing
+
+- Success messages: 3-4 seconds
+- Errors: 5-6 seconds or indefinite
+- Info: 4-5 seconds
+- Messages with actions: Longer or indefinite
+
+### Frequency
+
+- Don't overwhelm users with too many toasts
+- Combine related notifications when possible
+- Limit stack to 3-4 visible toasts
+- Use a notification center for important persistent messages
+
+### Placement
+
+- Top-right for general notifications
+- Top-center for critical alerts
+- Bottom for less urgent updates
+- Consider user's reading direction and UI layout
+
+## Integration with Livewire Events
+
+```php
+// Emit from any component
+$this->dispatch('toast', 
+    title: 'Action completed',
+    type: 'success'
+);
+
+// Listen in your layout
+<flux:toaster wire:on="toast" />
+```
+
+## Accessibility
+
+Toasts are fully accessible:
+
+- ARIA live regions announce content to screen readers
+- Color is not the only indicator (icons included)
+- Keyboard dismissal support
+- Respects prefers-reduced-motion
+- Adequate color contrast ratios
+
+<Tip>
+  For critical errors that require user action, consider using a modal dialog instead of a toast. Toasts work best for confirmations and non-critical updates.
+</Tip>

@@ -1,0 +1,283 @@
+---
+title: Blade Directives
+description: API reference for Flux Blade directives
+---
+
+Flux provides custom Blade directives for rendering assets and managing component scope.
+
+## Asset Directives
+
+### @fluxScripts
+
+Render the Flux JavaScript assets.
+
+```blade
+@fluxScripts
+```
+
+**With options:**
+
+```blade
+@fluxScripts(['nonce' => csp_nonce()])
+```
+
+<ParamField path="options" type="array" default="[]">
+  Configuration options
+  
+  **Options:**
+  - `nonce` (string): CSP nonce value for the script tag
+</ParamField>
+
+**Output:**
+
+```html
+<script src="/flux/flux.js?id=abc123" data-navigate-once></script>
+```
+
+**Behavior:**
+- Forces Livewire asset injection
+- In production (`app.debug = false`): Serves minified version
+- In development: Serves unminified version
+- Automatically detects Flux Pro vs Flux Lite
+- Includes `data-navigate-once` for Livewire navigation
+
+**Example:**
+
+```blade
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- ... -->
+</head>
+<body>
+    {{ $slot }}
+
+    @fluxScripts
+</body>
+</html>
+```
+
+### @fluxAppearance
+
+Render inline styles and scripts for dark mode support.
+
+```blade
+@fluxAppearance
+```
+
+**With options:**
+
+```blade
+@fluxAppearance(['nonce' => csp_nonce()])
+```
+
+<ParamField path="options" type="array" default="[]">
+  Configuration options
+  
+  **Options:**
+  - `nonce` (string): CSP nonce value for inline style and script tags
+</ParamField>
+
+**Output:**
+
+```html
+<style>
+    :root.dark {
+        color-scheme: dark;
+    }
+</style>
+<script>
+    window.Flux = {
+        applyAppearance (appearance) {
+            // Dark mode management logic
+        }
+    }
+
+    window.Flux.applyAppearance(window.localStorage.getItem('flux.appearance') || 'system')
+</script>
+```
+
+**Features:**
+- Sets `color-scheme: dark` for proper scrollbar styling in dark mode
+- Provides `window.Flux.applyAppearance()` JavaScript API
+- Supports `'light'`, `'dark'`, and `'system'` modes
+- Persists preference to `localStorage` (except system mode)
+- Applies saved preference immediately to prevent flash
+
+**Example:**
+
+```blade
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    @fluxAppearance
+</head>
+<body>
+    {{ $slot }}
+    
+    @fluxScripts
+</body>
+</html>
+```
+
+**JavaScript API:**
+
+```javascript
+// Change appearance mode
+window.Flux.applyAppearance('dark');   // Force dark mode
+window.Flux.applyAppearance('light');  // Force light mode
+window.Flux.applyAppearance('system'); // Use system preference
+```
+
+## Scope Management Directives
+
+Flux includes directives for managing Blade component scope. These are primarily for internal use but are documented for completeness.
+
+### @blaze
+
+Mark a section as "pure" Blade (no-op in Flux).
+
+```blade
+@blaze
+```
+
+This directive does nothing in Flux. It's provided for compatibility with Blaze (if installed).
+
+### @pure
+
+Legacy alias for `@blaze` (deprecated in Blaze v1.0).
+
+```blade
+@pure
+```
+
+Provided for backwards compatibility with published components or custom icons.
+
+### @unblaze
+
+Temporarily restore component scope.
+
+```blade
+@unblaze($variables)
+    <!-- Scope with $variables available -->
+@endunblaze
+```
+
+<ParamField path="variables" type="array" required>
+  Variables to make available in the scope
+</ParamField>
+
+**Example:**
+
+```blade
+@unblaze(['user' => $user, 'post' => $post])
+    <p>{{ $user->name }} wrote {{ $post->title }}</p>
+@endunblaze
+```
+
+## Usage Examples
+
+### Standard Layout
+
+```blade
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ config('app.name') }}</title>
+    
+    @vite(['resources/css/app.css'])
+    @fluxAppearance
+</head>
+<body>
+    {{ $slot }}
+    
+    @fluxScripts
+</body>
+</html>
+```
+
+### With Content Security Policy
+
+```blade
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self'; script-src 'self' 'nonce-{{ csp_nonce() }}'">
+    
+    @vite(['resources/css/app.css'])
+    @fluxAppearance(['nonce' => csp_nonce()])
+</head>
+<body>
+    {{ $slot }}
+    
+    @fluxScripts(['nonce' => csp_nonce()])
+</body>
+</html>
+```
+
+### Appearance Toggle Component
+
+```blade
+<flux:dropdown>
+    <flux:button>Theme</flux:button>
+    
+    <flux:menu>
+        <flux:menu.item wire:click="$dispatch('appearance', { mode: 'light' })">Light</flux:menu.item>
+        <flux:menu.item wire:click="$dispatch('appearance', { mode: 'dark' })">Dark</flux:menu.item>
+        <flux:menu.item wire:click="$dispatch('appearance', { mode: 'system' })">System</flux:menu.item>
+    </flux:menu>
+</flux:dropdown>
+
+<script>
+    window.addEventListener('appearance', (e) => {
+        window.Flux.applyAppearance(e.detail.mode);
+    });
+</script>
+```
+
+## Implementation Details
+
+The directives are registered in `FluxServiceProvider::boot()` and `AssetManager::registerAssetDirective()`:
+
+### @fluxScripts Implementation
+
+```php
+Blade::directive('fluxScripts', function ($expression) {
+    return <<<PHP
+    <?php app('livewire')->forceAssetInjection(); ?>
+    {!! app('flux')->scripts($expression) !!}
+    PHP;
+});
+```
+
+### @fluxAppearance Implementation
+
+```php
+Blade::directive('fluxAppearance', function ($expression) {
+    return <<<PHP
+    {!! app('flux')->fluxAppearance($expression) !!}
+    PHP;
+});
+```
+
+## Notes
+
+- **Placement:** `@fluxAppearance` should be in `<head>` to prevent flash of unstyled content
+- **Placement:** `@fluxScripts` should be at the end of `<body>` after your content
+- **CSP:** Both directives support `nonce` for Content Security Policy compliance
+- **Caching:** Generated script tags include version hashes for cache busting
+- **Navigation:** Scripts include `data-navigate-once` for Livewire navigation support
+
+## Related
+
+- [AssetManager](/api/asset-manager) - Underlying asset management
+- [FluxManager](/api/flux-manager) - Core manager methods
+- [Flux Facade](/api/flux-facade) - Facade interface

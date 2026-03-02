@@ -1,0 +1,230 @@
+---
+title: 'Command Palette'
+description: 'Keyboard-driven command palette interface'
+icon: 'terminal'
+---
+
+<Note>
+  The Command component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+## Overview
+
+The Command palette component provides a powerful, keyboard-driven interface for quick navigation and actions. Inspired by modern tools like VS Code and Raycast, it allows users to quickly search and execute commands without leaving the keyboard.
+
+## Basic Usage
+
+Create a simple command palette:
+
+```blade
+<flux:command wire:model="showCommand">
+    <flux:command.input placeholder="Type a command..." />
+    
+    <flux:command.list>
+        <flux:command.item wire:click="navigateToDashboard">
+            <flux:icon name="home" />
+            Go to Dashboard
+        </flux:command.item>
+        
+        <flux:command.item wire:click="navigateToSettings">
+            <flux:icon name="gear" />
+            Open Settings
+        </flux:command.item>
+    </flux:command.list>
+</flux:command>
+```
+
+## With Search
+
+Implement real-time search filtering:
+
+```blade
+<flux:command wire:model="open" wire:search="handleSearch">
+    <flux:command.input placeholder="Search anything..." />
+    
+    <flux:command.list>
+        @forelse($results as $result)
+            <flux:command.item wire:click="execute('{{ $result->action }}')"
+                               :shortcut="$result->shortcut">
+                <flux:icon :name="$result->icon" />
+                {{ $result->label }}
+            </flux:command.item>
+        @empty
+            <flux:command.empty>
+                No results found.
+            </flux:command.empty>
+        @endforelse
+    </flux:command.list>
+</flux:command>
+```
+
+## Grouped Commands
+
+Organize commands into logical groups:
+
+```blade
+<flux:command wire:model="open">
+    <flux:command.input />
+    
+    <flux:command.list>
+        <flux:command.group heading="Navigation">
+            <flux:command.item>Dashboard</flux:command.item>
+            <flux:command.item>Projects</flux:command.item>
+            <flux:command.item>Team</flux:command.item>
+        </flux:command.group>
+        
+        <flux:command.group heading="Actions">
+            <flux:command.item>Create new project</flux:command.item>
+            <flux:command.item>Invite team member</flux:command.item>
+            <flux:command.item>Export data</flux:command.item>
+        </flux:command.group>
+        
+        <flux:command.group heading="Settings">
+            <flux:command.item>Preferences</flux:command.item>
+            <flux:command.item>Billing</flux:command.item>
+            <flux:command.item>Sign out</flux:command.item>
+        </flux:command.group>
+    </flux:command.list>
+</flux:command>
+```
+
+## With Keyboard Shortcuts
+
+Display and trigger keyboard shortcuts:
+
+```blade
+<flux:command wire:model="open">
+    <flux:command.input />
+    
+    <flux:command.list>
+        <flux:command.item wire:click="newProject" shortcut="⌘N">
+            <flux:icon name="plus" />
+            New Project
+        </flux:command.item>
+        
+        <flux:command.item wire:click="search" shortcut="⌘K">
+            <flux:icon name="magnifying-glass" />
+            Search
+        </flux:command.item>
+        
+        <flux:command.item wire:click="settings" shortcut="⌘,">
+            <flux:icon name="gear" />
+            Settings
+        </flux:command.item>
+    </flux:command.list>
+</flux:command>
+```
+
+## Global Trigger
+
+Open the command palette with a keyboard shortcut:
+
+```blade
+<flux:command
+    wire:model="showPalette"
+    trigger="cmd+k"
+>
+    <!-- Command palette content -->
+</flux:command>
+```
+
+## Recent Commands
+
+Show frequently used or recent commands:
+
+```blade
+<flux:command wire:model="open">
+    <flux:command.input />
+    
+    <flux:command.list>
+        @if($searchQuery === '')
+            <flux:command.group heading="Recent">
+                @foreach($recentCommands as $command)
+                    <flux:command.item wire:click="execute('{{ $command->id }}')"
+                                       :icon="$command->icon">
+                        {{ $command->label }}
+                    </flux:command.item>
+                @endforeach
+            </flux:command.group>
+        @endif
+        
+        <flux:command.group heading="All Commands">
+            @foreach($allCommands as $command)
+                <flux:command.item wire:click="execute('{{ $command->id }}')"
+                                   :icon="$command->icon">
+                    {{ $command->label }}
+                </flux:command.item>
+            @endforeach
+        </flux:command.group>
+    </flux:command.list>
+</flux:command>
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Quick Navigation" icon="compass">
+    Allow power users to navigate your application instantly without clicking through menus.
+  </Card>
+  
+  <Card title="Global Search" icon="magnifying-glass">
+    Search across users, projects, documents, and settings from anywhere in the app.
+  </Card>
+  
+  <Card title="Action Launcher" icon="rocket">
+    Trigger common actions like creating records, exporting data, or changing settings.
+  </Card>
+  
+  <Card title="Help Center" icon="circle-question">
+    Provide quick access to documentation, support, and common questions.
+  </Card>
+</CardGroup>
+
+## Features
+
+### Keyboard Navigation
+
+- Arrow keys to navigate through commands
+- Enter to execute selected command
+- Escape to close the palette
+- Configurable global keyboard shortcut (⌘K, Ctrl+K)
+
+### Smart Search
+
+- Fuzzy matching for typo tolerance
+- Real-time filtering as you type
+- Search across command labels and descriptions
+- Highlight matching characters
+
+### Performance
+
+- Lazy loading for large command lists
+- Efficient filtering and rendering
+- Minimal bundle size impact
+
+## Best Practices
+
+### Discoverability
+
+Make the command palette easy to find:
+- Show keyboard shortcut in your app header
+- Include it in your help documentation
+- Add visual hints for new users
+
+### Command Organization
+
+Group related commands together and use clear, action-oriented labels:
+- "Create new project" instead of "New"
+- "Search users" instead of "Find"
+- "Export to CSV" instead of "Export"
+
+### Progressive Enhancement
+
+The command palette should enhance, not replace, your existing UI:
+- Keep traditional navigation available
+- Use it as a power-user feature
+- Don't hide critical functionality behind it
+
+<Tip>
+  Command palettes are especially valuable in complex applications where users need to access many different features quickly. They significantly improve productivity for frequent users.
+</Tip>

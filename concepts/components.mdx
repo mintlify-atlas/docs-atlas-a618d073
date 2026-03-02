@@ -1,0 +1,293 @@
+---
+title: Components
+description: How Flux components work with Livewire and Laravel's Blade templating
+---
+
+Flux components are built as Laravel Blade anonymous components that integrate seamlessly with Livewire. Understanding how they work will help you use them effectively and customize them when needed.
+
+## Anonymous Components
+
+Flux uses Laravel's anonymous component system to provide a clean, intuitive syntax. Components are registered with the `flux` namespace prefix:
+
+```php
+// FluxServiceProvider.php:38-45
+public function bootComponentPath()
+{
+    if (file_exists(resource_path('views/flux'))) {
+        Blade::anonymousComponentPath(resource_path('views/flux'), 'flux');
+    }
+
+    Blade::anonymousComponentPath(__DIR__.'/../stubs/resources/views/flux', 'flux');
+}
+```
+
+This registration allows you to use components with the `<flux::` syntax:
+
+```blade
+<flux::button>Click me</flux::button>
+<flux::input wire:model="name" />
+<flux::modal name="confirm">
+    <!-- Modal content -->
+</flux::modal>
+```
+
+### Component Resolution Order
+
+Flux checks for components in this order:
+
+1. **Published components** in `resources/views/flux` (your customized versions)
+2. **Package components** from the Flux vendor directory
+
+This means when you publish a component, your local version takes precedence over the package version.
+
+## Component Architecture
+
+Flux components are structured as Blade templates with props, attributes, and slots:
+
+```blade
+<!-- Example from button/index.blade.php -->
+@props([
+    'variant' => 'outline',
+    'type' => 'button',
+    'loading' => null,
+    'size' => 'base',
+    'color' => null,
+])
+```
+
+### Props vs Attributes
+
+Components distinguish between:
+
+- **Props**: Declared parameters with default values
+- **Attributes**: Everything else passed to the component
+
+```blade
+<flux::button variant="solid" class="mt-4" wire:click="save">
+    Save
+</flux::button>
+```
+
+In this example:
+- `variant` is a prop (defined in @props)
+- `class` and `wire:click` are attributes
+
+## Custom Tag Compiler
+
+Flux includes a custom tag compiler that extends Blade's component compilation:
+
+```php
+// FluxServiceProvider.php:67-79
+public function bootTagCompiler()
+{
+    $compiler = new FluxTagCompiler(
+        app('blade.compiler')->getClassComponentAliases(),
+        app('blade.compiler')->getClassComponentNamespaces(),
+        app('blade.compiler')
+    );
+
+    app()->bind('flux.compiler', fn () => $compiler);
+
+    app('blade.compiler')->precompiler(function ($in) use ($compiler) {
+        return $compiler->compile($in);
+    });
+}
+```
+
+The custom compiler handles:
+
+- Self-closing Flux components (`<flux::icon icon="home" />`)
+- Opening and closing tags (`<flux::button>...</flux::button>`)
+- Inline slot attributes
+- Special attribute handling
+
+## Blade Directives
+
+Flux provides several Blade directives for asset inclusion:
+
+### @fluxAppearance
+
+Handles dark mode and appearance preferences:
+
+```blade
+<head>
+    @fluxAppearance
+</head>
+```
+
+This directive injects:
+- Dark mode CSS (color-scheme)
+- JavaScript to apply user's appearance preference from localStorage
+- System preference detection
+
+### @fluxScripts
+
+Includes the Flux JavaScript bundle:
+
+```blade
+<body>
+    @fluxScripts
+</body>
+```
+
+The directive:
+- Automatically forces Livewire asset injection
+- Loads the appropriate bundle (Pro or free version)
+- Uses versioned URLs for cache busting
+- Includes `data-navigate-once` for Livewire navigation
+
+## Component Registration
+
+The service provider registers Flux as a singleton:
+
+```php
+// FluxServiceProvider.php:12-19
+public function register(): void
+{
+    $this->app->alias(FluxManager::class, 'flux');
+    $this->app->singleton(FluxManager::class);
+
+    $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+    $loader->alias('Flux', \Flux\Flux::class);
+}
+```
+
+This allows you to access Flux anywhere in your application:
+
+```php
+// Using the Flux facade
+Flux::classes()->add('text-red-500');
+
+// Using the helper
+app('flux')->pro(); // Check if Pro is installed
+```
+
+## Livewire Integration
+
+Flux components work seamlessly with Livewire directives:
+
+```blade
+<flux::input 
+    wire:model.live="search"
+    placeholder="Search..."
+/>
+
+<flux::button wire:click="save" :loading="$isLoading">
+    Save Changes
+</flux::button>
+```
+
+### Auto-Loading States
+
+Many Flux components automatically detect Livewire loading states:
+
+```blade
+<!-- From input/index.blade.php:34-52 -->
+<!-- If wire:model.live is used, loading state is automatic -->
+<flux::input wire:model.live="name" />
+
+<!-- Or specify a custom loading target -->
+<flux::input wire:model="name" :loading="'saveName'" />
+```
+
+## Attribute Helpers
+
+Flux provides utility methods for working with component attributes:
+
+### splitAttributes
+
+Separate styling attributes from functional attributes:
+
+```php
+Flux::splitAttributes($attributes, ['class', 'style']);
+// Returns: [$stylingAttributes, $functionalAttributes]
+```
+
+### attributesAfter
+
+Extract attributes with a specific prefix:
+
+```php
+Flux::attributesAfter('input:', $attributes);
+// Extracts: input:class, input:disabled, etc.
+```
+
+### forwardedAttributes
+
+Forward attributes to nested components:
+
+```php
+Flux::forwardedAttributes($attributes, ['disabled', 'required']);
+```
+
+## Component Macros
+
+Flux extends Livewire components with helpful macros:
+
+```php
+// FluxServiceProvider.php:82-94
+public function bootMacros()
+{
+    app('view')::macro('getCurrentComponentData', function () {
+        return $this->currentComponentData;
+    });
+
+    ComponentAttributeBag::macro('pluck', function ($key, $default = null) {
+        $result = $this->get($key);
+        unset($this->attributes[$key]);
+        return $result ?? $default;
+    });
+}
+```
+
+### Modal Macro
+
+Control modals from Livewire components:
+
+```php
+// In your Livewire component
+public function showConfirmation()
+{
+    $this->modal('confirm')->show();
+}
+
+public function closeAll()
+{
+    $this->modals()->close();
+}
+```
+
+### Toast Macro
+
+Display toast notifications:
+
+```php
+public function saved()
+{
+    $this->toast(
+        text: 'Changes saved successfully',
+        heading: 'Success',
+        duration: 5000,
+        variant: 'success'
+    );
+}
+```
+
+## Version Compatibility
+
+Flux supports Laravel 12+ with automatic view hashing detection:
+
+```php
+// FluxManager.php:161-169
+public function componentExists($name)
+{
+    // Laravel 12+ uses xxh128 hashing for views
+    if (app()->version() >= 12) {
+        return app('view')->exists(hash('xxh128', 'flux') . '::' . $name);
+    }
+
+    return app('view')->exists(md5('flux') . '::' . $name);
+}
+```
+
+This ensures components work correctly across Laravel 10, 11, and 12+.

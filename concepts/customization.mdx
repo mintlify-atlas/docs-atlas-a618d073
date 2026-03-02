@@ -1,0 +1,444 @@
+---
+title: Customization
+description: Publishing and customizing Flux component templates
+---
+
+Flux components can be fully customized by publishing their Blade template files to your application. This gives you complete control over component markup, styling, and behavior.
+
+## Publishing Components
+
+Use the `flux:publish` command to publish component templates:
+
+```bash
+php artisan flux:publish
+```
+
+This command provides an interactive prompt to select which components to publish.
+
+### Interactive Selection
+
+The default mode allows you to search and select a single component:
+
+```bash
+php artisan flux:publish
+
+# You'll see a searchable list:
+# Which component would you like to publish?
+# > Button
+#   Dropdown
+#   Input
+#   Modal
+#   ...
+```
+
+### Multiple Components
+
+Publish multiple components at once:
+
+```bash
+php artisan flux:publish --multiple
+```
+
+This opens a multi-select prompt where you can choose several components.
+
+### Publish All Components
+
+Publish every component:
+
+```bash
+php artisan flux:publish --all
+```
+
+### Publish Specific Components
+
+Skip the prompt by specifying component names:
+
+```bash
+php artisan flux:publish button input modal
+```
+
+### Force Overwrite
+
+By default, the command won't overwrite existing published components. Use `--force` to overwrite:
+
+```bash
+php artisan flux:publish button --force
+```
+
+## How Publishing Works
+
+The publish command copies component files from the Flux package to your application:
+
+```php
+// PublishCommand.php:99-106
+(new Filesystem)->ensureDirectoryExists(resource_path('views/flux'));
+
+$components = $this->fluxComponents()
+    ->intersectByKeys(array_flip($componentNames))
+    ->values()
+    ->flatten()
+    ->unique()
+    ->all();
+
+foreach ($components as $component) {
+    $this->publishComponent($component);
+}
+```
+
+### Source Locations
+
+The command checks for components in multiple locations:
+
+```php
+// PublishCommand.php:139-145
+$sourceAsDirectory = __DIR__.'/../../stubs/resources/views/flux/'.$component;
+$sourceAsFile = __DIR__.'/../../stubs/resources/views/flux/'.$component.'.blade.php';
+$sourceAsProDirectory = __DIR__.'/../../../flux-pro/stubs/resources/views/flux/'.$component;
+$sourceAsProFile = __DIR__.'/../../../flux-pro/stubs/resources/views/flux/'.$component.'.blade.php';
+
+$destinationAsDirectory = resource_path('views/flux/'.$component);
+$destinationAsFile = resource_path('views/flux/'.$component.'.blade.php');
+```
+
+Components can be:
+- **Single files** (e.g., `separator.blade.php`)
+- **Directories** with multiple files (e.g., `button/index.blade.php`, `button/group.blade.php`)
+
+### Published Location
+
+All components are published to:
+
+```
+resources/views/flux/
+```
+
+For example:
+
+```
+resources/views/flux/
+├── button/
+│   ├── index.blade.php
+│   └── group.blade.php
+├── input/
+│   ├── index.blade.php
+│   ├── clearable.blade.php
+│   └── viewable.blade.php
+└── modal.blade.php
+```
+
+## Available Components
+
+The components available for publishing depend on your license:
+
+### Free Components
+
+```php
+// PublishCommand.php:24-51
+'free' => [
+    'Accent' => ['accent'],
+    'Avatar' => ['avatar'],
+    'Badge' => ['badge'],
+    'Brand' => ['brand'],
+    'Breadcrumbs' => ['breadcrumbs'],
+    'Button' => ['button'],
+    'Callout' => ['callout'],
+    'Card' => ['card'],
+    'Checkbox' => ['checkbox'],
+    'Dropdown' => ['dropdown', 'menu', 'navmenu'],
+    'Field' => ['fieldset', 'legend', 'field', 'label', 'description', 'error'],
+    'Heading' => ['heading', 'subheading', 'text', 'link'],
+    'Icon' => ['icon'],
+    'Input' => ['input'],
+    'Layout' => ['header', 'sidebar', 'aside', 'main', 'footer', 'container', 'brand', 'profile', 'spacer'],
+    'Modal' => ['modal'],
+    'Navbar' => ['navbar', 'navlist'],
+    'Otp' => ['otp'],
+    'Radio' => ['radio'],
+    'Separator' => ['separator'],
+    'Select' => ['select'],
+    'Skeleton' => ['skeleton'],
+    'Switch' => ['switch'],
+    'Textarea' => ['textarea'],
+    'Tooltip' => ['tooltip'],
+    'Typography' => ['heading', 'subheading', 'text', 'link'],
+]
+```
+
+### Pro Components
+
+```php
+// PublishCommand.php:53-74
+'pro' => [
+    'Accordion' => ['accordion'],
+    'Autocomplete' => ['autocomplete'],
+    'Calendar' => ['calendar'],
+    'Chart' => ['chart'],
+    'Checkbox' => ['checkbox'],
+    'Command' => ['command'],
+    'Composer' => ['composer'],
+    'Context' => ['context'],
+    'Date picker' => ['date-picker'],
+    'Editor' => ['editor'],
+    'File upload' => ['file-upload', 'file-item'],
+    'Kanban' => ['kanban'],
+    'Pillbox' => ['pillbox'],
+    'Popover' => ['popover'],
+    'Select' => ['select'],
+    'Slider' => ['slider'],
+    'Tabs' => ['tabs','tab'],
+    'Table' => ['table', 'pagination'],
+    'Time picker' => ['time-picker'],
+    'Toast' => ['toast'],
+]
+```
+
+Pro components are only available if `livewire/flux-pro` is installed:
+
+```php
+// PublishCommand.php:117-120
+protected function isFluxProInstalled(): bool
+{
+    return InstalledVersions::isInstalled('livewire/flux-pro');
+}
+```
+
+## Customization Examples
+
+### Example 1: Custom Button Styling
+
+Publish the button component:
+
+```bash
+php artisan flux:publish button
+```
+
+Edit `resources/views/flux/button/index.blade.php`:
+
+```blade
+@props([
+    'variant' => 'outline',
+    'type' => 'button',
+    'size' => 'base',
+])
+
+{{-- Add custom variant --}}
+@php
+$variantClasses = match($variant) {
+    'solid' => 'bg-blue-600 hover:bg-blue-700 text-white',
+    'outline' => 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50',
+    'custom-gradient' => 'bg-gradient-to-r from-purple-500 to-pink-500 text-white',
+    default => '',
+};
+@endphp
+
+<button {{ $attributes->merge(['class' => $variantClasses]) }}>
+    {{ $slot }}
+</button>
+```
+
+Now use your custom variant:
+
+```blade
+<flux::button variant="custom-gradient">
+    Gradient Button
+</flux::button>
+```
+
+### Example 2: Custom Input Behavior
+
+Publish the input component:
+
+```bash
+php artisan flux:publish input
+```
+
+Add auto-uppercase behavior in `resources/views/flux/input/index.blade.php`:
+
+```blade
+@props([
+    'type' => 'text',
+    'autoUppercase' => false,
+])
+
+<input 
+    type="{{ $type }}"
+    {{ $autoUppercase ? 'oninput="this.value = this.value.toUpperCase()"' : '' }}
+    {{ $attributes }}
+/>
+```
+
+Use the new prop:
+
+```blade
+<flux::input wire:model="code" :auto-uppercase="true" />
+```
+
+### Example 3: Custom Modal Sizes
+
+Publish the modal component:
+
+```bash
+php artisan flux:publish modal
+```
+
+Add more size options in `resources/views/flux/modal.blade.php`:
+
+```blade
+@props([
+    'name' => null,
+    'size' => 'md',
+])
+
+@php
+$sizeClasses = match($size) {
+    'xs' => 'max-w-xs',
+    'sm' => 'max-w-sm',
+    'md' => 'max-w-md',
+    'lg' => 'max-w-lg',
+    'xl' => 'max-w-xl',
+    '2xl' => 'max-w-2xl',
+    'full' => 'max-w-full mx-4',
+    default => 'max-w-md',
+};
+@endphp
+
+<div class="{{ $sizeClasses }}">
+    {{ $slot }}
+</div>
+```
+
+## Component Resolution Priority
+
+Flux checks for components in this order:
+
+1. **Published components** in `resources/views/flux/`
+2. **Package components** in `vendor/livewire/flux/stubs/resources/views/flux/`
+3. **Pro package components** in `vendor/livewire/flux-pro/stubs/resources/views/flux/`
+
+This is configured in the service provider:
+
+```php
+// FluxServiceProvider.php:38-45
+public function bootComponentPath()
+{
+    // Published components (checked first)
+    if (file_exists(resource_path('views/flux'))) {
+        Blade::anonymousComponentPath(resource_path('views/flux'), 'flux');
+    }
+
+    // Package components (fallback)
+    Blade::anonymousComponentPath(__DIR__.'/../stubs/resources/views/flux', 'flux');
+}
+```
+
+## Updating Published Components
+
+When you update Flux, your published components won't be automatically updated. You have two options:
+
+### Option 1: Republish with --force
+
+Overwrite your customizations:
+
+```bash
+php artisan flux:publish button --force
+```
+
+**Warning**: This will lose your customizations!
+
+### Option 2: Manual Merge
+
+1. Check the Flux changelog for component changes
+2. Compare your published version with the new package version
+3. Manually merge the changes
+
+```bash
+# Compare files
+diff resources/views/flux/button/index.blade.php vendor/livewire/flux/stubs/resources/views/flux/button/index.blade.php
+```
+
+## Best Practices
+
+### Only Publish What You Need
+
+Publishing all components makes updates harder. Only publish components you actually want to customize:
+
+```bash
+# Good - targeted publishing
+php artisan flux:publish button input
+
+# Less ideal - publishing everything
+php artisan flux:publish --all
+```
+
+### Version Control
+
+Commit published components to version control:
+
+```bash
+git add resources/views/flux/
+git commit -m "Customize Flux button component"
+```
+
+### Document Changes
+
+Add comments to published components:
+
+```blade
+{{-- CUSTOMIZED: Added custom-gradient variant --}}
+@php
+$variantClasses = match($variant) {
+    'custom-gradient' => 'bg-gradient-to-r from-purple-500 to-pink-500',
+    // ... rest of variants
+};
+@endphp
+```
+
+### Test Thoroughly
+
+After customizing:
+
+1. Test all component variants
+2. Test in both light and dark modes
+3. Test Livewire interactions
+4. Test responsive behavior
+
+### Keep Backup
+
+Before using `--force`, backup your customizations:
+
+```bash
+cp -r resources/views/flux resources/views/flux-backup
+php artisan flux:publish button --force
+```
+
+## Troubleshooting
+
+### Component Not Found
+
+If you get "Component not found" errors after publishing:
+
+1. Clear Blade cache: `php artisan view:clear`
+2. Verify file location: `resources/views/flux/[component-name]`
+3. Check file naming (must end in `.blade.php`)
+
+### Changes Not Appearing
+
+If your customizations aren't showing:
+
+1. Clear view cache: `php artisan view:clear`
+2. Hard refresh browser (Cmd+Shift+R or Ctrl+Shift+R)
+3. Verify you're editing the right file
+
+### Publish Command Fails
+
+If the command shows warnings:
+
+```bash
+Skipping [button]. File already exists: resources/views/flux/button/index.blade.php
+```
+
+Use `--force` to overwrite:
+
+```bash
+php artisan flux:publish button --force
+```

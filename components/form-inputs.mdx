@@ -1,0 +1,480 @@
+---
+title: Form Inputs
+description: Comprehensive form input components with validation and Livewire integration
+---
+
+Flux provides a complete set of form input components with built-in validation, error handling, and seamless Livewire integration.
+
+## Input
+
+The primary text input component with extensive features:
+
+### Basic Usage
+
+```blade
+<flux:input wire:model="name" placeholder="Enter your name" />
+```
+
+### Input Types
+
+```blade
+<flux:input type="text" placeholder="Text" />
+<flux:input type="email" placeholder="Email" />
+<flux:input type="password" placeholder="Password" />
+<flux:input type="number" placeholder="Number" />
+<flux:input type="date" />
+<flux:input type="time" />
+<flux:input type="url" placeholder="https://" />
+<flux:input type="tel" placeholder="Phone" />
+<flux:input type="search" placeholder="Search..." />
+```
+
+### With Icons
+
+```blade
+<!-- Leading icon -->
+<flux:input icon="magnifying-glass" placeholder="Search..." />
+<flux:input icon:leading="envelope" type="email" />
+
+<!-- Trailing icon -->
+<flux:input icon:trailing="information-circle" />
+```
+
+### Sizes
+
+```blade
+<flux:input size="xs" placeholder="Extra small" />
+<flux:input size="sm" placeholder="Small" />
+<flux:input size="base" placeholder="Base (default)" />
+```
+
+### Variants
+
+<Tabs>
+  <Tab title="Outline">
+    ```blade
+    <flux:input variant="outline" placeholder="Outlined input" />
+    ```
+    Default variant with visible border.
+  </Tab>
+  
+  <Tab title="Filled">
+    ```blade
+    <flux:input variant="filled" placeholder="Filled input" />
+    ```
+    Solid background variant.
+  </Tab>
+</Tabs>
+
+### Input Features
+
+#### Clearable
+
+Add a clear button:
+
+```blade
+<flux:input wire:model="search" clearable placeholder="Search..." />
+```
+
+#### Copyable
+
+Add a copy-to-clipboard button:
+
+```blade
+<flux:input value="secret-token-123" copyable readonly />
+```
+
+#### Viewable
+
+Toggle password visibility:
+
+```blade
+<flux:input type="password" viewable placeholder="Password" />
+```
+
+#### Expandable
+
+Expand to textarea on click:
+
+```blade
+<flux:input wire:model="description" expandable placeholder="Add description..." />
+```
+
+#### Loading State
+
+```blade
+<flux:input wire:model.live="search" loading placeholder="Search..." />
+```
+
+### Input Masking
+
+Format input values:
+
+```blade
+<!-- Phone number -->
+<flux:input mask="(999) 999-9999" placeholder="Phone" />
+
+<!-- Credit card -->
+<flux:input mask="9999 9999 9999 9999" placeholder="Card number" />
+
+<!-- Date -->
+<flux:input mask="99/99/9999" placeholder="MM/DD/YYYY" />
+
+<!-- Dynamic masking -->
+<flux:input mask:dynamic="$money($input)" placeholder="Amount" />
+```
+
+### Input Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `string` | `text` | Input type |
+| `variant` | `string` | `outline` | Visual variant: `outline`, `filled` |
+| `size` | `string` | `base` | Size: `xs`, `sm`, `base` |
+| `icon` | `string` | - | Leading icon name |
+| `icon:leading` | `string` | - | Leading icon (alternative) |
+| `icon:trailing` | `string` | - | Trailing icon name |
+| `clearable` | `boolean` | `false` | Show clear button |
+| `copyable` | `boolean` | `false` | Show copy button |
+| `viewable` | `boolean` | `false` | Show view toggle (password) |
+| `expandable` | `boolean` | `false` | Expand to textarea |
+| `loading` | `boolean` | auto | Show loading indicator |
+| `mask` | `string` | - | Input mask pattern |
+| `mask:dynamic` | `string` | - | Dynamic mask expression |
+| `invalid` | `boolean` | auto | Force invalid state |
+
+---
+
+## Textarea
+
+Multi-line text input:
+
+### Basic Usage
+
+```blade
+<flux:textarea wire:model="description" placeholder="Enter description..." />
+```
+
+### Rows
+
+```blade
+<flux:textarea rows="3" placeholder="3 rows" />
+<flux:textarea rows="6" placeholder="6 rows" />
+
+<!-- Auto-resize based on content -->
+<flux:textarea rows="auto" placeholder="Auto-resize" />
+```
+
+### Resize Behavior
+
+```blade
+<flux:textarea resize="vertical" placeholder="Vertical resize" />
+<flux:textarea resize="horizontal" placeholder="Horizontal resize" />
+<flux:textarea resize="both" placeholder="Both directions" />
+<flux:textarea resize="none" placeholder="No resize" />
+```
+
+---
+
+## Select
+
+Native select dropdown with custom styling:
+
+### Basic Usage
+
+```blade
+<flux:select wire:model="country">
+    <option value="">Select a country</option>
+    <option value="us">United States</option>
+    <option value="ca">Canada</option>
+    <option value="mx">Mexico</option>
+</flux:select>
+```
+
+### With Groups
+
+```blade
+<flux:select wire:model="category">
+    <optgroup label="Fruits">
+        <option value="apple">Apple</option>
+        <option value="banana">Banana</option>
+    </optgroup>
+    <optgroup label="Vegetables">
+        <option value="carrot">Carrot</option>
+        <option value="lettuce">Lettuce</option>
+    </optgroup>
+</flux:select>
+```
+
+---
+
+## Checkbox
+
+Checkbox inputs with multiple variants:
+
+### Basic Usage
+
+```blade
+<flux:checkbox wire:model="accepted">
+    I accept the terms
+</flux:checkbox>
+```
+
+### Variants
+
+<Tabs>
+  <Tab title="Default">
+    ```blade
+    <flux:checkbox wire:model="option1">Option 1</flux:checkbox>
+    <flux:checkbox wire:model="option2">Option 2</flux:checkbox>
+    ```
+    Standard checkbox appearance.
+  </Tab>
+  
+  <Tab title="Buttons">
+    ```blade
+    <flux:checkbox.group variant="buttons">
+        <flux:checkbox value="1">Option 1</flux:checkbox>
+        <flux:checkbox value="2">Option 2</flux:checkbox>
+        <flux:checkbox value="3">Option 3</flux:checkbox>
+    </flux:checkbox.group>
+    ```
+    Button-style checkboxes.
+  </Tab>
+  
+  <Tab title="Cards">
+    ```blade
+    <flux:checkbox.group variant="cards">
+        <flux:checkbox value="basic">Basic Plan</flux:checkbox>
+        <flux:checkbox value="pro">Pro Plan</flux:checkbox>
+        <flux:checkbox value="enterprise">Enterprise</flux:checkbox>
+    </flux:checkbox.group>
+    ```
+    Card-style checkboxes.
+  </Tab>
+  
+  <Tab title="Pills">
+    ```blade
+    <flux:checkbox.group variant="pills">
+        <flux:checkbox value="tag1">React</flux:checkbox>
+        <flux:checkbox value="tag2">Vue</flux:checkbox>
+        <flux:checkbox value="tag3">Laravel</flux:checkbox>
+    </flux:checkbox.group>
+    ```
+    Pill-style checkboxes.
+  </Tab>
+</Tabs>
+
+### Checkbox Group
+
+```blade
+<flux:checkbox.group wire:model="interests">
+    <flux:checkbox value="sports">Sports</flux:checkbox>
+    <flux:checkbox value="music">Music</flux:checkbox>
+    <flux:checkbox value="travel">Travel</flux:checkbox>
+</flux:checkbox.group>
+```
+
+---
+
+## Radio
+
+Radio button inputs with multiple variants:
+
+### Basic Usage
+
+```blade
+<flux:radio.group wire:model="plan">
+    <flux:radio value="free">Free</flux:radio>
+    <flux:radio value="pro">Pro</flux:radio>
+    <flux:radio value="enterprise">Enterprise</flux:radio>
+</flux:radio.group>
+```
+
+### Variants
+
+<Tabs>
+  <Tab title="Default">
+    ```blade
+    <flux:radio.group wire:model="size">
+        <flux:radio value="sm">Small</flux:radio>
+        <flux:radio value="md">Medium</flux:radio>
+        <flux:radio value="lg">Large</flux:radio>
+    </flux:radio.group>
+    ```
+  </Tab>
+  
+  <Tab title="Buttons">
+    ```blade
+    <flux:radio.group variant="buttons" wire:model="view">
+        <flux:radio value="list">List View</flux:radio>
+        <flux:radio value="grid">Grid View</flux:radio>
+    </flux:radio.group>
+    ```
+  </Tab>
+  
+  <Tab title="Cards">
+    ```blade
+    <flux:radio.group variant="cards" wire:model="plan">
+        <flux:radio value="starter">Starter - $9/mo</flux:radio>
+        <flux:radio value="professional">Professional - $29/mo</flux:radio>
+        <flux:radio value="enterprise">Enterprise - $99/mo</flux:radio>
+    </flux:radio.group>
+    ```
+  </Tab>
+  
+  <Tab title="Pills">
+    ```blade
+    <flux:radio.group variant="pills" wire:model="priority">
+        <flux:radio value="low">Low</flux:radio>
+        <flux:radio value="medium">Medium</flux:radio>
+        <flux:radio value="high">High</flux:radio>
+    </flux:radio.group>
+    ```
+  </Tab>
+  
+  <Tab title="Segmented">
+    ```blade
+    <flux:radio.group variant="segmented" wire:model="interval">
+        <flux:radio value="monthly">Monthly</flux:radio>
+        <flux:radio value="yearly">Yearly</flux:radio>
+    </flux:radio.group>
+    ```
+    iOS-style segmented control.
+  </Tab>
+</Tabs>
+
+---
+
+## Switch
+
+Toggle switch for boolean values:
+
+```blade
+<flux:switch wire:model="notifications">
+    Enable notifications
+</flux:switch>
+
+<flux:switch wire:model="darkMode">
+    Dark mode
+</flux:switch>
+```
+
+---
+
+## Field
+
+Wrapper component for form inputs with labels, descriptions, and errors:
+
+### Basic Usage
+
+```blade
+<flux:field>
+    <flux:label>Email Address</flux:label>
+    <flux:input type="email" wire:model="email" />
+    <flux:error name="email" />
+</flux:field>
+```
+
+### With Description
+
+```blade
+<flux:field>
+    <flux:label>Username</flux:label>
+    <flux:description>Choose a unique username for your profile.</flux:description>
+    <flux:input wire:model="username" />
+    <flux:error name="username" />
+</flux:field>
+```
+
+### Field Components
+
+#### Label
+
+```blade
+<flux:label>Full Name</flux:label>
+<flux:label required>Email (required)</flux:label>
+```
+
+#### Description
+
+```blade
+<flux:description>Helpful context about this field.</flux:description>
+```
+
+#### Error
+
+```blade
+<flux:error name="email" />
+```
+
+Automatically displays validation errors from Livewire.
+
+---
+
+## Fieldset
+
+Group related form fields:
+
+```blade
+<flux:fieldset>
+    <flux:legend>Personal Information</flux:legend>
+    
+    <flux:field>
+        <flux:label>First Name</flux:label>
+        <flux:input wire:model="firstName" />
+    </flux:field>
+    
+    <flux:field>
+        <flux:label>Last Name</flux:label>
+        <flux:input wire:model="lastName" />
+    </flux:field>
+</flux:fieldset>
+```
+
+---
+
+## Validation
+
+All form components automatically integrate with Laravel validation:
+
+```blade
+<flux:field>
+    <flux:label>Email</flux:label>
+    <flux:input type="email" wire:model="email" />
+    <flux:error name="email" />
+</flux:field>
+```
+
+Inputs automatically show error state when validation fails:
+
+```php
+class ContactForm extends Component
+{
+    public $email = '';
+    
+    protected $rules = [
+        'email' => 'required|email',
+    ];
+    
+    public function submit()
+    {
+        $this->validate();
+        // ...
+    }
+}
+```
+
+---
+
+## Accessibility
+
+- All inputs include proper `name` attributes
+- Labels are associated with inputs
+- Error messages use `aria-invalid` and proper ARIA attributes
+- Keyboard navigation works as expected
+- Required fields can be marked visually
+
+<Note>
+  Form components automatically extract the field name from `wire:model` for validation and error handling.
+</Note>

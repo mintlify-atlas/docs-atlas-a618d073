@@ -1,0 +1,264 @@
+---
+title: Installation
+description: Install Flux UI in your Laravel application with Livewire and Tailwind CSS v4
+---
+
+# Installation
+
+Flux requires a modern Laravel application with Livewire v3 and Tailwind CSS v4. Follow this guide to get Flux up and running in your project.
+
+## Prerequisites
+
+Before installing Flux, ensure your application meets these requirements:
+
+<CardGroup cols={3}>
+  <Card title="Laravel" icon="code">
+    Version 10.0 or higher
+  </Card>
+  <Card title="Livewire" icon="bolt">
+    Version 3.5.19 or higher
+  </Card>
+  <Card title="Tailwind CSS" icon="palette">
+    Version 4.0 or higher
+  </Card>
+</CardGroup>
+
+<Note>
+  If you don't have Tailwind CSS installed yet, follow the [Tailwind CSS installation guide for Laravel](https://tailwindcss.com/docs/guides/laravel) before proceeding.
+</Note>
+
+## Install Flux
+
+<Steps>
+  <Step title="Install via Composer">
+    Run the following command from your project's root directory:
+
+    ```bash
+    composer require livewire/flux
+    ```
+
+    This will install the Flux package and register the service provider automatically through Laravel's package auto-discovery.
+  </Step>
+
+  <Step title="Configure Tailwind CSS">
+    Add the Flux CSS imports to your `resources/css/app.css` file:
+
+    ```css resources/css/app.css
+    @import 'tailwindcss';
+    @import '../../vendor/livewire/flux/dist/flux.css';
+
+    @custom-variant dark (&:where(.dark, .dark *));
+    ```
+
+    <Note>
+      The `@custom-variant` directive enables Flux's dark mode support. This is required for proper dark mode functionality.
+    </Note>
+  </Step>
+
+  <Step title="Add Flux Directives to Your Layout">
+    Add the `@fluxAppearance` and `@fluxScripts` Blade directives to your layout file (e.g., `resources/views/layouts/app.blade.php`):
+
+    ```html resources/views/layouts/app.blade.php
+    <!DOCTYPE html>
+    <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{ config('app.name', 'Laravel') }}</title>
+
+        @fluxAppearance
+
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    </head>
+    <body>
+        {{ $slot }}
+
+        @fluxScripts
+    </body>
+    </html>
+    ```
+
+    <Info>
+      - `@fluxAppearance` should be placed in the `<head>` section
+      - `@fluxScripts` should be placed before the closing `</body>` tag
+    </Info>
+  </Step>
+</Steps>
+
+## Optional: Use the Inter Font
+
+Flux is designed to work beautifully with the [Inter font family](https://rsms.me/inter). While optional, we recommend using it for the best visual experience.
+
+<Steps>
+  <Step title="Add the Font Link">
+    Add the following to your layout's `<head>` section:
+
+    ```html
+    <head>
+        ...
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=inter:400,500,600&display=swap" rel="stylesheet" />
+        @fluxAppearance
+    </head>
+    ```
+  </Step>
+
+  <Step title="Configure Tailwind to Use Inter">
+    Update your `resources/css/app.css` to set Inter as the default sans-serif font:
+
+    ```css resources/css/app.css
+    @import 'tailwindcss';
+    @import '../../vendor/livewire/flux/dist/flux.css';
+
+    @custom-variant dark (&:where(.dark, .dark *));
+
+    @theme {
+        --font-sans: Inter, sans-serif;
+    }
+    ```
+  </Step>
+</Steps>
+
+## Verify Installation
+
+Create a simple test view to verify Flux is working:
+
+```blade resources/views/test-flux.blade.php
+<div class="p-8">
+    <flux:heading size="lg">Hello from Flux!</flux:heading>
+    <flux:separator class="my-4" />
+    <flux:button>Click me</flux:button>
+</div>
+```
+
+If you see a styled heading, separator, and button, Flux is successfully installed!
+
+## Upgrading Flux
+
+To ensure you have the latest version of Flux, regularly update your dependencies:
+
+```bash
+composer update livewire/flux
+```
+
+If you have Flux Pro installed:
+
+```bash
+composer update livewire/flux livewire/flux-pro
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Learn how to use Flux components in your application
+  </Card>
+  <Card title="Flux Pro" icon="star" href="#flux-pro-installation">
+    Install Flux Pro to unlock all components
+  </Card>
+</CardGroup>
+
+---
+
+## Flux Pro Installation
+
+If you've purchased a Flux Pro license, follow these additional steps to activate it:
+
+<Steps>
+  <Step title="Activate Your License">
+    Run the activation command:
+
+    ```bash
+    php artisan flux:activate
+    ```
+
+    You'll be prompted to enter:
+    - Your email address (the one used for purchase)
+    - Your license key
+  </Step>
+
+  <Step title="Verify Pro Installation">
+    Once activated, you'll have access to all Pro components including tables, modals, forms, and more.
+
+    Test a Pro component:
+
+    ```blade
+    <flux:modal name="example">
+        <flux:heading>Pro Component</flux:heading>
+        <flux:text>This is a Flux Pro modal!</flux:text>
+    </flux:modal>
+    ```
+  </Step>
+</Steps>
+
+<Note>
+  Your license key is tied to your domain. For development, the license will work on `localhost` and `.test` domains automatically.
+</Note>
+
+## Customizing Components
+
+To customize specific Flux components, you can publish their Blade view files:
+
+```bash
+php artisan flux:publish
+```
+
+You'll be prompted to select which components to publish. Published components will be placed in `resources/views/flux/` and will override the default Flux components.
+
+<Tip>
+  Only publish components you need to customize. This makes it easier to update Flux in the future without conflicts.
+</Tip>
+
+To publish all components at once:
+
+```bash
+php artisan flux:publish --all
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Components are not styled">
+    Make sure you've imported the Flux CSS file in your `resources/css/app.css`:
+
+    ```css
+    @import '../../vendor/livewire/flux/dist/flux.css';
+    ```
+
+    Also ensure you're running your build process (`npm run dev` or `npm run build`).
+  </Accordion>
+
+  <Accordion title="Dark mode is not working">
+    Ensure you've added the custom variant for dark mode:
+
+    ```css
+    @custom-variant dark (&:where(.dark, .dark *));
+    ```
+
+    Dark mode is triggered by adding the `dark` class to the `<html>` element.
+  </Accordion>
+
+  <Accordion title="JavaScript features are not working">
+    Make sure you've added the `@fluxScripts` directive before the closing `</body>` tag in your layout.
+  </Accordion>
+
+  <Accordion title="Livewire wire:model is not working">
+    Ensure you have Livewire v3.5.19 or higher installed:
+
+    ```bash
+    composer show livewire/livewire
+    ```
+
+    Update if necessary:
+
+    ```bash
+    composer update livewire/livewire
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## What's Next?
+
+<Card title="Quick Start Guide" icon="book" href="/quickstart">
+  Learn how to build your first components with Flux
+</Card>

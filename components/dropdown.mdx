@@ -1,0 +1,226 @@
+---
+title: Dropdown
+description: Dropdown menus and popovers for contextual actions and content
+---
+
+The Dropdown component provides a flexible container for creating dropdown menus, popovers, and contextual overlays with customizable positioning and alignment.
+
+## Basic Usage
+
+```blade
+<flux:dropdown>
+    <flux:button>Open Menu</flux:button>
+    
+    <flux:menu>
+        <flux:menu.item>Profile</flux:menu.item>
+        <flux:menu.item>Settings</flux:menu.item>
+        <flux:menu.separator />
+        <flux:menu.item>Logout</flux:menu.item>
+    </flux:menu>
+</flux:dropdown>
+```
+
+The first child element (typically a button) acts as the trigger, and subsequent content becomes the dropdown content.
+
+## Positioning
+
+Control where the dropdown appears relative to the trigger:
+
+<Tabs>
+  <Tab title="Bottom (Default)">
+    ```blade
+    <flux:dropdown position="bottom">
+        <flux:button>Bottom</flux:button>
+        <flux:menu>
+            <flux:menu.item>Option 1</flux:menu.item>
+            <flux:menu.item>Option 2</flux:menu.item>
+        </flux:menu>
+    </flux:dropdown>
+    ```
+  </Tab>
+  
+  <Tab title="Top">
+    ```blade
+    <flux:dropdown position="top">
+        <flux:button>Top</flux:button>
+        <flux:menu>
+            <flux:menu.item>Option 1</flux:menu.item>
+            <flux:menu.item>Option 2</flux:menu.item>
+        </flux:menu>
+    </flux:dropdown>
+    ```
+  </Tab>
+  
+  <Tab title="Left">
+    ```blade
+    <flux:dropdown position="left">
+        <flux:button>Left</flux:button>
+        <flux:menu>
+            <flux:menu.item>Option 1</flux:menu.item>
+            <flux:menu.item>Option 2</flux:menu.item>
+        </flux:menu>
+    </flux:dropdown>
+    ```
+  </Tab>
+  
+  <Tab title="Right">
+    ```blade
+    <flux:dropdown position="right">
+        <flux:button>Right</flux:button>
+        <flux:menu>
+            <flux:menu.item>Option 1</flux:menu.item>
+            <flux:menu.item>Option 2</flux:menu.item>
+        </flux:menu>
+    </flux:dropdown>
+    ```
+  </Tab>
+</Tabs>
+
+## Alignment
+
+Control how the dropdown aligns with the trigger element:
+
+```blade
+<!-- Align to start (default) -->
+<flux:dropdown align="start">
+    <flux:button>Start Aligned</flux:button>
+    <flux:menu>
+        <flux:menu.item>Option 1</flux:menu.item>
+    </flux:menu>
+</flux:dropdown>
+
+<!-- Align to center -->
+<flux:dropdown align="center">
+    <flux:button>Center Aligned</flux:button>
+    <flux:menu>
+        <flux:menu.item>Option 1</flux:menu.item>
+    </flux:menu>
+</flux:dropdown>
+
+<!-- Align to end -->
+<flux:dropdown align="end">
+    <flux:button>End Aligned</flux:button>
+    <flux:menu>
+        <flux:menu.item>Option 1</flux:menu.item>
+    </flux:menu>
+</flux:dropdown>
+```
+
+## With Icons
+
+Create rich dropdown menus with icons:
+
+```blade
+<flux:dropdown>
+    <flux:button icon:trailing="chevron-down">Actions</flux:button>
+    
+    <flux:menu>
+        <flux:menu.item icon="pencil">Edit</flux:menu.item>
+        <flux:menu.item icon="document-duplicate">Duplicate</flux:menu.item>
+        <flux:menu.item icon="archive-box">Archive</flux:menu.item>
+        <flux:menu.separator />
+        <flux:menu.item icon="trash" variant="danger">Delete</flux:menu.item>
+    </flux:menu>
+</flux:dropdown>
+```
+
+## Livewire Integration
+
+Control dropdown state with Livewire:
+
+```blade
+<flux:dropdown wire:model="showUserMenu">
+    <flux:button>User Menu</flux:button>
+    
+    <flux:menu>
+        <flux:menu.item wire:click="viewProfile">View Profile</flux:menu.item>
+        <flux:menu.item wire:click="editSettings">Settings</flux:menu.item>
+    </flux:menu>
+</flux:dropdown>
+```
+
+The component automatically adds the `.self` modifier to `wire:model` for proper event handling.
+
+## Custom Content
+
+Dropdowns aren't limited to menus - they can contain any content:
+
+```blade
+<flux:dropdown>
+    <flux:button>Color Picker</flux:button>
+    
+    <div class="p-4">
+        <div class="grid grid-cols-4 gap-2">
+            <button class="w-8 h-8 rounded bg-red-500"></button>
+            <button class="w-8 h-8 rounded bg-blue-500"></button>
+            <button class="w-8 h-8 rounded bg-green-500"></button>
+            <button class="w-8 h-8 rounded bg-yellow-500"></button>
+        </div>
+    </div>
+</flux:dropdown>
+```
+
+## User Profile Dropdown
+
+A common pattern for user menus:
+
+```blade
+<flux:dropdown position="bottom" align="end">
+    <flux:button variant="ghost" size="sm">
+        <img src="{{ auth()->user()->avatar }}" class="w-6 h-6 rounded-full" />
+    </flux:button>
+    
+    <flux:menu>
+        <flux:menu.item>Signed in as {{ auth()->user()->email }}</flux:menu.item>
+        <flux:menu.separator />
+        <flux:menu.item icon="user">Your Profile</flux:menu.item>
+        <flux:menu.item icon="cog">Settings</flux:menu.item>
+        <flux:menu.separator />
+        <flux:menu.item icon="arrow-right-on-rectangle" wire:click="logout">
+            Sign Out
+        </flux:menu.item>
+    </flux:menu>
+</flux:dropdown>
+```
+
+## Context Menu
+
+Create right-click context menus:
+
+```blade
+<div x-data="{ open: false }" @contextmenu.prevent="open = true">
+    <flux:dropdown x-model="open">
+        <div>Right-click me</div>
+        
+        <flux:menu>
+            <flux:menu.item icon="pencil">Edit</flux:menu.item>
+            <flux:menu.item icon="trash">Delete</flux:menu.item>
+        </flux:menu>
+    </flux:dropdown>
+</div>
+```
+
+## Props Reference
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `position` | `string` | `bottom` | Dropdown position: `top`, `bottom`, `left`, `right` |
+| `align` | `string` | `start` | Dropdown alignment: `start`, `center`, `end` |
+| `wire:model` | `string` | - | Livewire property for controlling open state |
+
+## Accessibility
+
+- Dropdown automatically manages focus when opened/closed
+- Pressing `Escape` closes the dropdown
+- Clicking outside closes the dropdown
+- Keyboard navigation within menu items is supported
+
+## Related Components
+
+- [Navigation Components](/components/navigation) - Menu items and navigation
+- [Tooltip](/components/tooltip) - Simple hover content
+- [Modal](/components/feedback#modal) - Full-page overlays
+
+<Note>
+  The Dropdown component uses the `<ui-dropdown>` custom element internally and automatically adds the `.self` modifier to `wire:model` for optimal performance.
+</Note>

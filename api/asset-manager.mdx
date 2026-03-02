@@ -1,0 +1,353 @@
+---
+title: AssetManager
+description: API reference for the AssetManager class that handles Flux asset generation and routing
+---
+
+The `AssetManager` class manages the generation and serving of Flux CSS and JavaScript assets. It handles both development and production builds, asset versioning, and CSP nonce support.
+
+## Overview
+
+The AssetManager is primarily used internally by Flux, but its static methods can be accessed directly:
+
+```php
+use Flux\AssetManager;
+
+// Generate script tags
+echo AssetManager::scripts();
+echo AssetManager::scripts(['nonce' => 'xyz123']);
+```
+
+## Methods
+
+### boot()
+
+Bootstrap the AssetManager.
+
+```php
+static function boot(): void
+```
+
+This method is called automatically by the service provider. It registers Blade directives and asset routes.
+
+### scripts()
+
+Generate the Flux JavaScript script tag.
+
+```php
+public static function scripts($options = []): string
+```
+
+<ParamField path="options" type="array" default="[]">
+  Configuration options
+  
+  **Options:**
+  - `nonce` (string): CSP nonce value for the script tag
+</ParamField>
+
+**Returns:** HTML script tag with proper versioning
+
+**Behavior:**
+- In production (`app.debug = false`): Serves minified version (`flux.min.js`)
+- In development (`app.debug = true`): Serves unminified version (`flux.js`)
+- Automatically detects Flux Pro vs Flux Lite
+- Includes `data-navigate-once` attribute for Livewire navigation
+- Adds version hash for cache busting
+
+**Example:**
+
+```php
+// Basic usage
+echo AssetManager::scripts();
+// Output: <script src="/flux/flux.js?id=abc123" data-navigate-once></script>
+
+// With CSP nonce
+echo AssetManager::scripts(['nonce' => 'xyz123']);
+// Output: <script src="/flux/flux.js?id=abc123" data-navigate-once nonce="xyz123"></script>
+```
+
+### fluxAppearance()
+
+Generate inline styles and scripts for dark mode support.
+
+```php
+public static function fluxAppearance($options = []): string
+```
+
+<ParamField path="options" type="array" default="[]">
+  Configuration options
+  
+  **Options:**
+  - `nonce` (string): CSP nonce value for inline style and script tags
+</ParamField>
+
+**Returns:** HTML string with inline styles and scripts
+
+**Features:**
+- Sets `color-scheme: dark` in dark mode for proper scrollbar styling
+- Provides `window.Flux.applyAppearance()` function
+- Supports three appearance modes: `'light'`, `'dark'`, `'system'`
+- Persists preference to `localStorage` (except for system mode)
+- Applies stored preference on page load to prevent flash
+
+**Example:**
+
+```php
+echo AssetManager::fluxAppearance();
+
+// With CSP nonce
+echo AssetManager::fluxAppearance(['nonce' => 'xyz123']);
+```
+
+**JavaScript API:**
+
+```javascript
+// Change appearance mode
+window.Flux.applyAppearance('dark');
+window.Flux.applyAppearance('light');
+window.Flux.applyAppearance('system');
+```
+
+### editorStyles()
+
+Generate the Flux editor CSS link tag (Flux Pro only).
+
+```php
+public static function editorStyles(): string
+```
+
+**Returns:** HTML link tag for editor CSS
+
+**Throws:** `\Exception` if Flux Pro is not installed
+
+**Example:**
+
+```php
+echo AssetManager::editorStyles();
+// Output: <link rel="stylesheet" href="/flux/editor.css?id=abc123">
+```
+
+### editorScripts()
+
+Generate the Flux editor JavaScript script tag (Flux Pro only).
+
+```php
+public static function editorScripts(): string
+```
+
+**Returns:** HTML script tag with `defer` attribute
+
+**Throws:** `\Exception` if Flux Pro is not installed
+
+**Behavior:**
+- In production: Serves `editor.min.js`
+- In development: Serves `editor.js`
+- Includes version hash for cache busting
+
+**Example:**
+
+```php
+echo AssetManager::editorScripts();
+// Output: <script src="/flux/editor.js?id=abc123" defer></script>
+```
+
+## Asset Routes
+
+The AssetManager registers the following routes:
+
+| Route | Description | Handler |
+|-------|-------------|--------|
+| `/flux/flux.js` | Development JavaScript | `fluxJs()` |
+| `/flux/flux.min.js` | Production JavaScript | `fluxMinJs()` |
+| `/flux/editor.css` | Editor CSS (Pro only) | `editorCss()` |
+| `/flux/editor.js` | Editor JavaScript (Pro only) | `editorJs()` |
+| `/flux/editor.min.js` | Editor JavaScript minified (Pro only) | `editorMinJs()` |
+
+### Route Handlers
+
+#### fluxJs()
+
+Serve the development Flux JavaScript.
+
+```php
+public function fluxJs(): Response
+```
+
+**Returns:** File response with caching headers
+
+#### fluxMinJs()
+
+Serve the production (minified) Flux JavaScript.
+
+```php
+public function fluxMinJs(): Response
+```
+
+**Returns:** File response with caching headers
+
+#### editorCss()
+
+Serve the Flux editor CSS.
+
+```php
+public function editorCss(): Response
+```
+
+**Returns:** File response with caching headers
+
+**Throws:** `\Exception` if Flux Pro is not installed
+
+#### editorJs()
+
+Serve the development Flux editor JavaScript.
+
+```php
+public function editorJs(): Response
+```
+
+**Returns:** File response with caching headers
+
+**Throws:** `\Exception` if Flux Pro is not installed
+
+#### editorMinJs()
+
+Serve the production (minified) Flux editor JavaScript.
+
+```php
+public function editorMinJs(): Response
+```
+
+**Returns:** File response with caching headers
+
+**Throws:** `\Exception` if Flux Pro is not installed
+
+## Blade Directives
+
+The AssetManager registers two Blade directives:
+
+### @fluxScripts
+
+Render the Flux JavaScript assets.
+
+```blade
+@fluxScripts
+@fluxScripts(['nonce' => csp_nonce()])
+```
+
+**Equivalent to:**
+
+```php
+<?php app('livewire')->forceAssetInjection(); ?>
+{!! app('flux')->scripts($expression) !!}
+```
+
+### @fluxAppearance
+
+Render the Flux appearance management scripts.
+
+```blade
+@fluxAppearance
+@fluxAppearance(['nonce' => csp_nonce()])
+```
+
+**Equivalent to:**
+
+```php
+{!! app('flux')->fluxAppearance($expression) !!}
+```
+
+## Caching
+
+All asset responses include aggressive caching headers:
+
+- **Cache-Control:** `public, max-age=31536000` (1 year)
+- **Expires:** 1 year from request time
+- **Last-Modified:** File modification timestamp
+- **304 Not Modified:** Returned when `If-Modified-Since` matches
+
+### Version Hashing
+
+Assets use version hashes from the manifest file for cache busting:
+
+```php
+// Example manifest.json
+{
+  "/flux.js": "abc123def456",
+  "/editor.js": "xyz789uvw012"
+}
+```
+
+These hashes ensure that when assets change, browsers fetch the new version.
+
+## Content Security Policy (CSP)
+
+All asset generation methods support CSP nonces:
+
+```php
+$nonce = csp_nonce(); // Your CSP nonce generation
+
+echo AssetManager::scripts(['nonce' => $nonce]);
+echo AssetManager::fluxAppearance(['nonce' => $nonce]);
+```
+
+In Blade templates:
+
+```blade
+@fluxScripts(['nonce' => csp_nonce()])
+@fluxAppearance(['nonce' => csp_nonce()])
+```
+
+## Examples
+
+### Basic Layout
+
+```blade
+<!DOCTYPE html>
+<html>
+<head>
+    @fluxAppearance
+</head>
+<body>
+    {{ $slot }}
+
+    @fluxScripts
+</body>
+</html>
+```
+
+### With CSP Nonces
+
+```blade
+<!DOCTYPE html>
+<html>
+<head>
+    @fluxAppearance(['nonce' => csp_nonce()])
+</head>
+<body>
+    {{ $slot }}
+
+    @fluxScripts(['nonce' => csp_nonce()])
+</body>
+</html>
+```
+
+### Flux Pro Editor
+
+```blade
+<!DOCTYPE html>
+<html>
+<head>
+    {!! AssetManager::editorStyles() !!}
+</head>
+<body>
+    {{ $slot }}
+
+    {!! AssetManager::editorScripts() !!}
+</body>
+</html>
+```
+
+## Related
+
+- [Flux Facade](/api/flux-facade) - Access AssetManager methods via facade
+- [FluxManager](/api/flux-manager) - Core manager that uses AssetManager
+- [Blade Directives](/api/directives) - Blade directive documentation

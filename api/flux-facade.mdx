@@ -1,0 +1,238 @@
+---
+title: Flux Facade
+description: API reference for the Flux facade providing convenient access to FluxManager methods
+---
+
+The `Flux` facade provides a convenient static interface to access the FluxManager instance and its methods.
+
+## Overview
+
+The Flux facade is a Laravel facade that proxies method calls to the underlying `FluxManager` class. It provides access to utility methods for managing Flux components, scripts, styles, and more.
+
+```php
+use Flux\Flux;
+
+// Example usage
+$classes = Flux::classes('bg-white text-gray-900');
+$isPro = Flux::pro();
+```
+
+## Methods
+
+All methods from the [FluxManager](/api/flux-manager) class are accessible through this facade.
+
+### classes()
+
+Create a class builder instance for constructing CSS class strings.
+
+```php
+public function classes($styles = null): ClassBuilder
+```
+
+<ParamField path="styles" type="string|null" default="null">
+  Optional CSS classes to initialize the builder with
+</ParamField>
+
+**Returns:** `ClassBuilder` instance
+
+**Example:**
+
+```php
+// Create empty class builder
+$builder = Flux::classes();
+
+// Create class builder with initial classes
+$builder = Flux::classes('bg-white rounded-lg');
+$builder->add('shadow-md'); // Chain additional classes
+```
+
+### pro()
+
+Check if Flux Pro is installed.
+
+```php
+public function pro(): bool
+```
+
+**Returns:** `true` if Flux Pro is installed, `false` otherwise
+
+**Example:**
+
+```php
+if (Flux::pro()) {
+    // Flux Pro features available
+}
+```
+
+### scripts()
+
+Generate the Flux JavaScript script tag.
+
+```php
+public function scripts($options = []): string
+```
+
+<ParamField path="options" type="array" default="[]">
+  Configuration options for the script tag
+  
+  **Options:**
+  - `nonce` (string): CSP nonce value for the script tag
+</ParamField>
+
+**Returns:** HTML script tag string
+
+**Example:**
+
+```php
+// Basic usage
+echo Flux::scripts();
+
+// With CSP nonce
+echo Flux::scripts(['nonce' => 'xyz123']);
+```
+
+### fluxAppearance()
+
+Generate the Flux appearance management script and styles.
+
+```php
+public function fluxAppearance($options = []): string
+```
+
+<ParamField path="options" type="array" default="[]">
+  Configuration options
+  
+  **Options:**
+  - `nonce` (string): CSP nonce value for inline scripts and styles
+</ParamField>
+
+**Returns:** HTML string containing inline styles and scripts for appearance management
+
+**Example:**
+
+```php
+// Basic usage
+echo Flux::fluxAppearance();
+
+// With CSP nonce
+echo Flux::fluxAppearance(['nonce' => 'xyz123']);
+```
+
+### editorStyles()
+
+Generate the Flux editor CSS link tag (Flux Pro only).
+
+```php
+public function editorStyles(): string
+```
+
+**Returns:** HTML link tag for editor CSS
+
+**Example:**
+
+```php
+echo Flux::editorStyles();
+```
+
+### editorScripts()
+
+Generate the Flux editor JavaScript script tag (Flux Pro only).
+
+```php
+public function editorScripts(): string
+```
+
+**Returns:** HTML script tag for editor JavaScript
+
+**Example:**
+
+```php
+echo Flux::editorScripts();
+```
+
+### splitAttributes()
+
+Split an attribute bag into two bags based on attribute names.
+
+```php
+public function splitAttributes(
+    $attributes, 
+    $by = ['class', 'style'], 
+    $strict = false
+): array
+```
+
+<ParamField path="attributes" type="ComponentAttributeBag" required>
+  The attribute bag to split
+</ParamField>
+
+<ParamField path="by" type="array" default="['class', 'style']">
+  Array of attribute names to split by
+</ParamField>
+
+<ParamField path="strict" type="bool" default="false">
+  If true, uses exact matching. If false, uses startsWith matching
+</ParamField>
+
+**Returns:** Array with two ComponentAttributeBag instances: `[matched, unmatched]`
+
+**Example:**
+
+```php
+// Split class and style attributes from others
+[$styling, $remaining] = Flux::splitAttributes($attributes);
+
+// Strict matching for specific attributes
+[$id, $others] = Flux::splitAttributes($attributes, ['id'], true);
+```
+
+### forwardedAttributes()
+
+Extract specific attributes from an attribute bag for forwarding to nested components.
+
+```php
+public function forwardedAttributes($attributes, $propKeys): array
+```
+
+<ParamField path="attributes" type="ComponentAttributeBag" required>
+  The attribute bag to extract from
+</ParamField>
+
+<ParamField path="propKeys" type="array" required>
+  Array of prop keys to extract (supports both camelCase and kebab-case)
+</ParamField>
+
+**Returns:** Array of extracted prop values
+
+**Example:**
+
+```php
+$props = Flux::forwardedAttributes($attributes, ['wireModel', 'placeholder']);
+```
+
+### componentExists()
+
+Check if a Flux component exists.
+
+```php
+public function componentExists($name): bool
+```
+
+<ParamField path="name" type="string" required>
+  The component name to check
+</ParamField>
+
+**Returns:** `true` if the component exists, `false` otherwise
+
+**Example:**
+
+```php
+if (Flux::componentExists('button')) {
+    // Component exists
+}
+```
+
+## Related
+
+- [FluxManager](/api/flux-manager) - The underlying manager class
+- [AssetManager](/api/asset-manager) - Asset management functionality

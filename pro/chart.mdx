@@ -1,0 +1,221 @@
+---
+title: 'Chart'
+description: 'Beautiful data visualization and charting'
+icon: 'chart-line'
+---
+
+<Note>
+  The Chart component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+## Overview
+
+The Chart component provides powerful data visualization capabilities with support for multiple chart types including line, bar, pie, and area charts. Built for Livewire, it enables reactive, real-time chart updates with beautiful animations and responsive design.
+
+## Basic Usage
+
+Create a simple line chart:
+
+```blade
+<flux:chart
+    type="line"
+    :data="$chartData"
+    :labels="$labels"
+/>
+```
+
+## Line Chart
+
+Display trends over time:
+
+```blade
+<flux:chart type="line" :data="$revenueData">
+    <flux:chart.dataset
+        label="Revenue"
+        :data="$monthlyRevenue"
+        color="blue"
+    />
+    <flux:chart.dataset
+        label="Expenses"
+        :data="$monthlyExpenses"
+        color="red"
+    />
+</flux:chart>
+```
+
+```php
+class Dashboard extends Component
+{
+    public function getRevenueDataProperty()
+    {
+        return [
+            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            'datasets' => [
+                [
+                    'label' => 'Revenue',
+                    'data' => [12000, 19000, 15000, 25000, 22000, 30000],
+                ],
+            ],
+        ];
+    }
+}
+```
+
+## Bar Chart
+
+Compare values across categories:
+
+```blade
+<flux:chart
+    type="bar"
+    :data="$salesByCategory"
+    :options="['indexAxis' => 'y']"
+/>
+```
+
+## Pie Chart
+
+Show proportional data:
+
+```blade
+<flux:chart
+    type="pie"
+    :data="$marketShare"
+    :labels="['Product A', 'Product B', 'Product C']"
+/>
+```
+
+## Area Chart
+
+Display cumulative trends:
+
+```blade
+<flux:chart type="area">
+    <flux:chart.dataset
+        label="Users"
+        :data="$userGrowth"
+        fill
+    />
+</flux:chart>
+```
+
+## Multiple Datasets
+
+Compare multiple metrics:
+
+```blade
+<flux:chart type="line" :labels="$months">
+    <flux:chart.dataset
+        label="New Users"
+        :data="$newUsers"
+        color="green"
+    />
+    <flux:chart.dataset
+        label="Active Users"
+        :data="$activeUsers"
+        color="blue"
+    />
+    <flux:chart.dataset
+        label="Churned Users"
+        :data="$churnedUsers"
+        color="red"
+    />
+</flux:chart>
+```
+
+## Real-time Updates
+
+Update charts dynamically with Livewire:
+
+```blade
+<flux:chart
+    type="line"
+    :data="$liveData"
+    wire:poll.5s="refreshData"
+/>
+```
+
+```php
+public function refreshData()
+{
+    $this->liveData = $this->fetchLatestMetrics();
+}
+```
+
+## Customization
+
+Customize chart appearance and behavior:
+
+```blade
+<flux:chart
+    type="bar"
+    :data="$data"
+    :options="[
+        'responsive' => true,
+        'maintainAspectRatio' => false,
+        'plugins' => [
+            'legend' => ['position' => 'bottom'],
+            'tooltip' => ['enabled' => true],
+        ],
+        'scales' => [
+            'y' => ['beginAtZero' => true],
+        ],
+    ]"
+/>
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Analytics Dashboard" icon="chart-column">
+    Display key metrics like traffic, conversions, and revenue in visual format.
+  </Card>
+  
+  <Card title="Sales Reports" icon="dollar-sign">
+    Show sales performance, trends, and comparisons across periods.
+  </Card>
+  
+  <Card title="Resource Monitoring" icon="gauge">
+    Visualize server performance, API usage, or system health metrics.
+  </Card>
+  
+  <Card title="User Insights" icon="users">
+    Track user growth, engagement, and behavior patterns over time.
+  </Card>
+</CardGroup>
+
+## Chart Types
+
+### Line Charts
+Ideal for showing trends over time, comparing multiple metrics, or displaying continuous data.
+
+### Bar Charts
+Perfect for comparing discrete categories, showing rankings, or displaying survey results.
+
+### Pie Charts
+Best for showing proportions, market share, or percentage breakdowns.
+
+### Area Charts
+Great for emphasizing magnitude of change over time or showing cumulative values.
+
+## Features
+
+- Responsive design that adapts to container size
+- Smooth animations and transitions
+- Interactive tooltips and legends
+- Export to image functionality
+- Accessibility features for screen readers
+- Touch-friendly for mobile devices
+
+## Accessibility
+
+Charts include accessibility features:
+
+- Alternative text descriptions
+- Keyboard navigation support
+- Screen reader compatible data tables
+- High contrast mode support
+
+<Tip>
+  For complex dashboards, consider lazy-loading charts or using the wire:init directive to improve initial page load performance.
+</Tip>

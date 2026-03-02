@@ -1,0 +1,390 @@
+---
+title: FluxManager
+description: API reference for the FluxManager class that manages Flux components and assets
+---
+
+The `FluxManager` class is the core manager for the Flux UI component library. It handles component registration, asset rendering, and provides utility methods for working with Flux components.
+
+## Overview
+
+The FluxManager is typically accessed through the `Flux` facade, but can also be accessed directly via the container:
+
+```php
+use Flux\FluxManager;
+
+$flux = app('flux'); // or app(FluxManager::class)
+```
+
+## Properties
+
+### hasRenderedAssets
+
+```php
+public bool $hasRenderedAssets = false
+```
+
+Tracks whether Flux assets (scripts/styles) have been rendered on the current page.
+
+## Methods
+
+### boot()
+
+Bootstrap the FluxManager instance.
+
+```php
+public function boot(): void
+```
+
+This method is called automatically by the service provider. It sets up Livewire event listeners and boots components.
+
+### pro()
+
+Check if Flux Pro is installed.
+
+```php
+public function pro(): bool
+```
+
+**Returns:** `true` if the `livewire/flux-pro` package is installed, `false` otherwise
+
+**Example:**
+
+```php
+if ($flux->pro()) {
+    // Access Flux Pro features
+}
+```
+
+### ensurePro()
+
+Ensure Flux Pro is installed, throw an exception if not.
+
+```php
+public function ensurePro(): void
+```
+
+**Throws:** `\Exception` if Flux Pro is not installed
+
+**Example:**
+
+```php
+$flux->ensurePro(); // Throws if Pro is not installed
+```
+
+### scripts()
+
+Generate the Flux JavaScript script tag.
+
+```php
+public function scripts($options = []): string
+```
+
+<ParamField path="options" type="array" default="[]">
+  Configuration options
+  
+  **Options:**
+  - `nonce` (string): CSP nonce value for the script tag
+</ParamField>
+
+**Returns:** HTML script tag string
+
+**Example:**
+
+```php
+echo $flux->scripts();
+echo $flux->scripts(['nonce' => 'xyz123']);
+```
+
+This method automatically marks assets as rendered and delegates to `AssetManager::scripts()`.
+
+### fluxAppearance()
+
+Generate the Flux appearance management script and styles.
+
+```php
+public function fluxAppearance($options = []): string
+```
+
+<ParamField path="options" type="array" default="[]">
+  Configuration options
+  
+  **Options:**
+  - `nonce` (string): CSP nonce value for inline scripts and styles
+</ParamField>
+
+**Returns:** HTML string containing inline styles and scripts for dark mode support
+
+**Example:**
+
+```php
+echo $flux->fluxAppearance();
+```
+
+### editorStyles()
+
+Generate the Flux editor CSS link tag (Flux Pro only).
+
+```php
+public function editorStyles(): string
+```
+
+**Returns:** HTML link tag for editor CSS
+
+**Example:**
+
+```php
+echo $flux->editorStyles();
+```
+
+### editorScripts()
+
+Generate the Flux editor JavaScript script tag (Flux Pro only).
+
+```php
+public function editorScripts(): string
+```
+
+**Returns:** HTML script tag for editor JavaScript
+
+**Example:**
+
+```php
+echo $flux->editorScripts();
+```
+
+### classes()
+
+Create a class builder instance for constructing CSS class strings.
+
+```php
+public function classes($styles = null): ClassBuilder
+```
+
+<ParamField path="styles" type="string|null" default="null">
+  Optional CSS classes to initialize the builder with
+</ParamField>
+
+**Returns:** `ClassBuilder` instance
+
+**Example:**
+
+```php
+$builder = $flux->classes();
+$builder = $flux->classes('bg-white text-gray-900');
+```
+
+### disallowWireModel()
+
+Throw an exception if wire: attributes are present.
+
+```php
+public function disallowWireModel($attributes, $componentName): void
+```
+
+<ParamField path="attributes" type="ComponentAttributeBag" required>
+  The attribute bag to check
+</ParamField>
+
+<ParamField path="componentName" type="string" required>
+  The component name for the error message
+</ParamField>
+
+**Throws:** `\Exception` if any `wire:*` attributes are found
+
+**Example:**
+
+```php
+$flux->disallowWireModel($attributes, 'flux:button');
+```
+
+### splitAttributes()
+
+Split an attribute bag into two bags based on attribute names.
+
+```php
+public function splitAttributes(
+    $attributes, 
+    $by = ['class', 'style'], 
+    $strict = false
+): array
+```
+
+<ParamField path="attributes" type="ComponentAttributeBag" required>
+  The attribute bag to split
+</ParamField>
+
+<ParamField path="by" type="array" default="['class', 'style']">
+  Array of attribute names to split by
+</ParamField>
+
+<ParamField path="strict" type="bool" default="false">
+  If `true`, uses exact matching. If `false`, uses startsWith matching
+</ParamField>
+
+**Returns:** Array with two ComponentAttributeBag instances: `[matched, unmatched]`
+
+**Example:**
+
+```php
+// Split class and style attributes
+[$styling, $remaining] = $flux->splitAttributes($attributes);
+
+// Split data- attributes (non-strict)
+[$dataAttrs, $others] = $flux->splitAttributes($attributes, ['data-']);
+
+// Split specific attributes (strict)
+[$id, $others] = $flux->splitAttributes($attributes, ['id', 'name'], true);
+```
+
+### forwardedAttributes()
+
+Extract specific attributes from an attribute bag for forwarding to nested components.
+
+```php
+public function forwardedAttributes($attributes, $propKeys): array
+```
+
+<ParamField path="attributes" type="ComponentAttributeBag" required>
+  The attribute bag to extract from
+</ParamField>
+
+<ParamField path="propKeys" type="array" required>
+  Array of prop keys to extract (supports both camelCase and kebab-case)
+</ParamField>
+
+**Returns:** Array of extracted prop values with keys converted to camelCase
+
+**Example:**
+
+```php
+// Extract specific props for forwarding
+$props = $flux->forwardedAttributes($attributes, ['wireModel', 'placeholder']);
+
+// Supports kebab-case conversion
+// If attribute has 'wire-model', it will be extracted as 'wireModel'
+```
+
+### attributesAfter()
+
+Extract attributes with a specific prefix and remove them from the original bag.
+
+```php
+public function attributesAfter(
+    $prefix, 
+    $attributes, 
+    $default = []
+): ComponentAttributeBag
+```
+
+<ParamField path="prefix" type="string" required>
+  The prefix to match (e.g., 'icon:')
+</ParamField>
+
+<ParamField path="attributes" type="ComponentAttributeBag" required>
+  The attribute bag to extract from (modified in place)
+</ParamField>
+
+<ParamField path="default" type="array" default="[]">
+  Default attributes for the new bag
+</ParamField>
+
+**Returns:** New ComponentAttributeBag with prefix-matched attributes (prefix removed from keys)
+
+**Example:**
+
+```php
+// Extract icon: prefixed attributes
+$iconAttrs = $flux->attributesAfter('icon:', $attributes);
+// icon:class="text-blue-500" becomes class="text-blue-500" in $iconAttrs
+```
+
+### applyInset()
+
+Generate CSS classes for inset positioning.
+
+```php
+public function applyInset(
+    $inset, 
+    $top, 
+    $right, 
+    $bottom, 
+    $left
+): string
+```
+
+<ParamField path="inset" type="bool|string|null" required>
+  Inset specification: `true` for all sides, space-separated sides, or `null`
+</ParamField>
+
+<ParamField path="top" type="string" required>
+  CSS class for top inset
+</ParamField>
+
+<ParamField path="right" type="string" required>
+  CSS class for right inset
+</ParamField>
+
+<ParamField path="bottom" type="string" required>
+  CSS class for bottom inset
+</ParamField>
+
+<ParamField path="left" type="string" required>
+  CSS class for left inset
+</ParamField>
+
+**Returns:** Space-separated CSS class string
+
+**Example:**
+
+```php
+// Apply all sides
+$classes = $flux->applyInset(true, 'pt-4', 'pr-4', 'pb-4', 'pl-4');
+// Returns: 'pt-4 pr-4 pb-4 pl-4'
+
+// Apply specific sides
+$classes = $flux->applyInset('top bottom', 'pt-4', 'pr-4', 'pb-4', 'pl-4');
+// Returns: 'pt-4 pb-4'
+
+// No inset
+$classes = $flux->applyInset(null, 'pt-4', 'pr-4', 'pb-4', 'pl-4');
+// Returns: ''
+```
+
+### componentExists()
+
+Check if a Flux component exists.
+
+```php
+public function componentExists($name): bool
+```
+
+<ParamField path="name" type="string" required>
+  The component name to check
+</ParamField>
+
+**Returns:** `true` if the component exists, `false` otherwise
+
+**Example:**
+
+```php
+if ($flux->componentExists('button')) {
+    // Component exists
+}
+```
+
+This method accounts for Laravel version differences in view hashing (xxh128 in Laravel 12+, md5 in earlier versions).
+
+### markAssetsRendered()
+
+Mark assets as rendered.
+
+```php
+public function markAssetsRendered(): void
+```
+
+Sets `$hasRenderedAssets` to `true`. Called automatically by `scripts()` and `fluxAppearance()`.
+
+## Related
+
+- [Flux Facade](/api/flux-facade) - Convenient facade for accessing FluxManager
+- [AssetManager](/api/asset-manager) - Asset management functionality

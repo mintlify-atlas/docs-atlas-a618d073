@@ -1,0 +1,360 @@
+---
+title: Styling
+description: Tailwind CSS styling approach, customization, and theme configuration
+---
+
+Flux is built with Tailwind CSS v4 and follows modern utility-first styling patterns. Understanding Flux's styling approach will help you customize components and maintain consistent design.
+
+## Tailwind CSS v4 Setup
+
+Flux requires Tailwind CSS v4.0+ with a specific configuration:
+
+```css
+/* resources/css/app.css */
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+```
+
+This setup:
+
+1. **Imports Tailwind CSS** - The base framework
+2. **Imports Flux styles** - Component-specific CSS from the vendor directory
+3. **Defines dark variant** - Custom variant for dark mode support
+
+## Dark Mode
+
+Flux uses a class-based dark mode strategy with the custom variant:
+
+```css
+@custom-variant dark (&:where(.dark, .dark *));
+```
+
+This variant applies dark mode styles when:
+- The root element has the `dark` class
+- Any parent element has the `dark` class
+
+### Dark Mode Implementation
+
+Flux includes JavaScript to manage appearance preferences:
+
+```javascript
+// From AssetManager.php:103-127
+window.Flux = {
+    applyAppearance (appearance) {
+        let applyDark = () => document.documentElement.classList.add('dark')
+        let applyLight = () => document.documentElement.classList.remove('dark')
+
+        if (appearance === 'system') {
+            let media = window.matchMedia('(prefers-color-scheme: dark)')
+            window.localStorage.removeItem('flux.appearance')
+            media.matches ? applyDark() : applyLight()
+        } else if (appearance === 'dark') {
+            window.localStorage.setItem('flux.appearance', 'dark')
+            applyDark()
+        } else if (appearance === 'light') {
+            window.localStorage.setItem('flux.appearance', 'light')
+            applyLight()
+        }
+    }
+}
+
+window.Flux.applyAppearance(window.localStorage.getItem('flux.appearance') || 'system')
+```
+
+This provides:
+- User preference persistence via localStorage
+- System preference detection
+- Programmatic appearance control
+
+### Dark Mode Scrollbars
+
+Flux automatically styles scrollbars for dark mode:
+
+```css
+:root.dark {
+    color-scheme: dark;
+}
+```
+
+## Theme Customization
+
+Customize Flux's appearance using Tailwind's `@theme` directive:
+
+```css
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: Inter, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    
+    /* Custom color palette */
+    --color-primary-50: #f0f9ff;
+    --color-primary-500: #0ea5e9;
+    --color-primary-900: #0c4a6e;
+}
+```
+
+### Recommended Typography
+
+Flux is designed with the Inter font family. Add it to your layout:
+
+```html
+<head>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600&display=swap" rel="stylesheet" />
+</head>
+```
+
+Then configure it in your CSS:
+
+```css
+@theme {
+    --font-sans: Inter, sans-serif;
+}
+```
+
+## Dynamic Class Building
+
+Flux provides a `ClassBuilder` for conditional styling:
+
+```php
+$classes = Flux::classes()
+    ->add('base-class')
+    ->add($variant === 'solid' ? 'bg-blue-500' : 'bg-transparent')
+    ->add($disabled ? 'opacity-50' : '');
+```
+
+This is used throughout Flux components:
+
+```blade
+<!-- From button/index.blade.php:37-40 -->
+@php
+$iconClasses = Flux::classes()
+    ->add($iconVariant === 'outline' ? ($square && $size !== 'xs' ? 'size-5' : 'size-4') : '')
+    ->add($attributes->pluck('icon:class'));
+@endphp
+```
+
+## Component Styling Patterns
+
+### Variants
+
+Flux components use variants for different visual styles:
+
+```blade
+<flux::button variant="solid">Primary Action</flux::button>
+<flux::button variant="outline">Secondary Action</flux::button>
+<flux::button variant="ghost">Tertiary Action</flux::button>
+```
+
+### Sizes
+
+Consistent sizing across components:
+
+```blade
+<flux::button size="xs">Tiny</flux::button>
+<flux::button size="sm">Small</flux::button>
+<flux::button size="base">Default</flux::button>
+<flux::button size="lg">Large</flux::button>
+```
+
+### Colors
+
+Semantic color options:
+
+```blade
+<flux::badge color="zinc">Default</flux::badge>
+<flux::badge color="red">Error</flux::badge>
+<flux::badge color="green">Success</flux::badge>
+<flux::badge color="blue">Info</flux::badge>
+```
+
+## Customizing Component Styles
+
+You can override Flux component styles in several ways:
+
+### 1. Utility Classes
+
+Pass Tailwind classes directly to components:
+
+```blade
+<flux::button class="mt-4 shadow-lg hover:shadow-xl">
+    Custom Styled Button
+</flux::button>
+```
+
+### 2. Variant Props
+
+Use built-in variant props when available:
+
+```blade
+<flux::input variant="outline" size="lg" />
+```
+
+### 3. Publish and Modify
+
+Publish component templates and modify their styles:
+
+```bash
+php artisan flux:publish button
+```
+
+Then edit `resources/views/flux/button/index.blade.php` to customize the markup and styling.
+
+### 4. Global CSS Overrides
+
+Add custom styles in your CSS file:
+
+```css
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Custom overrides */
+@layer components {
+    .flux-button {
+        @apply font-semibold;
+    }
+}
+```
+
+## Attribute Forwarding
+
+Flux components intelligently forward style attributes:
+
+```blade
+<flux::input 
+    class="mt-4"
+    input:class="font-mono"
+    icon:class="text-blue-500"
+/>
+```
+
+The namespaced attributes target specific elements:
+- `class` - Applied to the wrapper
+- `input:class` - Applied to the input element
+- `icon:class` - Applied to the icon element
+
+## Responsive Styling
+
+Use Tailwind's responsive utilities with Flux components:
+
+```blade
+<flux::button class="w-full md:w-auto">
+    Responsive Button
+</flux::button>
+
+<flux::card class="p-4 md:p-6 lg:p-8">
+    Responsive padding
+</flux::card>
+```
+
+## State-Based Styling
+
+Flux components support state modifiers:
+
+```blade
+<flux::button class="hover:scale-105 active:scale-95 disabled:opacity-50">
+    Interactive Button
+</flux::button>
+```
+
+## Icon Variants
+
+Flux provides different icon styles:
+
+```blade
+<flux::button icon="home" icon:variant="mini">Mini Icon</flux::button>
+<flux::button icon="home" icon:variant="micro">Micro Icon</flux::button>
+<flux::button icon="home" icon:variant="outline">Outline Icon</flux::button>
+```
+
+Icon sizing is automatically adjusted based on component size:
+
+```php
+// From button/index.blade.php:29-32
+$iconVariant ??= ($size === 'xs')
+    ? ($square ? 'micro' : 'micro')
+    : ($square ? 'mini' : 'micro');
+```
+
+## Best Practices
+
+### Use Semantic Props First
+
+Prefer component props over custom classes:
+
+```blade
+<!-- Good -->
+<flux::button variant="solid" size="lg">
+
+<!-- Less ideal -->
+<flux::button class="bg-blue-500 px-6 py-3">
+```
+
+### Namespace Custom Attributes
+
+Use the colon syntax for targeting specific elements:
+
+```blade
+<flux::input 
+    input:class="font-mono"
+    input:placeholder="Enter code..."
+/>
+```
+
+### Maintain Consistency
+
+Stick to Flux's design tokens:
+
+```blade
+<!-- Consistent with Flux -->
+<flux::card class="space-y-4">
+
+<!-- Inconsistent -->
+<flux::card class="space-y-7">
+```
+
+### Test Dark Mode
+
+Always test custom styles in both light and dark modes:
+
+```blade
+<flux::button class="bg-white dark:bg-zinc-800">
+    Works in both modes
+</flux::button>
+```
+
+## Performance Considerations
+
+Flux's styling approach is optimized for performance:
+
+1. **CSS is extracted** - Tailwind extracts only used utilities
+2. **Component styles are cached** - Blade caches compiled templates
+3. **Assets are versioned** - Cache busting with manifest hashing
+4. **Minimal runtime CSS** - Most styling is pre-compiled
+
+The asset manager uses efficient caching:
+
+```php
+// AssetManager.php:163-171
+protected function cachedFileResponse($filename, $contentType, $lastModified, $downloadCallback)
+{
+    $expires = strtotime('+1 year');
+    $cacheControl = 'public, max-age=31536000';
+
+    if ($this->matchesCache($lastModified)) {
+        return response('', 304, [
+            'Expires' => $this->httpDate($expires),
+            'Cache-Control' => $cacheControl,
+        ]);
+    }
+    // ...
+}
+```

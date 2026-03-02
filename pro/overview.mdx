@@ -1,0 +1,143 @@
+---
+title: 'Flux Pro Components'
+description: 'Premium UI components for advanced Livewire applications'
+icon: 'crown'
+---
+
+<Note>
+  Flux Pro components require a **Flux Pro license**. Visit [fluxui.dev/pricing](https://fluxui.dev/pricing) to upgrade and unlock these premium features.
+</Note>
+
+## What is Flux Pro?
+
+Flux Pro is the premium tier of the Flux UI component library, providing advanced, production-ready components for building sophisticated Livewire applications. These components are designed for teams and projects that need enhanced functionality, complex interactions, and enterprise-grade features.
+
+## Pro Components
+
+Flux Pro includes the following premium components:
+
+<CardGroup cols={2}>
+  <Card title="Accordion" icon="chevron-down" href="/pro/accordion">
+    Collapsible content sections with smooth animations
+  </Card>
+  
+  <Card title="Autocomplete" icon="wand-magic-sparkles" href="/pro/autocomplete">
+    Smart search input with suggestions and filtering
+  </Card>
+  
+  <Card title="Calendar" icon="calendar" href="/pro/calendar">
+    Full-featured calendar with event management
+  </Card>
+  
+  <Card title="Chart" icon="chart-line" href="/pro/chart">
+    Beautiful data visualization and charting
+  </Card>
+  
+  <Card title="Command" icon="terminal" href="/pro/command">
+    Keyboard-driven command palette interface
+  </Card>
+  
+  <Card title="Date Picker" icon="calendar-day" href="/pro/date-picker">
+    Elegant date selection with calendar view
+  </Card>
+  
+  <Card title="Editor" icon="pen-to-square" href="/pro/editor">
+    Rich text editor with formatting controls
+  </Card>
+  
+  <Card title="File Upload" icon="cloud-arrow-up" href="/pro/file-upload">
+    Drag-and-drop file uploads with previews
+  </Card>
+  
+  <Card title="Kanban" icon="columns" href="/pro/kanban">
+    Drag-and-drop board for task management
+  </Card>
+  
+  <Card title="Popover" icon="comment" href="/pro/popover">
+    Contextual overlays and tooltips
+  </Card>
+  
+  <Card title="Slider" icon="sliders" href="/pro/slider">
+    Range selection and value adjustment
+  </Card>
+  
+  <Card title="Table" icon="table" href="/pro/table">
+    Advanced data tables with sorting and pagination
+  </Card>
+  
+  <Card title="Tabs" icon="folder" href="/pro/tabs">
+    Organized content in tabbed interfaces
+  </Card>
+  
+  <Card title="Toast" icon="bell" href="/pro/toast">
+    Non-intrusive notifications and alerts
+  </Card>
+</CardGroup>
+
+## Activation
+
+Once you have purchased a Flux Pro license:
+
+### Step 1: Install Flux Pro
+
+Install the Flux Pro package via Composer:
+
+```bash
+composer require livewire/flux-pro
+```
+
+### Step 2: Activate Your License
+
+Add your license key to your `.env` file:
+
+```bash
+FLUX_PRO_KEY=your-license-key-here
+```
+
+### Step 3: Publish Components
+
+Publish the Pro components you need:
+
+```bash
+php artisan flux:publish --pro
+```
+
+Or publish individual components:
+
+```bash
+php artisan flux:publish accordion
+php artisan flux:publish table
+```
+
+### Step 4: Start Building
+
+Pro components are now available in your Livewire application. Use them with the `<flux:` prefix:
+
+```blade
+<flux:table :rows="$users">
+    <!-- Your table configuration -->
+</flux:table>
+```
+
+## License Options
+
+Flux Pro is available with flexible licensing options:
+
+- **Solo**: For individual developers and freelancers
+- **Team**: For small development teams
+- **Enterprise**: For large organizations with multiple projects
+
+Visit [fluxui.dev/pricing](https://fluxui.dev/pricing) to compare plans and choose the right option for your needs.
+
+## Support
+
+Flux Pro license holders receive priority support:
+
+- Access to private support channels
+- Faster response times
+- Direct access to the Flux team
+- Advanced documentation and tutorials
+
+<Tip>
+  All Flux Pro components are built with the same quality and attention to detail as the core Flux library, ensuring consistency across your application.
+</Tip>

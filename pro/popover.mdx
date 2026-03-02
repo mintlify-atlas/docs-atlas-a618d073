@@ -1,0 +1,298 @@
+---
+title: 'Popover'
+description: 'Contextual overlays and tooltips'
+icon: 'comment'
+---
+
+<Note>
+  The Popover component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+## Overview
+
+The Popover component displays floating content anchored to a trigger element. It's perfect for contextual information, tooltips, menus, and interactive overlays without cluttering your interface.
+
+## Basic Usage
+
+Create a simple popover:
+
+```blade
+<flux:popover>
+    <flux:popover.trigger>
+        <flux:button>Click me</flux:button>
+    </flux:popover.trigger>
+    
+    <flux:popover.content>
+        This is a popover with helpful information.
+    </flux:popover.content>
+</flux:popover>
+```
+
+## Positioning
+
+Control where the popover appears:
+
+```blade
+<flux:popover placement="top">
+    <flux:popover.trigger>
+        <flux:button>Hover me</flux:button>
+    </flux:popover.trigger>
+    
+    <flux:popover.content>
+        Appears above the button
+    </flux:popover.content>
+</flux:popover>
+```
+
+Available positions: `top`, `bottom`, `left`, `right`, `top-start`, `top-end`, `bottom-start`, `bottom-end`
+
+## Trigger Methods
+
+Control how the popover opens:
+
+```blade
+<!-- Click to open -->
+<flux:popover trigger="click">
+    <!-- Content -->
+</flux:popover>
+
+<!-- Hover to open -->
+<flux:popover trigger="hover">
+    <!-- Content -->
+</flux:popover>
+
+<!-- Focus to open -->
+<flux:popover trigger="focus">
+    <!-- Content -->
+</flux:popover>
+```
+
+## Rich Content
+
+Include complex content in popovers:
+
+```blade
+<flux:popover>
+    <flux:popover.trigger>
+        <flux:button icon="circle-info" />
+    </flux:popover.trigger>
+    
+    <flux:popover.content class="w-80">
+        <div class="space-y-2">
+            <h4 class="font-semibold">User Information</h4>
+            <div class="flex items-center gap-3">
+                <flux:avatar src="/avatar.jpg" />
+                <div>
+                    <p class="font-medium">John Doe</p>
+                    <p class="text-sm text-gray-500">john@example.com</p>
+                </div>
+            </div>
+            <flux:button size="sm" class="w-full">View Profile</flux:button>
+        </div>
+    </flux:popover.content>
+</flux:popover>
+```
+
+## With Arrow
+
+Add a pointing arrow:
+
+```blade
+<flux:popover arrow>
+    <flux:popover.trigger>
+        <flux:button>Show tooltip</flux:button>
+    </flux:popover.trigger>
+    
+    <flux:popover.content>
+        Helpful tip with an arrow
+    </flux:popover.content>
+</flux:popover>
+```
+
+## Menu Popover
+
+Create dropdown menus:
+
+```blade
+<flux:popover trigger="click" placement="bottom-end">
+    <flux:popover.trigger>
+        <flux:button icon="ellipsis-vertical" />
+    </flux:popover.trigger>
+    
+    <flux:popover.content>
+        <flux:menu>
+            <flux:menu.item wire:click="edit">Edit</flux:menu.item>
+            <flux:menu.item wire:click="duplicate">Duplicate</flux:menu.item>
+            <flux:menu.separator />
+            <flux:menu.item wire:click="delete" variant="danger">Delete</flux:menu.item>
+        </flux:menu>
+    </flux:popover.content>
+</flux:popover>
+```
+
+## Controlled State
+
+Manually control popover visibility:
+
+```blade
+<flux:popover :open="$showPopover" wire:close="$set('showPopover', false)">
+    <flux:popover.trigger>
+        <flux:button wire:click="$set('showPopover', true)">Open</flux:button>
+    </flux:popover.trigger>
+    
+    <flux:popover.content>
+        <div class="space-y-2">
+            <p>This popover is controlled by Livewire state.</p>
+            <flux:button size="sm" wire:click="$set('showPopover', false)">
+                Close
+            </flux:button>
+        </div>
+    </flux:popover.content>
+</flux:popover>
+```
+
+## Delay
+
+Add show/hide delays:
+
+```blade
+<flux:popover
+    trigger="hover"
+    :show-delay="200"
+    :hide-delay="100"
+>
+    <flux:popover.trigger>
+        <span>Hover for tooltip</span>
+    </flux:popover.trigger>
+    
+    <flux:popover.content>
+        Appears after 200ms, hides after 100ms
+    </flux:popover.content>
+</flux:popover>
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Help Tooltips" icon="circle-question">
+    Provide contextual help and explanations without cluttering the interface.
+  </Card>
+  
+  <Card title="User Previews" icon="user">
+    Show user profile previews when hovering over names or avatars.
+  </Card>
+  
+  <Card title="Action Menus" icon="ellipsis">
+    Display contextual actions and options for items in lists or tables.
+  </Card>
+  
+  <Card title="Form Help" icon="circle-info">
+    Explain form fields and validation requirements inline.
+  </Card>
+</CardGroup>
+
+## Features
+
+### Smart Positioning
+
+- Automatic flip when space is limited
+- Boundary detection and adjustment
+- Configurable offset and padding
+- Multiple placement options
+
+### Interaction
+
+- Multiple trigger types (click, hover, focus)
+- Customizable delays
+- Click outside to close
+- Escape key to dismiss
+
+### Styling
+
+- Optional arrow pointer
+- Custom width and height
+- Animation support
+- Theme customization
+
+## Best Practices
+
+### When to Use Popovers
+
+**Good uses:**
+- Supplementary information
+- Quick actions
+- Form field help
+- User previews
+
+**Avoid for:**
+- Critical information
+- Long content
+- Primary navigation
+- Mobile-first interfaces
+
+### Accessibility Considerations
+
+- Ensure popovers are keyboard accessible
+- Don't hide critical info in popovers on mobile
+- Use hover popovers sparingly (not touch-friendly)
+- Provide alternative access to popover content
+
+### Performance
+
+- Lazy load popover content when possible
+- Limit number of simultaneous popovers
+- Use lightweight content to avoid layout shifts
+
+## Accessibility
+
+The Popover component includes:
+
+- Proper ARIA attributes (`aria-haspopup`, `aria-expanded`)
+- Focus management
+- Keyboard navigation (Escape to close)
+- Screen reader support
+- Focus trap for complex popovers
+
+## Advanced Example
+
+Feature-rich user preview popover:
+
+```blade
+<flux:popover trigger="hover" placement="top" :show-delay="300" arrow>
+    <flux:popover.trigger>
+        <a href="{{ route('users.show', $user) }}" class="text-blue-600 hover:underline">
+            {{ $user->name }}
+        </a>
+    </flux:popover.trigger>
+    
+    <flux:popover.content class="w-72">
+        <div class="space-y-3">
+            <div class="flex items-start gap-3">
+                <flux:avatar :src="$user->avatar" size="lg" />
+                <div class="flex-1 min-w-0">
+                    <h4 class="font-semibold truncate">{{ $user->name }}</h4>
+                    <p class="text-sm text-gray-600 truncate">{{ $user->title }}</p>
+                    <p class="text-xs text-gray-500 truncate">{{ $user->email }}</p>
+                </div>
+            </div>
+            
+            @if($user->bio)
+                <p class="text-sm text-gray-700 line-clamp-3">{{ $user->bio }}</p>
+            @endif
+            
+            <div class="flex gap-2 pt-2 border-t">
+                <flux:button size="sm" href="{{ route('users.show', $user) }}" class="flex-1">
+                    View Profile
+                </flux:button>
+                <flux:button size="sm" variant="outline" wire:click="messageUser({{ $user->id }})">
+                    <flux:icon name="envelope" />
+                </flux:button>
+            </div>
+        </div>
+    </flux:popover.content>
+</flux:popover>
+```
+
+<Tip>
+  Use popovers to progressively disclose information, keeping your interface clean while providing quick access to additional details when needed.
+</Tip>

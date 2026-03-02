@@ -1,0 +1,250 @@
+---
+title: 'Date Picker'
+description: 'Elegant date selection with calendar view'
+icon: 'calendar-day'
+---
+
+<Note>
+  The Date Picker component requires a **Flux Pro license**. [Learn more about Flux Pro](/pro/overview).
+</Note>
+
+## Overview
+
+The Date Picker component provides an intuitive calendar interface for selecting dates. It supports single dates, date ranges, and advanced features like min/max dates, disabled dates, and custom formatting.
+
+## Basic Usage
+
+Create a simple date picker:
+
+```blade
+<flux:date-picker
+    wire:model="selectedDate"
+    placeholder="Select a date"
+/>
+```
+
+## Date Range
+
+Allow selection of start and end dates:
+
+```blade
+<flux:date-picker
+    wire:model="dateRange"
+    mode="range"
+    placeholder="Select date range"
+/>
+```
+
+```php
+class BookingForm extends Component
+{
+    public $dateRange = [
+        'start' => null,
+        'end' => null,
+    ];
+}
+```
+
+## With Constraints
+
+Set minimum and maximum selectable dates:
+
+```blade
+<flux:date-picker
+    wire:model="appointmentDate"
+    :min="now()"
+    :max="now()->addMonths(3)"
+    placeholder="Choose appointment date"
+/>
+```
+
+## Disabled Dates
+
+Prevent selection of specific dates:
+
+```blade
+<flux:date-picker
+    wire:model="deliveryDate"
+    :disabled-dates="$unavailableDates"
+/>
+```
+
+```php
+public function getUnavailableDatesProperty()
+{
+    return [
+        now()->addDays(5),
+        now()->addDays(12),
+        now()->addDays(25),
+    ];
+}
+```
+
+## Disable Days of Week
+
+Disable specific days (e.g., weekends):
+
+```blade
+<flux:date-picker
+    wire:model="meetingDate"
+    :disabled-days="[0, 6]"
+    placeholder="Select a weekday"
+/>
+```
+
+## Custom Format
+
+Specify date display format:
+
+```blade
+<flux:date-picker
+    wire:model="eventDate"
+    format="M d, Y"
+    placeholder="Select date"
+/>
+```
+
+## With Time
+
+Include time selection:
+
+```blade
+<flux:date-picker
+    wire:model="scheduledAt"
+    enable-time
+    time-format="H:i"
+    placeholder="Select date and time"
+/>
+```
+
+## Multiple Dates
+
+Allow selection of multiple individual dates:
+
+```blade
+<flux:date-picker
+    wire:model="selectedDates"
+    mode="multiple"
+    placeholder="Select dates"
+/>
+```
+
+## Inline Calendar
+
+Display calendar without an input field:
+
+```blade
+<flux:date-picker
+    wire:model="date"
+    inline
+/>
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Appointment Booking" icon="calendar-check">
+    Let users select available appointment dates with unavailable times disabled.
+  </Card>
+  
+  <Card title="Date Range Filters" icon="filter">
+    Filter reports, analytics, or records by selecting a custom date range.
+  </Card>
+  
+  <Card title="Event Scheduling" icon="clock">
+    Schedule events with date and time selection in a single component.
+  </Card>
+  
+  <Card title="Availability Selection" icon="calendar-days">
+    Allow users to select multiple dates for availability or preferences.
+  </Card>
+</CardGroup>
+
+## Features
+
+### Flexible Selection Modes
+
+- Single date selection
+- Date range selection
+- Multiple individual dates
+- Inline calendar display
+
+### Smart Constraints
+
+- Minimum and maximum dates
+- Disabled specific dates
+- Disabled days of week
+- Custom validation rules
+
+### Localization
+
+- Configurable date formats
+- Multiple language support
+- First day of week customization
+- Locale-aware month/day names
+
+### User Experience
+
+- Keyboard navigation (arrow keys, Enter, Escape)
+- Month/year quick navigation
+- Today button for quick selection
+- Clear button to reset selection
+
+## Accessibility
+
+The Date Picker component is fully accessible:
+
+- ARIA labels and attributes
+- Keyboard navigation support
+- Focus management
+- Screen reader announcements
+- High contrast mode compatible
+
+## Advanced Examples
+
+### Booking System
+
+Implement a complete booking date selector:
+
+```blade
+<flux:date-picker
+    wire:model="booking.date"
+    :min="now()->addDay()"
+    :max="now()->addMonths(6)"
+    :disabled-dates="$bookedDates"
+    :disabled-days="[0]"
+    placeholder="Select booking date"
+/>
+
+@if($booking->date)
+    <flux:time-picker
+        wire:model="booking.time"
+        :available-times="$availableTimesForDate"
+    />
+@endif
+```
+
+### Report Date Range
+
+Filter data with date range selection:
+
+```blade
+<div class="flex gap-4">
+    <flux:date-picker
+        wire:model="filters.startDate"
+        :max="$filters['endDate'] ?? now()"
+        placeholder="Start date"
+    />
+    
+    <flux:date-picker
+        wire:model="filters.endDate"
+        :min="$filters['startDate'] ?? null"
+        :max="now()"
+        placeholder="End date"
+    />
+</div>
+```
+
+<Tip>
+  For better user experience, combine the Date Picker with clear default ranges like "Last 7 days" or "This month" as quick selection options.
+</Tip>
